@@ -1,26 +1,43 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ThemeProvider, CssBaseline, Box } from '@mui/material';
+import theme from './theme';
+import Navbar from './components/Navbar';
+import Home from './pages/Home';
+import BrandDetail from './pages/BrandDetail';
+import MenuDetail from './pages/MenuDetail';
+import SearchResults from './pages/SearchResults';
 
-function App() {
+const App: React.FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Router>
+        <Box sx={{ 
+          minHeight: '100vh',
+          background: theme.palette.background.default,
+          display: 'flex',
+          flexDirection: 'column'
+        }}>
+          <Navbar />
+          <Box component="main" sx={{ 
+            flexGrow: 1,
+            p: { xs: 2, sm: 3, md: 4 },
+            maxWidth: '1200px',
+            width: '100%',
+            mx: 'auto'
+          }}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/brand/:id" element={<BrandDetail />} />
+              <Route path="/menu/:id" element={<MenuDetail />} />
+              <Route path="/search" element={<SearchResults />} />
+            </Routes>
+          </Box>
+        </Box>
+      </Router>
+    </ThemeProvider>
   );
-}
+};
 
 export default App;
