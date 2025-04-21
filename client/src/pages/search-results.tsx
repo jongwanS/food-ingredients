@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { useSearchParams } from "@/hooks/use-search-params";
@@ -7,11 +7,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AllergyBadge } from "@/components/allergy-badge";
 import { Product } from "@/types";
-import { Heart, AlertCircle, Search, Store } from "lucide-react";
+import { Heart, AlertCircle, Search, Store, Grid, List } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function SearchResults() {
   const [searchParams] = useSearchParams();
   const [, navigate] = useLocation();
+  const [viewType, setViewType] = useState<'grid' | 'list'>('grid');
   
   const query = searchParams.get("q") || "";
   const calorieRange = searchParams.get("calorieRange") || "";
@@ -84,12 +86,41 @@ export default function SearchResults() {
   
   return (
     <>
-      <FilterBar />
+      <FilterBar 
+        onFilterChange={(newFilters) => {
+          // 필터가 변경될 때마다 URL 파라미터를 업데이트하여 다시 검색 쿼리
+          // FilterBar 내부에서 이미 처리되기 때문에 추가 작업은 필요 없음
+        }}
+      />
       
       <div className="mb-8">
-        <div className="flex items-center mb-2">
-          <Search className="w-6 h-6 text-primary mr-2" />
-          <h1 className="text-3xl font-heading font-bold gradient-text">검색 결과</h1>
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center">
+            <Search className="w-6 h-6 text-primary mr-2" />
+            <h1 className="text-3xl font-heading font-bold gradient-text">검색 결과</h1>
+          </div>
+          
+          {/* 뷰 타입 전환 버튼 */}
+          <div className="flex bg-pink-50 rounded-lg p-1 border border-pink-100">
+            <Button
+              variant="ghost"
+              size="sm"
+              className={`rounded-md ${viewType === 'grid' ? 'bg-white shadow-sm' : ''}`}
+              onClick={() => setViewType('grid')}
+            >
+              <Grid className="h-4 w-4 mr-1" />
+              바둑판형
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className={`rounded-md ${viewType === 'list' ? 'bg-white shadow-sm' : ''}`}
+              onClick={() => setViewType('list')}
+            >
+              <List className="h-4 w-4 mr-1" />
+              목록형
+            </Button>
+          </div>
         </div>
         <p className="text-gray-600 bg-pink-50/60 py-2 px-4 rounded-lg inline-block border border-pink-100 shadow-sm">
           <span className="font-semibold text-pink-700">"{query}"</span>에 대한 검색 결과입니다
@@ -127,7 +158,8 @@ export default function SearchResults() {
           <p className="text-gray-600 mb-2 font-semibold">검색 결과가 없습니다.</p>
           <p className="text-sm text-gray-500">다른 검색어로 시도해 보세요.</p>
         </div>
-      ) : (
+      ) : viewType === 'grid' ? (
+        // 바둑판형 뷰 (Grid View)
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array.isArray(searchResults) && searchResults.map((product: Product) => (
             <Card 
@@ -181,6 +213,70 @@ export default function SearchResults() {
                   </div>
                 </div>
               </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        // 목록형 뷰 (List View)
+        <div className="flex flex-col gap-4">
+          {Array.isArray(searchResults) && searchResults.map((product: Product) => (
+            <Card 
+              key={product.id}
+              className="bg-white rounded-xl shadow-sm overflow-hidden card-hover border border-pink-100"
+              onClick={() => handleProductSelect(product.id)}
+            >
+              <div className="flex flex-col md:flex-row">
+                <div className="md:w-1/4 h-48 md:h-auto bg-gray-100 relative overflow-hidden">
+                  <img 
+                    src={product.imageUrl} 
+                    alt={product.name} 
+                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                  />
+                  {product.featuredProduct && (
+                    <div className="absolute top-3 right-3 bg-pink-500/90 text-white text-xs py-1 px-2 rounded-full shadow-md flex items-center">
+                      <Heart className="h-3 w-3 mr-1" /> 인기
+                    </div>
+                  )}
+                </div>
+                <CardContent className="p-4 border-t md:border-t-0 md:border-l border-pink-50 md:w-3/4">
+                  <div className="flex flex-col md:flex-row md:justify-between md:items-start">
+                    <div>
+                      <div className="flex items-center text-xs font-medium text-pink-600 mb-1 bg-pink-50 py-1 px-2 rounded-full w-fit">
+                        <Store className="h-3 w-3 mr-1" />
+                        {getFranchiseName(product.franchiseId)}
+                      </div>
+                      <h3 className="text-lg font-heading font-semibold mb-2 gradient-text">{product.name}</h3>
+                      
+                      {product.allergens && product.allergens.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          {getAllergenNames(product.allergens as number[]).map((allergen, idx) => (
+                            <AllergyBadge key={idx} name={allergen as string} />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm mt-4 md:mt-0 w-full md:w-auto">
+                      <div className="flex items-center bg-pink-50 px-2 py-1 rounded-md">
+                        <span className="w-3 h-3 rounded-full bg-primary mr-2"></span>
+                        <span className="text-gray-700">{product.calories} kcal</span>
+                      </div>
+                      <div className="flex items-center bg-green-50 px-2 py-1 rounded-md">
+                        <span className="w-3 h-3 rounded-full bg-green-500 mr-2"></span>
+                        <span className="text-gray-700">{product.protein}g 단백질</span>
+                      </div>
+                      <div className="flex items-center bg-blue-50 px-2 py-1 rounded-md">
+                        <span className="w-3 h-3 rounded-full bg-blue-500 mr-2"></span>
+                        <span className="text-gray-700">{product.carbs}g 탄수화물</span>
+                      </div>
+                      <div className="flex items-center bg-yellow-50 px-2 py-1 rounded-md">
+                        <span className="w-3 h-3 rounded-full bg-yellow-500 mr-2"></span>
+                        <span className="text-gray-700">{product.fat}g 지방</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </div>
             </Card>
           ))}
         </div>
