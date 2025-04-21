@@ -30,7 +30,7 @@ export function FranchiseGrid({ categoryId }: FranchiseGridProps) {
   
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 gap-4">
         {Array.from({ length: 6 }).map((_, index) => (
           <Card key={index} className="overflow-hidden bg-white border border-pink-100">
             <div className="flex items-center justify-center p-6">
@@ -64,7 +64,7 @@ export function FranchiseGrid({ categoryId }: FranchiseGridProps) {
   }
   
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-2 gap-4">
       {franchises?.map((franchise: Franchise) => (
         <Card 
           key={franchise.id}
