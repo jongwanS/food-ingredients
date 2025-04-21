@@ -170,18 +170,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Search API endpoint
   app.get("/api/search", async (req, res) => {
     try {
-      // Validate and parse search parameters
-      const parseResult = productSearchSchema.safeParse(req.query);
-      
-      if (!parseResult.success) {
-        return res.status(400).json({ 
-          message: "Invalid search parameters",
-          errors: parseResult.error.errors
-        });
-      }
-      
-      // Extract search parameters
-      const searchParams = parseResult.data;
+      // 직접 파라미터를 추출하여 처리
+      const searchParams: any = {
+        query: req.query.query,
+        franchiseId: req.query.franchiseId ? parseInt(req.query.franchiseId as string) : undefined,
+        categoryId: req.query.categoryId ? parseInt(req.query.categoryId as string) : undefined
+      };
       
       // Handle range-based filters
       const parsedParams: any = { ...searchParams };
