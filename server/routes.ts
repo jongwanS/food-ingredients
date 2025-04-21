@@ -186,10 +186,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Handle range-based filters
       const parsedParams: any = { ...searchParams };
       
-      // Parse calorie ranges
+      // Parse calorie ranges (슬라이더 값 직접 처리)
       if (req.query.calorieRange) {
         const calorieRange = req.query.calorieRange as string;
-        if (calorieRange === "0-300") {
+        // 숫자로 직접 전달되는 경우 (슬라이더에서 직접 설정한 값)
+        if (!isNaN(Number(calorieRange)) && Number(calorieRange) > 0) {
+          parsedParams.maxCalories = Number(calorieRange);
+        }
+        // 기존 문자열 패턴 지원 (하위 호환성)
+        else if (calorieRange === "0-300") {
           parsedParams.maxCalories = 300;
         } else if (calorieRange === "300-500") {
           parsedParams.minCalories = 300;
@@ -202,10 +207,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
-      // Parse protein ranges
+      // Parse protein ranges (슬라이더 값 직접 처리)
       if (req.query.proteinRange) {
         const proteinRange = req.query.proteinRange as string;
-        if (proteinRange === "0-10") {
+        // 숫자로 직접 전달되는 경우 (슬라이더에서 직접 설정한 값)
+        if (!isNaN(Number(proteinRange)) && Number(proteinRange) > 0) {
+          parsedParams.maxProtein = Number(proteinRange);
+        }
+        // 기존 문자열 패턴 지원 (하위 호환성)
+        else if (proteinRange === "0-10") {
           parsedParams.maxProtein = 10;
         } else if (proteinRange === "10-20") {
           parsedParams.minProtein = 10;
@@ -218,10 +228,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
-      // Parse carbs ranges
+      // Parse carbs ranges (슬라이더 값 직접 처리)
       if (req.query.carbsRange) {
         const carbsRange = req.query.carbsRange as string;
-        if (carbsRange === "0-30") {
+        // 숫자로 직접 전달되는 경우 (슬라이더에서 직접 설정한 값)
+        if (!isNaN(Number(carbsRange)) && Number(carbsRange) > 0) {
+          parsedParams.maxCarbs = Number(carbsRange);
+        }
+        // 기존 문자열 패턴 지원 (하위 호환성)
+        else if (carbsRange === "0-30") {
           parsedParams.maxCarbs = 30;
         } else if (carbsRange === "30-60") {
           parsedParams.minCarbs = 30;
@@ -234,10 +249,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
-      // Parse fat ranges
+      // Parse fat ranges (슬라이더 값 직접 처리)
       if (req.query.fatRange) {
         const fatRange = req.query.fatRange as string;
-        if (fatRange === "0-10") {
+        // 숫자로 직접 전달되는 경우 (슬라이더에서 직접 설정한 값)
+        if (!isNaN(Number(fatRange)) && Number(fatRange) > 0) {
+          parsedParams.maxFat = Number(fatRange);
+        }
+        // 기존 문자열 패턴 지원 (하위 호환성)
+        else if (fatRange === "0-10") {
           parsedParams.maxFat = 10;
         } else if (fatRange === "10-20") {
           parsedParams.minFat = 10;

@@ -37,7 +37,18 @@ export function ProductList({ franchiseId }: ProductListProps) {
       try {
         // Use /api/search only when filters are applied
         const hasFilters = calorieRange || proteinRange || carbsRange || fatRange;
-        const endpoint = hasFilters ? '/api/search' : `/api/products?franchiseId=${franchiseId}`;
+        let endpoint = '';
+        if (hasFilters) {
+          // 검색 API를 사용하고 필터 파라미터 추가
+          endpoint = `/api/search?franchiseId=${franchiseId}`;
+          if (calorieRange) endpoint += `&calorieRange=${calorieRange}`;
+          if (proteinRange) endpoint += `&proteinRange=${proteinRange}`;
+          if (carbsRange) endpoint += `&carbsRange=${carbsRange}`;
+          if (fatRange) endpoint += `&fatRange=${fatRange}`;
+        } else {
+          // 필터가 없으면 기본 제품 API 사용
+          endpoint = `/api/products?franchiseId=${franchiseId}`;
+        }
         
         const res = await fetch(endpoint);
         if (!res.ok) {

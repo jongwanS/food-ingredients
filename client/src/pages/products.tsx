@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { FilterBar } from "@/components/ui/filter-bar";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { ProductList } from "@/components/product-list";
@@ -13,6 +13,7 @@ interface ProductsProps {
 
 export default function Products({ params }: ProductsProps) {
   const franchiseId = parseInt(params.franchiseId);
+  const queryClient = useQueryClient();
   
   // Fetch franchise details
   const { data: franchise, isLoading: franchiseLoading } = useQuery({
@@ -26,6 +27,12 @@ export default function Products({ params }: ProductsProps) {
     queryFn: () => fetch(`/api/categories/${franchise.categoryId}`).then(res => res.json()),
     enabled: !!franchise?.categoryId,
   });
+  
+  // 필터 변경 시 제품 쿼리 무효화 처리
+  const handleFilterChange = () => {
+    // 제품 쿼리를 무효화하여 새로운 필터로 다시 로드하게 함
+    queryClient.invalidateQueries({ queryKey: ['/api/products', { franchiseId }] });
+  };
   
   // Scroll to top on page load
   useEffect(() => {
@@ -51,7 +58,7 @@ export default function Products({ params }: ProductsProps) {
   
   return (
     <>
-      <FilterBar />
+      <FilterBar onFilterChange={handleFilterChange} />
       
       <Breadcrumbs items={breadcrumbItems} />
       
