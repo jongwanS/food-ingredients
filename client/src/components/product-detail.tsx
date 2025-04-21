@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { AllergyBadge } from "@/components/allergy-badge";
 import { ArrowLeft, Heart, Droplet, AlertCircle, Gauge, Flame } from "lucide-react";
 
@@ -118,6 +119,14 @@ export function ProductDetail({ productId }: ProductDetailProps) {
           <Droplet className="h-5 w-5 mr-2 text-primary" />
           영양 정보
         </h3>
+        
+        <Tabs defaultValue="total" className="mb-6">
+          <TabsList>
+            <TabsTrigger value="total">전체 영양성분</TabsTrigger>
+            <TabsTrigger value="per100g">100g 당 영양성분</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="total">
         
         {/* Nutrition Highlights */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
@@ -239,8 +248,36 @@ export function ProductDetail({ productId }: ProductDetailProps) {
         </div>
         
         <p className="mt-4 text-xs text-gray-500 bg-white p-3 rounded-lg border border-pink-100 shadow-sm">
-          <span className="text-pink-500 font-medium">*</span> 퍼센트 일일 권장량은 2,000 칼로리 식이요법을 기준으로 합니다. 개인 칼로리 필요량에 따라 일일 권장치는 다를 수 있습니다.
-        </p>
+              <span className="text-pink-500 font-medium">*</span> 퍼센트 일일 권장량은 2,000 칼로리 식이요법을 기준으로 합니다. 개인 칼로리 필요량에 따라 일일 권장치는 다를 수 있습니다.
+            </p>
+          </TabsContent>
+          
+          <TabsContent value="per100g">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+              <div className="bg-white p-4 rounded-lg text-center shadow-sm border border-pink-100">
+                <Flame className="h-5 w-5 mx-auto mb-1 text-primary" />
+                <span className="block text-2xl font-bold text-primary">{Math.round((product.calories / product.servingSize) * 100)}</span>
+                <span className="text-sm text-gray-500">칼로리 (kcal)</span>
+              </div>
+              <div className="bg-white p-4 rounded-lg text-center shadow-sm border border-green-100">
+                <span className="block text-2xl font-bold text-green-500">{((product.protein / product.servingSize) * 100).toFixed(1)}g</span>
+                <span className="text-sm text-gray-500">단백질</span>
+              </div>
+              <div className="bg-white p-4 rounded-lg text-center shadow-sm border border-blue-100">
+                <span className="block text-2xl font-bold text-blue-500">{((product.carbs / product.servingSize) * 100).toFixed(1)}g</span>
+                <span className="text-sm text-gray-500">탄수화물</span>
+              </div>
+              <div className="bg-white p-4 rounded-lg text-center shadow-sm border border-yellow-100">
+                <span className="block text-2xl font-bold text-yellow-500">{((product.fat / product.servingSize) * 100).toFixed(1)}g</span>
+                <span className="text-sm text-gray-500">총 지방</span>
+              </div>
+            </div>
+            
+            <p className="mt-4 text-xs text-gray-500 bg-white p-3 rounded-lg border border-pink-100 shadow-sm">
+              <span className="text-pink-500 font-medium">*</span> 100g 당 영양성분 함량은 전체 중량을 기준으로 환산된 값입니다.
+            </p>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
