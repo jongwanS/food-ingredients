@@ -1,6 +1,5 @@
 import { useState, FormEvent } from 'react';
 import { useLocation } from 'wouter';
-import { useLocation } from 'wouter'; // Added useNavigate import
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
@@ -17,11 +16,10 @@ export function SearchBar({ className, placeholder = "메뉴 이름 또는 프�
   const [searchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState<string>(searchParams.get('q') || '');
   const [, setLocation] = useLocation();
-  const [, setLocation] = useLocation(); // Added useNavigate hook
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-
+    
     if (searchTerm.trim()) {
       // 기존 필터 유지
       const filters = {
@@ -30,19 +28,19 @@ export function SearchBar({ className, placeholder = "메뉴 이름 또는 프�
         carbsRange: searchParams.get('carbsRange') || '',
         fatRange: searchParams.get('fatRange') || ''
       };
-
+      
       // URL 쿼리 생성
       let query = `?q=${encodeURIComponent(searchTerm.trim())}`;
-
+      
       // 필터 조건 추가
       Object.entries(filters).forEach(([key, value]) => {
         if (value) {
           query += `&${key}=${encodeURIComponent(value)}`;
         }
       });
-
+      
       // 검색 결과 페이지로 이동
-      setLocation(`/search${query}`); // Changed to use useNavigate
+      setLocation(`/search${query}`);
     }
   };
 
