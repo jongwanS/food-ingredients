@@ -20,7 +20,7 @@ function Router() {
       <Route path="/franchise/:franchiseId" component={Products} />
       <Route path="/product/:productId" component={ProductDetail} />
       <Route path="/search" component={SearchResults} />
-      <Route component={NotFound} />
+      <Route path="/:rest*" component={NotFound} />
     </Switch>
   );
 }
