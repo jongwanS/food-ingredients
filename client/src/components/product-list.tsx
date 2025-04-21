@@ -33,7 +33,20 @@ export function ProductList({ franchiseId }: ProductListProps) {
   // Fetch products by franchise with filters
   const { data: products, isLoading, error } = useQuery({
     queryKey: ['/api/search', { franchiseId, calorieRange, proteinRange, carbsRange, fatRange }],
-    queryFn: () => fetch(`/api/search?${filterParams.toString()}`).then(res => res.json()),
+    queryFn: async () => {
+      try {
+        const res = await fetch(`/api/search?${filterParams.toString()}`);
+        if (!res.ok) {
+          console.error('API 응답 오류:', res.status);
+          return [];
+        }
+        const data = await res.json();
+        return Array.isArray(data) ? data : [];
+      } catch (err) {
+        console.error('API 요청 오류:', err);
+        return [];
+      }
+    },
   });
   
   // Fetch allergens for badges
@@ -90,9 +103,12 @@ export function ProductList({ franchiseId }: ProductListProps) {
     );
   }
   
+  // 먼저 products가 배열인지 확인
+  const productArray = Array.isArray(products) ? products : [];
+  
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {products?.map((product: Product) => (
+      {productArray.map((product: Product) => (
         <Card 
           key={product.id}
           className="bg-white rounded-xl shadow-sm overflow-hidden card-hover border border-pink-100"

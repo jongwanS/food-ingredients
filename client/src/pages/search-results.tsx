@@ -31,7 +31,20 @@ export default function SearchResults() {
   // Fetch search results
   const { data: searchResults, isLoading, error } = useQuery({
     queryKey: ['/api/search', { query, calorieRange, proteinRange, carbsRange, fatRange }],
-    queryFn: () => fetch(`/api/search?${filterParams.toString()}`).then(res => res.json()),
+    queryFn: async () => {
+      try {
+        const res = await fetch(`/api/search?${filterParams.toString()}`);
+        if (!res.ok) {
+          console.error('검색 API 응답 오류:', res.status);
+          return [];
+        }
+        const data = await res.json();
+        return Array.isArray(data) ? data : [];
+      } catch (err) {
+        console.error('검색 API 요청 오류:', err);
+        return [];
+      }
+    },
     enabled: query.length > 0
   });
   
@@ -108,7 +121,7 @@ export default function SearchResults() {
           <p className="text-primary mb-2 font-semibold">검색 중 오류가 발생했습니다.</p>
           <p className="text-sm text-gray-600">잠시 후 다시 시도해 주세요.</p>
         </div>
-      ) : searchResults?.length === 0 ? (
+      ) : (!Array.isArray(searchResults) || searchResults.length === 0) ? (
         <div className="text-center py-12 bg-pink-50/50 rounded-lg p-8">
           <Search className="w-12 h-12 text-pink-300 mx-auto mb-4 opacity-50" />
           <p className="text-gray-600 mb-2 font-semibold">검색 결과가 없습니다.</p>
@@ -116,7 +129,7 @@ export default function SearchResults() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {searchResults?.map((product: Product) => (
+          {Array.isArray(searchResults) && searchResults.map((product: Product) => (
             <Card 
               key={product.id}
               className="bg-white rounded-xl shadow-sm overflow-hidden card-hover border border-pink-100"
