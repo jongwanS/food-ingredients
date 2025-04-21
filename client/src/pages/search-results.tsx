@@ -104,21 +104,21 @@ export default function SearchResults() {
           <div className="flex bg-pink-50 rounded-lg p-1 border border-pink-100">
             <Button
               variant="ghost"
-              size="sm"
+              size="icon"
               className={`rounded-md ${viewType === 'grid' ? 'bg-white shadow-sm' : ''}`}
               onClick={() => setViewType('grid')}
+              title="바둑판형 보기"
             >
-              <Grid className="h-4 w-4 mr-1" />
-              바둑판형
+              <Grid className="h-4 w-4" />
             </Button>
             <Button
               variant="ghost"
-              size="sm"
+              size="icon"
               className={`rounded-md ${viewType === 'list' ? 'bg-white shadow-sm' : ''}`}
               onClick={() => setViewType('list')}
+              title="목록형 보기"
             >
-              <List className="h-4 w-4 mr-1" />
-              목록형
+              <List className="h-4 w-4" />
             </Button>
           </div>
         </div>

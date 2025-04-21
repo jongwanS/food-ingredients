@@ -71,7 +71,7 @@ export function ProductList({ franchiseId }: ProductListProps) {
   
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 gap-4">
         {Array.from({ length: 6 }).map((_, index) => (
           <Card key={index} className="overflow-hidden bg-white border border-pink-100 rounded-xl">
             <Skeleton className="h-48 w-full" />
@@ -111,7 +111,7 @@ export function ProductList({ franchiseId }: ProductListProps) {
   const productArray = Array.isArray(products) ? products : [];
   
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-2 gap-4">
       {productArray.map((product: Product) => (
         <Card 
           key={product.id}
