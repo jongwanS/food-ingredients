@@ -1,0 +1,69 @@
+import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { FilterBar } from "@/components/ui/filter-bar";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
+import { ProductList } from "@/components/product-list";
+import { Skeleton } from "@/components/ui/skeleton";
+
+interface ProductsProps {
+  params: {
+    franchiseId: string;
+  };
+}
+
+export default function Products({ params }: ProductsProps) {
+  const franchiseId = parseInt(params.franchiseId);
+  
+  // Fetch franchise details
+  const { data: franchise, isLoading: franchiseLoading } = useQuery({
+    queryKey: ['/api/franchises', franchiseId],
+    queryFn: () => fetch(`/api/franchises/${franchiseId}`).then(res => res.json()),
+  });
+  
+  // Fetch category for breadcrumbs if franchise is loaded
+  const { data: category } = useQuery({
+    queryKey: ['/api/categories', franchise?.categoryId],
+    queryFn: () => fetch(`/api/categories/${franchise.categoryId}`).then(res => res.json()),
+    enabled: !!franchise?.categoryId,
+  });
+  
+  // Scroll to top on page load
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  
+  // Prepare breadcrumb items
+  const breadcrumbItems = [];
+  
+  if (category) {
+    breadcrumbItems.push({
+      label: category.nameKorean,
+      path: `/category/${category.id}`,
+      current: false
+    });
+  }
+  
+  breadcrumbItems.push({
+    label: franchiseLoading ? "로딩 중..." : franchise?.name || "프랜차이즈",
+    path: `/franchise/${franchiseId}`,
+    current: true
+  });
+  
+  return (
+    <>
+      <FilterBar />
+      
+      <Breadcrumbs items={breadcrumbItems} />
+      
+      <h1 className="text-3xl font-heading font-bold mb-6">
+        {franchiseLoading ? (
+          <Skeleton className="h-9 w-64" />
+        ) : (
+          <>{franchise?.name || "프랜차이즈"} 메뉴</>
+        )}
+      </h1>
+      
+      <ProductList franchiseId={franchiseId} />
+    </>
+  );
+}
