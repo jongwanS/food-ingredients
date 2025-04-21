@@ -32,10 +32,14 @@ export function ProductList({ franchiseId }: ProductListProps) {
   
   // Fetch products by franchise with filters
   const { data: products, isLoading, error } = useQuery({
-    queryKey: ['/api/search', { franchiseId, calorieRange, proteinRange, carbsRange, fatRange }],
+    queryKey: ['/api/products', { franchiseId, calorieRange, proteinRange, carbsRange, fatRange }],
     queryFn: async () => {
       try {
-        const res = await fetch(`/api/search?${filterParams.toString()}`);
+        // Use /api/search only when filters are applied
+        const hasFilters = calorieRange || proteinRange || carbsRange || fatRange;
+        const endpoint = hasFilters ? '/api/search' : `/api/products?franchiseId=${franchiseId}`;
+        
+        const res = await fetch(endpoint);
         if (!res.ok) {
           console.error('API 응답 오류:', res.status);
           return [];
