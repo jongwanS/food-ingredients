@@ -287,53 +287,53 @@ export function ProductDetail({ productId }: ProductDetailProps) {
                 <tbody>
                   <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                     <td className="py-3 px-4 font-medium text-gray-700">칼로리</td>
-                    <td className="py-3 px-4 text-right text-primary font-medium">100 kcal</td>
-                    <td className="py-3 px-4 text-right">5%</td>
+                    <td className="py-3 px-4 text-right text-primary font-medium">{Math.round((product.calories / 246) * 100)} kcal</td>
+                    <td className="py-3 px-4 text-right">{Math.round((product.calories / 246) * 100 / 2000 * 100)}%</td>
                   </tr>
                   <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                     <td className="py-3 px-4 font-medium text-gray-700">지방</td>
-                    <td className="py-3 px-4 text-right text-yellow-500 font-medium">4.6g</td>
-                    <td className="py-3 px-4 text-right">7%</td>
+                    <td className="py-3 px-4 text-right text-yellow-500 font-medium">{((product.fat / 246) * 100).toFixed(1)}g</td>
+                    <td className="py-3 px-4 text-right">{Math.round((product.fat / 246) * 100 / 65 * 100)}%</td>
                   </tr>
                   <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                     <td className="py-3 px-4 pl-8 text-gray-600">포화지방</td>
-                    <td className="py-3 px-4 text-right text-orange-400">1.7g</td>
-                    <td className="py-3 px-4 text-right">9%</td>
+                    <td className="py-3 px-4 text-right text-orange-400">{((product.saturatedFat / 246) * 100).toFixed(1)}g</td>
+                    <td className="py-3 px-4 text-right">{Math.round((product.saturatedFat / 246) * 100 / 20 * 100)}%</td>
                   </tr>
                   <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                     <td className="py-3 px-4 pl-8 text-gray-600">트랜스지방</td>
-                    <td className="py-3 px-4 text-right text-orange-400">0.2g</td>
+                    <td className="py-3 px-4 text-right text-orange-400">{((product.transFat / 246) * 100).toFixed(1)}g</td>
                     <td className="py-3 px-4 text-right">-</td>
                   </tr>
                   <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                     <td className="py-3 px-4 font-medium text-gray-700">콜레스테롤</td>
-                    <td className="py-3 px-4 text-right">13mg</td>
-                    <td className="py-3 px-4 text-right">4%</td>
+                    <td className="py-3 px-4 text-right">{Math.round((product.cholesterol / 246) * 100)}mg</td>
+                    <td className="py-3 px-4 text-right">{Math.round((product.cholesterol / 246) * 100 / 300 * 100)}%</td>
                   </tr>
                   <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                     <td className="py-3 px-4 font-medium text-gray-700">나트륨</td>
-                    <td className="py-3 px-4 text-right">154mg</td>
-                    <td className="py-3 px-4 text-right">6%</td>
+                    <td className="py-3 px-4 text-right">{Math.round((product.sodium / 246) * 100)}mg</td>
+                    <td className="py-3 px-4 text-right">{Math.round((product.sodium / 246) * 100 / 2400 * 100)}%</td>
                   </tr>
                   <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                     <td className="py-3 px-4 font-medium text-gray-700">탄수화물</td>
-                    <td className="py-3 px-4 text-right text-blue-500 font-medium">12.3g</td>
-                    <td className="py-3 px-4 text-right">4%</td>
+                    <td className="py-3 px-4 text-right text-blue-500 font-medium">{((product.carbs / 246) * 100).toFixed(1)}g</td>
+                    <td className="py-3 px-4 text-right">{Math.round((product.carbs / 246) * 100 / 300 * 100)}%</td>
                   </tr>
                   <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                     <td className="py-3 px-4 pl-8 text-gray-600">식이섬유</td>
-                    <td className="py-3 px-4 text-right">0.5g</td>
-                    <td className="py-3 px-4 text-right">2%</td>
+                    <td className="py-3 px-4 text-right">{((product.fiber / 246) * 100).toFixed(1)}g</td>
+                    <td className="py-3 px-4 text-right">{Math.round((product.fiber / 246) * 100 / 25 * 100)}%</td>
                   </tr>
                   <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                     <td className="py-3 px-4 pl-8 text-gray-600">당류</td>
-                    <td className="py-3 px-4 text-right">1.4g</td>
+                    <td className="py-3 px-4 text-right">{((product.sugar / 246) * 100).toFixed(1)}g</td>
                     <td className="py-3 px-4 text-right">-</td>
                   </tr>
                   <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                     <td className="py-3 px-4 font-medium text-gray-700">단백질</td>
-                    <td className="py-3 px-4 text-right text-green-500 font-medium">4.1g</td>
-                    <td className="py-3 px-4 text-right">8%</td>
+                    <td className="py-3 px-4 text-right text-green-500 font-medium">{((product.protein / 246) * 100).toFixed(1)}g</td>
+                    <td className="py-3 px-4 text-right">{Math.round((product.protein / 246) * 100 / 50 * 100)}%</td>
                   </tr>
                 </tbody>
               </table>
