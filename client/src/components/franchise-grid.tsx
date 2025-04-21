@@ -15,7 +15,13 @@ export function FranchiseGrid({ categoryId }: FranchiseGridProps) {
   // Fetch franchises by category
   const { data: franchises, isLoading, error } = useQuery({
     queryKey: ['/api/franchises', { categoryId }],
-    queryFn: () => fetch(`/api/franchises?categoryId=${categoryId}`).then(res => res.json()),
+    queryFn: async () => {
+      const response = await fetch(`/api/franchises?categoryId=${categoryId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch franchises');
+      }
+      return response.json();
+    },
   });
   
   const handleFranchiseSelect = (franchiseId: number) => {
