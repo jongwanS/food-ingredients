@@ -256,19 +256,19 @@ export function ProductDetail({ productId }: ProductDetailProps) {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
               <div className="bg-white p-4 rounded-lg text-center shadow-sm border border-pink-100">
                 <Flame className="h-5 w-5 mx-auto mb-1 text-primary" />
-                <span className="block text-2xl font-bold text-primary">{Math.round((product.calories / product.servingSize) * 100)}</span>
+                <span className="block text-2xl font-bold text-primary">{product.calories}</span>
                 <span className="text-sm text-gray-500">칼로리 (kcal)</span>
               </div>
               <div className="bg-white p-4 rounded-lg text-center shadow-sm border border-green-100">
-                <span className="block text-2xl font-bold text-green-500">{((product.protein / product.servingSize) * 100).toFixed(1)}g</span>
+                <span className="block text-2xl font-bold text-green-500">{product.protein}g</span>
                 <span className="text-sm text-gray-500">단백질</span>
               </div>
               <div className="bg-white p-4 rounded-lg text-center shadow-sm border border-blue-100">
-                <span className="block text-2xl font-bold text-blue-500">{((product.carbs / product.servingSize) * 100).toFixed(1)}g</span>
+                <span className="block text-2xl font-bold text-blue-500">{product.carbs}g</span>
                 <span className="text-sm text-gray-500">탄수화물</span>
               </div>
               <div className="bg-white p-4 rounded-lg text-center shadow-sm border border-yellow-100">
-                <span className="block text-2xl font-bold text-yellow-500">{((product.fat / product.servingSize) * 100).toFixed(1)}g</span>
+                <span className="block text-2xl font-bold text-yellow-500">{product.fat}g</span>
                 <span className="text-sm text-gray-500">총 지방</span>
               </div>
             </div>
