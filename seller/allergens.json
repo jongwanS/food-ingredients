@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Wheat",
+    "nameKorean": "밀",
+    "id": 1
+  },
+  {
+    "name": "Milk",
+    "nameKorean": "유제품",
+    "id": 2
+  },
+  {
+    "name": "Eggs",
+    "nameKorean": "계란",
+    "id": 3
+  },
+  {
+    "name": "Fish",
+    "nameKorean": "생선",
+    "id": 4
+  },
+  {
+    "name": "Shellfish",
+    "nameKorean": "조개류",
+    "id": 5
+  },
+  {
+    "name": "Peanuts",
+    "nameKorean": "땅콩",
+    "id": 6
+  },
+  {
+    "name": "Tree Nuts",
+    "nameKorean": "견과류",
+    "id": 7
+  },
+  {
+    "name": "Soy",
+    "nameKorean": "대두",
+    "id": 8
+  }
+]

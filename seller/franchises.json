@@ -1,0 +1,50 @@
+[
+  {
+    "name": "맥도날드",
+    "categoryId": 1,
+    "logoUrl": "https://via.placeholder.com/200x200/FFC72C/D82A2A?text=M",
+    "id": 1
+  },
+  {
+    "name": "버거킹",
+    "categoryId": 1,
+    "logoUrl": "https://via.placeholder.com/200x200/0033A0/ED7902?text=BK",
+    "id": 2
+  },
+  {
+    "name": "롯데리아",
+    "categoryId": 1,
+    "logoUrl": "https://via.placeholder.com/200x200/DA291C/FFFFFF?text=L",
+    "id": 3
+  },
+  {
+    "name": "KFC",
+    "categoryId": 2,
+    "logoUrl": "https://via.placeholder.com/200x200/F40027/FFFFFF?text=KFC",
+    "id": 4
+  },
+  {
+    "name": "BBQ",
+    "categoryId": 2,
+    "logoUrl": "https://via.placeholder.com/200x200/800020/FFFFFF?text=BBQ",
+    "id": 5
+  },
+  {
+    "name": "도미노피자",
+    "categoryId": 3,
+    "logoUrl": "https://via.placeholder.com/200x200/006491/FFFFFF?text=DP",
+    "id": 6
+  },
+  {
+    "name": "스타벅스",
+    "categoryId": 4,
+    "logoUrl": "https://via.placeholder.com/200x200/00704A/FFFFFF?text=SB",
+    "id": 7
+  },
+  {
+    "name": "투썸플레이스",
+    "categoryId": 4,
+    "logoUrl": "https://via.placeholder.com/200x200/B80F0A/FFFFFF?text=TS",
+    "id": 8
+  }
+]
