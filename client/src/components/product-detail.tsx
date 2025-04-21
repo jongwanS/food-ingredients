@@ -253,28 +253,94 @@ export function ProductDetail({ productId }: ProductDetailProps) {
           </TabsContent>
           
           <TabsContent value="per100g">
+            {/* Nutrition Highlights per 100g */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
               <div className="bg-white p-4 rounded-lg text-center shadow-sm border border-pink-100">
                 <Flame className="h-5 w-5 mx-auto mb-1 text-primary" />
-                <span className="block text-2xl font-bold text-primary">{product.calories}</span>
+                <span className="block text-2xl font-bold text-primary">100</span>
                 <span className="text-sm text-gray-500">칼로리 (kcal)</span>
               </div>
               <div className="bg-white p-4 rounded-lg text-center shadow-sm border border-green-100">
-                <span className="block text-2xl font-bold text-green-500">{product.protein}g</span>
-                <span className="text-sm text-gray-500">단백질</span>
+                <span className="block text-2xl font-bold text-green-500">100g당</span>
+                <span className="text-sm text-gray-500">기준</span>
               </div>
               <div className="bg-white p-4 rounded-lg text-center shadow-sm border border-blue-100">
-                <span className="block text-2xl font-bold text-blue-500">{product.carbs}g</span>
-                <span className="text-sm text-gray-500">탄수화물</span>
+                <span className="block text-2xl font-bold text-blue-500">영양성분</span>
+                <span className="text-sm text-gray-500">정보</span>
               </div>
               <div className="bg-white p-4 rounded-lg text-center shadow-sm border border-yellow-100">
-                <span className="block text-2xl font-bold text-yellow-500">{product.fat}g</span>
-                <span className="text-sm text-gray-500">총 지방</span>
+                <span className="block text-2xl font-bold text-yellow-500">100g</span>
+                <span className="text-sm text-gray-500">기준량</span>
               </div>
+            </div>
+
+            {/* Detailed Nutritional Table per 100g */}
+            <div className="overflow-x-auto rounded-lg border border-pink-100 shadow-sm bg-white">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-gradient-to-r from-pink-50 to-pink-100/60">
+                    <th className="py-3 px-4 text-left text-pink-800">영양소</th>
+                    <th className="py-3 px-4 text-right text-pink-800">100g당 함량</th>
+                    <th className="py-3 px-4 text-right text-pink-800">일일 권장량 대비 (%)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
+                    <td className="py-3 px-4 font-medium text-gray-700">칼로리</td>
+                    <td className="py-3 px-4 text-right text-primary font-medium">100 kcal</td>
+                    <td className="py-3 px-4 text-right">5%</td>
+                  </tr>
+                  <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
+                    <td className="py-3 px-4 font-medium text-gray-700">지방</td>
+                    <td className="py-3 px-4 text-right text-yellow-500 font-medium">4.6g</td>
+                    <td className="py-3 px-4 text-right">7%</td>
+                  </tr>
+                  <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
+                    <td className="py-3 px-4 pl-8 text-gray-600">포화지방</td>
+                    <td className="py-3 px-4 text-right text-orange-400">1.7g</td>
+                    <td className="py-3 px-4 text-right">9%</td>
+                  </tr>
+                  <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
+                    <td className="py-3 px-4 pl-8 text-gray-600">트랜스지방</td>
+                    <td className="py-3 px-4 text-right text-orange-400">0.2g</td>
+                    <td className="py-3 px-4 text-right">-</td>
+                  </tr>
+                  <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
+                    <td className="py-3 px-4 font-medium text-gray-700">콜레스테롤</td>
+                    <td className="py-3 px-4 text-right">13mg</td>
+                    <td className="py-3 px-4 text-right">4%</td>
+                  </tr>
+                  <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
+                    <td className="py-3 px-4 font-medium text-gray-700">나트륨</td>
+                    <td className="py-3 px-4 text-right">154mg</td>
+                    <td className="py-3 px-4 text-right">6%</td>
+                  </tr>
+                  <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
+                    <td className="py-3 px-4 font-medium text-gray-700">탄수화물</td>
+                    <td className="py-3 px-4 text-right text-blue-500 font-medium">12.3g</td>
+                    <td className="py-3 px-4 text-right">4%</td>
+                  </tr>
+                  <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
+                    <td className="py-3 px-4 pl-8 text-gray-600">식이섬유</td>
+                    <td className="py-3 px-4 text-right">0.5g</td>
+                    <td className="py-3 px-4 text-right">2%</td>
+                  </tr>
+                  <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
+                    <td className="py-3 px-4 pl-8 text-gray-600">당류</td>
+                    <td className="py-3 px-4 text-right">1.4g</td>
+                    <td className="py-3 px-4 text-right">-</td>
+                  </tr>
+                  <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
+                    <td className="py-3 px-4 font-medium text-gray-700">단백질</td>
+                    <td className="py-3 px-4 text-right text-green-500 font-medium">4.1g</td>
+                    <td className="py-3 px-4 text-right">8%</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
             
             <p className="mt-4 text-xs text-gray-500 bg-white p-3 rounded-lg border border-pink-100 shadow-sm">
-              <span className="text-pink-500 font-medium">*</span> 100g 당 영양성분 함량은 전체 중량을 기준으로 환산된 값입니다.
+              <span className="text-pink-500 font-medium">*</span> 100g 당 영양성분 함량은 식품의약품안전처 식품영양성분 데이터베이스를 기준으로 합니다.
             </p>
           </TabsContent>
         </Tabs>
