@@ -238,16 +238,16 @@ export class MemStorage implements IStorage {
       this.createAllergen(allergen);
     });
 
-    // Sample categories
+    // Sample categories with cute emoji-style icons (copyright-free)
     const categoryData: InsertCategory[] = [
-      { name: "Burger", nameKorean: "버거", imageUrl: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500" },
-      { name: "Chicken", nameKorean: "치킨", imageUrl: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500" },
-      { name: "Pizza", nameKorean: "피자", imageUrl: "https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500" },
-      { name: "Coffee/Drinks", nameKorean: "커피/음료", imageUrl: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500" },
-      { name: "Dessert", nameKorean: "디저트", imageUrl: "https://images.unsplash.com/photo-1551024601-bec78aea704b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500" },
-      { name: "Korean", nameKorean: "한식", imageUrl: "https://images.unsplash.com/photo-1583187855471-2531219c22d1?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500" },
-      { name: "Japanese", nameKorean: "일식", imageUrl: "https://images.unsplash.com/photo-1617196701537-7329482cc9fe?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500" },
-      { name: "Chinese", nameKorean: "중식", imageUrl: "https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500" }
+      { name: "Burger", nameKorean: "버거", imageUrl: "https://cdn-icons-png.flaticon.com/512/6978/6978255.png" },
+      { name: "Chicken", nameKorean: "치킨", imageUrl: "https://cdn-icons-png.flaticon.com/512/7342/7342616.png" },
+      { name: "Pizza", nameKorean: "피자", imageUrl: "https://cdn-icons-png.flaticon.com/512/6978/6978292.png" },
+      { name: "Coffee/Drinks", nameKorean: "커피/음료", imageUrl: "https://cdn-icons-png.flaticon.com/512/6816/6816550.png" },
+      { name: "Dessert", nameKorean: "디저트", imageUrl: "https://cdn-icons-png.flaticon.com/512/3361/3361447.png" },
+      { name: "Korean", nameKorean: "한식", imageUrl: "https://cdn-icons-png.flaticon.com/512/2689/2689588.png" },
+      { name: "Japanese", nameKorean: "일식", imageUrl: "https://cdn-icons-png.flaticon.com/512/2252/2252075.png" },
+      { name: "Chinese", nameKorean: "중식", imageUrl: "https://cdn-icons-png.flaticon.com/512/2518/2518046.png" }
     ];
     
     const categories: Category[] = [];

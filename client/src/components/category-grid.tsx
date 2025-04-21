@@ -47,16 +47,15 @@ export function CategoryGrid() {
           className="category-card card-hover rounded-xl overflow-hidden cursor-pointer"
           onClick={() => handleCategorySelect(category.id)}
         >
-          <div className="h-48 bg-gray-100 relative overflow-hidden">
+          <div className="h-48 bg-pink-50/80 border border-pink-100 rounded-xl relative overflow-hidden flex flex-col items-center justify-center">
             <img 
               src={category.imageUrl} 
               alt={category.nameKorean} 
-              className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+              className="w-24 h-24 object-contain mb-2 transition-transform duration-300 hover:scale-110"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-70"></div>
-            <div className="category-name flex justify-between items-center">
-              <h3 className="text-lg font-heading font-semibold">{category.nameKorean}</h3>
-              <Sparkles className="h-4 w-4 text-pink-200" />
+            <div className="category-name flex justify-center items-center mt-2 bg-white/70 rounded-full px-4 py-1 shadow-sm">
+              <h3 className="text-lg font-heading font-semibold text-pink-700">{category.nameKorean}</h3>
+              <Sparkles className="h-4 w-4 text-pink-400 ml-1" />
             </div>
           </div>
         </div>
