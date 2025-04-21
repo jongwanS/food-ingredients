@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Category } from "@/types";
+import { Sparkles } from "lucide-react";
 
 export function CategoryGrid() {
   const [, navigate] = useLocation();
@@ -21,12 +22,9 @@ export function CategoryGrid() {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
         {Array.from({ length: 8 }).map((_, index) => (
-          <Card key={index} className="overflow-hidden">
-            <Skeleton className="h-40 w-full" />
-            <CardContent className="p-4">
-              <Skeleton className="h-6 w-24 mx-auto" />
-            </CardContent>
-          </Card>
+          <div key={index} className="category-card">
+            <Skeleton className="h-48 w-full rounded-lg" />
+          </div>
         ))}
       </div>
     );
@@ -34,9 +32,9 @@ export function CategoryGrid() {
   
   if (error) {
     return (
-      <div className="text-center py-10">
-        <p className="text-red-500 mb-2">카테고리를 불러오는 중 오류가 발생했습니다.</p>
-        <p className="text-sm text-gray-500">잠시 후 다시 시도해 주세요.</p>
+      <div className="text-center py-10 bg-pink-50 rounded-lg p-8 shadow-inner">
+        <p className="text-primary mb-2 font-semibold">카테고리를 불러오는 중 오류가 발생했습니다.</p>
+        <p className="text-sm text-gray-600">잠시 후 다시 시도해 주세요.</p>
       </div>
     );
   }
@@ -44,22 +42,24 @@ export function CategoryGrid() {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
       {categories?.map((category: Category) => (
-        <Card 
+        <div 
           key={category.id}
-          className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+          className="category-card card-hover rounded-xl overflow-hidden cursor-pointer"
           onClick={() => handleCategorySelect(category.id)}
         >
-          <div className="h-40 bg-gray-200 relative overflow-hidden">
+          <div className="h-48 bg-gray-100 relative overflow-hidden">
             <img 
               src={category.imageUrl} 
               alt={category.nameKorean} 
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
             />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-70"></div>
+            <div className="category-name flex justify-between items-center">
+              <h3 className="text-lg font-heading font-semibold">{category.nameKorean}</h3>
+              <Sparkles className="h-4 w-4 text-pink-200" />
+            </div>
           </div>
-          <CardContent className="p-4 text-center">
-            <h3 className="text-lg font-heading font-semibold">{category.nameKorean}</h3>
-          </CardContent>
-        </Card>
+        </div>
       ))}
     </div>
   );
