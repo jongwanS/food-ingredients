@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { AllergyBadge } from "@/components/allergy-badge";
 import { Product } from "@/types";
 import { useSearchParams } from "@/hooks/use-search-params";
+import { Heart, AlertCircle, Flame } from "lucide-react";
 
 interface ProductListProps {
   franchiseId: number;
@@ -55,9 +56,9 @@ export function ProductList({ franchiseId }: ProductListProps) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {Array.from({ length: 6 }).map((_, index) => (
-          <Card key={index} className="overflow-hidden">
+          <Card key={index} className="overflow-hidden bg-white border border-pink-100 rounded-xl">
             <Skeleton className="h-48 w-full" />
-            <CardContent className="p-4">
+            <CardContent className="p-4 border-t border-pink-50">
               <Skeleton className="h-6 w-32 mb-2" />
               <Skeleton className="h-4 w-full mb-2" />
               <Skeleton className="h-4 w-full mb-2" />
@@ -71,17 +72,19 @@ export function ProductList({ franchiseId }: ProductListProps) {
   
   if (error) {
     return (
-      <div className="text-center py-10">
-        <p className="text-red-500 mb-2">메뉴 정보를 불러오는 중 오류가 발생했습니다.</p>
-        <p className="text-sm text-gray-500">잠시 후 다시 시도해 주세요.</p>
+      <div className="text-center py-10 bg-pink-50 rounded-lg p-8 shadow-inner">
+        <AlertCircle className="h-10 w-10 text-primary mx-auto mb-3 opacity-80" />
+        <p className="text-primary mb-2 font-semibold">메뉴 정보를 불러오는 중 오류가 발생했습니다.</p>
+        <p className="text-sm text-gray-600">잠시 후 다시 시도해 주세요.</p>
       </div>
     );
   }
   
   if (products?.length === 0) {
     return (
-      <div className="text-center py-10">
-        <p className="text-gray-500 mb-2">선택한 필터 조건에 맞는 메뉴가 없습니다.</p>
+      <div className="text-center py-10 bg-pink-50/50 rounded-lg p-8">
+        <Flame className="w-12 h-12 text-pink-300 mx-auto mb-4 opacity-50" />
+        <p className="text-gray-600 mb-2">선택한 필터 조건에 맞는 메뉴가 없습니다.</p>
         <p className="text-sm text-gray-500">필터 조건을 변경해 보세요.</p>
       </div>
     );
@@ -92,18 +95,23 @@ export function ProductList({ franchiseId }: ProductListProps) {
       {products?.map((product: Product) => (
         <Card 
           key={product.id}
-          className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+          className="bg-white rounded-xl shadow-sm overflow-hidden card-hover border border-pink-100"
           onClick={() => handleProductSelect(product.id)}
         >
-          <div className="h-48 bg-gray-200 relative overflow-hidden">
+          <div className="h-48 bg-gray-100 relative overflow-hidden">
             <img 
               src={product.imageUrl} 
               alt={product.name} 
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
             />
+            {product.featuredProduct && (
+              <div className="absolute top-3 right-3 bg-pink-500/90 text-white text-xs py-1 px-2 rounded-full shadow-md flex items-center">
+                <Heart className="h-3 w-3 mr-1" /> 인기
+              </div>
+            )}
           </div>
-          <CardContent className="p-4">
-            <h3 className="text-lg font-heading font-semibold mb-2">{product.name}</h3>
+          <CardContent className="p-4 border-t border-pink-50">
+            <h3 className="text-lg font-heading font-semibold mb-2 gradient-text">{product.name}</h3>
             
             {product.allergens && product.allergens.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-3">
@@ -113,22 +121,22 @@ export function ProductList({ franchiseId }: ProductListProps) {
               </div>
             )}
             
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <div className="flex items-center">
-                <span className="w-4 h-4 rounded-full bg-primary mr-2"></span>
-                <span>{product.calories} kcal</span>
+            <div className="grid grid-cols-2 gap-y-2 gap-x-3 text-sm mt-3">
+              <div className="flex items-center bg-pink-50 px-2 py-1 rounded-md">
+                <span className="w-3 h-3 rounded-full bg-primary mr-2"></span>
+                <span className="text-gray-700">{product.calories} kcal</span>
               </div>
-              <div className="flex items-center">
-                <span className="w-4 h-4 rounded-full bg-green-500 mr-2"></span>
-                <span>{product.protein}g 단백질</span>
+              <div className="flex items-center bg-green-50 px-2 py-1 rounded-md">
+                <span className="w-3 h-3 rounded-full bg-green-500 mr-2"></span>
+                <span className="text-gray-700">{product.protein}g 단백질</span>
               </div>
-              <div className="flex items-center">
-                <span className="w-4 h-4 rounded-full bg-blue-500 mr-2"></span>
-                <span>{product.carbs}g 탄수화물</span>
+              <div className="flex items-center bg-blue-50 px-2 py-1 rounded-md">
+                <span className="w-3 h-3 rounded-full bg-blue-500 mr-2"></span>
+                <span className="text-gray-700">{product.carbs}g 탄수화물</span>
               </div>
-              <div className="flex items-center">
-                <span className="w-4 h-4 rounded-full bg-yellow-500 mr-2"></span>
-                <span>{product.fat}g 지방</span>
+              <div className="flex items-center bg-yellow-50 px-2 py-1 rounded-md">
+                <span className="w-3 h-3 rounded-full bg-yellow-500 mr-2"></span>
+                <span className="text-gray-700">{product.fat}g 지방</span>
               </div>
             </div>
           </CardContent>
