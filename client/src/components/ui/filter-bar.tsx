@@ -24,9 +24,12 @@ export function FilterBar({ className, onFilterChange }: FilterBarProps) {
   });
 
   const handleFilterChange = (value: string, filterName: string) => {
+    // 값이 0인 경우 필터 제거 (빈 문자열로 설정)
+    const newValue = value === "0" || value === "all" ? "" : value;
+    
     setFilters(prev => ({
       ...prev,
-      [filterName]: value === "all" ? "" : value
+      [filterName]: newValue
     }));
   };
 

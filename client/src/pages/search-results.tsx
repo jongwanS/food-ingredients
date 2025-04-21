@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { useSearchParams } from "@/hooks/use-search-params";
 import { FilterBar } from "@/components/ui/filter-bar";
@@ -9,17 +9,25 @@ import { AllergyBadge } from "@/components/allergy-badge";
 import { Product } from "@/types";
 import { Heart, AlertCircle, Search, Store, Grid, List } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function SearchResults() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [, navigate] = useLocation();
   const [viewType, setViewType] = useState<'grid' | 'list'>('grid');
+  const [searchInput, setSearchInput] = useState("");
+  const queryClient = useQueryClient();
   
   const query = searchParams.get("q") || "";
   const calorieRange = searchParams.get("calorieRange") || "";
   const proteinRange = searchParams.get("proteinRange") || "";
   const carbsRange = searchParams.get("carbsRange") || "";
   const fatRange = searchParams.get("fatRange") || "";
+  
+  // 검색창 초기값 설정
+  useEffect(() => {
+    setSearchInput(query);
+  }, [query]);
   
   // Create query parameter string
   const filterParams = new URLSearchParams();
@@ -79,6 +87,36 @@ export default function SearchResults() {
     navigate(`/product/${productId}`);
   };
   
+  // 검색 실행 함수
+  const handleSearch = () => {
+    if (searchInput.trim()) {
+      // URL 파라미터 업데이트
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set("q", searchInput);
+      setSearchParams(newParams);
+      
+      // 쿼리 무효화하여 새로운 검색 결과 로드
+      queryClient.invalidateQueries({ 
+        queryKey: ['/api/search'] 
+      });
+    }
+  };
+  
+  // Enter 키 누르면 검색 실행
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+  
+  // 필터 변경 시 실행할 함수
+  const handleFilterChange = (newFilters: any) => {
+    // 필터 변경 시 쿼리 무효화하여 새로운 검색 결과 로드
+    queryClient.invalidateQueries({ 
+      queryKey: ['/api/search'] 
+    });
+  };
+
   // Scroll to top on page load
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -86,12 +124,7 @@ export default function SearchResults() {
   
   return (
     <>
-      <FilterBar 
-        onFilterChange={(newFilters) => {
-          // 필터가 변경될 때마다 URL 파라미터를 업데이트하여 다시 검색 쿼리
-          // FilterBar 내부에서 이미 처리되기 때문에 추가 작업은 필요 없음
-        }}
-      />
+      <FilterBar onFilterChange={handleFilterChange} />
       
       <div className="mb-8">
         <div className="flex items-center justify-between mb-2">
@@ -122,6 +155,25 @@ export default function SearchResults() {
             </Button>
           </div>
         </div>
+        
+        {/* 검색 입력 필드 추가 */}
+        <div className="flex gap-2 mb-4">
+          <div className="relative flex-grow">
+            <Input
+              type="text"
+              placeholder="메뉴 이름으로 검색..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              className="pl-10 shadow-sm"
+            />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          </div>
+          <Button onClick={handleSearch} className="shadow-sm">
+            검색
+          </Button>
+        </div>
+        
         <p className="text-gray-600 bg-pink-50/60 py-2 px-4 rounded-lg inline-block border border-pink-100 shadow-sm">
           <span className="font-semibold text-pink-700">"{query}"</span>에 대한 검색 결과입니다
         </p>
