@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "@/hooks/use-search-params";
 import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
+import { Slider } from "@radix-ui/react-slider";
 import { cn } from "@/lib/utils";
 
 interface FilterBarProps {

@@ -1,6 +1,6 @@
 import { useState, FormEvent } from 'react';
 import { useLocation } from 'wouter';
-import { useNavigate } from 'react-router-dom'; // Added useNavigate import
+import { useLocation } from 'wouter'; // Added useNavigate import
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
@@ -17,7 +17,7 @@ export function SearchBar({ className, placeholder = "메뉴 이름 또는 프�
   const [searchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState<string>(searchParams.get('q') || '');
   const [, setLocation] = useLocation();
-  const navigate = useNavigate(); // Added useNavigate hook
+  const [, setLocation] = useLocation(); // Added useNavigate hook
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -42,7 +42,7 @@ export function SearchBar({ className, placeholder = "메뉴 이름 또는 프�
       });
 
       // 검색 결과 페이지로 이동
-      navigate(`/search${query}`); // Changed to use useNavigate
+      setLocation(`/search${query}`); // Changed to use useNavigate
     }
   };
 
