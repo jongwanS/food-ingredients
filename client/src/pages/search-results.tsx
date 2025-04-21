@@ -13,7 +13,7 @@ export default function SearchResults() {
   const [searchParams] = useSearchParams();
   const [, navigate] = useLocation();
   
-  const query = searchParams.get("query") || "";
+  const query = searchParams.get("q") || "";
   const calorieRange = searchParams.get("calorieRange") || "";
   const proteinRange = searchParams.get("proteinRange") || "";
   const carbsRange = searchParams.get("carbsRange") || "";
@@ -21,7 +21,7 @@ export default function SearchResults() {
   
   // Create query parameter string
   const filterParams = new URLSearchParams();
-  filterParams.append("query", query);
+  filterParams.append("q", query);
   
   if (calorieRange) filterParams.append("calorieRange", calorieRange);
   if (proteinRange) filterParams.append("proteinRange", proteinRange);
