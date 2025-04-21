@@ -11,10 +11,10 @@ interface FilterBarProps {
 export function FilterBar({ className }: FilterBarProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = useState({
-    calorieRange: searchParams.get("calorieRange") || "",
-    proteinRange: searchParams.get("proteinRange") || "",
-    carbsRange: searchParams.get("carbsRange") || "",
-    fatRange: searchParams.get("fatRange") || ""
+    calories: searchParams.get("calories") || "0",
+    protein: searchParams.get("protein") || "0",
+    carbs: searchParams.get("carbs") || "0",
+    fat: searchParams.get("fat") || "0"
   });
 
   const handleFilterChange = (value: string, filterName: string) => {
@@ -48,83 +48,67 @@ export function FilterBar({ className }: FilterBarProps) {
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full md:w-auto">
           {/* Calories Filter */}
-          <div className="flex flex-col">
-            <Label className="text-sm font-medium mb-1">칼로리</Label>
-            <Select
-              value={filters.calorieRange || "all"}
-              onValueChange={(value) => handleFilterChange(value, "calorieRange")}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="모두" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">모두</SelectItem>
-                <SelectItem value="0-300">300 kcal 이하</SelectItem>
-                <SelectItem value="300-500">300-500 kcal</SelectItem>
-                <SelectItem value="500-800">500-800 kcal</SelectItem>
-                <SelectItem value="800+">800 kcal 이상</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="flex flex-col w-full">
+            <div className="flex justify-between items-center mb-1">
+              <Label className="text-sm font-medium">칼로리</Label>
+              <span className="text-sm text-gray-500">{filters.calories || 0} kcal 이하</span>
+            </div>
+            <Slider
+              defaultValue={[0]}
+              max={1000}
+              step={100}
+              value={[parseInt(filters.calories) || 0]}
+              onValueChange={(value) => handleFilterChange(value[0].toString(), "calories")}
+              className="mb-4"
+            />
           </div>
           
           {/* Protein Filter */}
-          <div className="flex flex-col">
-            <Label className="text-sm font-medium mb-1">단백질</Label>
-            <Select
-              value={filters.proteinRange || "all"}
-              onValueChange={(value) => handleFilterChange(value, "proteinRange")}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="모두" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">모두</SelectItem>
-                <SelectItem value="0-10">10g 이하</SelectItem>
-                <SelectItem value="10-20">10-20g</SelectItem>
-                <SelectItem value="20-30">20-30g</SelectItem>
-                <SelectItem value="30+">30g 이상</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="flex flex-col w-full">
+            <div className="flex justify-between items-center mb-1">
+              <Label className="text-sm font-medium">단백질</Label>
+              <span className="text-sm text-gray-500">{filters.protein || 0}g 이하</span>
+            </div>
+            <Slider
+              defaultValue={[0]}
+              max={50}
+              step={5}
+              value={[parseInt(filters.protein) || 0]}
+              onValueChange={(value) => handleFilterChange(value[0].toString(), "protein")}
+              className="mb-4"
+            />
           </div>
           
           {/* Carbs Filter */}
-          <div className="flex flex-col">
-            <Label className="text-sm font-medium mb-1">탄수화물</Label>
-            <Select
-              value={filters.carbsRange || "all"}
-              onValueChange={(value) => handleFilterChange(value, "carbsRange")}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="모두" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">모두</SelectItem>
-                <SelectItem value="0-30">30g 이하</SelectItem>
-                <SelectItem value="30-60">30-60g</SelectItem>
-                <SelectItem value="60-90">60-90g</SelectItem>
-                <SelectItem value="90+">90g 이상</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="flex flex-col w-full">
+            <div className="flex justify-between items-center mb-1">
+              <Label className="text-sm font-medium">탄수화물</Label>
+              <span className="text-sm text-gray-500">{filters.carbs || 0}g 이하</span>
+            </div>
+            <Slider
+              defaultValue={[0]}
+              max={100}
+              step={10}
+              value={[parseInt(filters.carbs) || 0]}
+              onValueChange={(value) => handleFilterChange(value[0].toString(), "carbs")}
+              className="mb-4"
+            />
           </div>
           
           {/* Fat Filter */}
-          <div className="flex flex-col">
-            <Label className="text-sm font-medium mb-1">지방</Label>
-            <Select
-              value={filters.fatRange || "all"}
-              onValueChange={(value) => handleFilterChange(value, "fatRange")}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="모두" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">모두</SelectItem>
-                <SelectItem value="0-10">10g 이하</SelectItem>
-                <SelectItem value="10-20">10-20g</SelectItem>
-                <SelectItem value="20-30">20-30g</SelectItem>
-                <SelectItem value="30+">30g 이상</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="flex flex-col w-full">
+            <div className="flex justify-between items-center mb-1">
+              <Label className="text-sm font-medium">지방</Label>
+              <span className="text-sm text-gray-500">{filters.fat || 0}g 이하</span>
+            </div>
+            <Slider
+              defaultValue={[0]}
+              max={50}
+              step={5}
+              value={[parseInt(filters.fat) || 0]}
+              onValueChange={(value) => handleFilterChange(value[0].toString(), "fat")}
+              className="mb-4"
+            />
           </div>
         </div>
       </div>
