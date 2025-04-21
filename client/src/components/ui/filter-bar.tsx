@@ -6,15 +6,21 @@ import { cn } from "@/lib/utils";
 
 interface FilterBarProps {
   className?: string;
+  onFilterChange?: (filters: {
+    calorieRange: string;
+    proteinRange: string;
+    carbsRange: string;
+    fatRange: string;
+  }) => void;
 }
 
-export function FilterBar({ className }: FilterBarProps) {
+export function FilterBar({ className, onFilterChange }: FilterBarProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const [filters, setFilters] = useState({
-    calories: searchParams.get("calories") || "0",
-    protein: searchParams.get("protein") || "0",
-    carbs: searchParams.get("carbs") || "0",
-    fat: searchParams.get("fat") || "0"
+    calorieRange: searchParams.get("calorieRange") || "0",
+    proteinRange: searchParams.get("proteinRange") || "0",
+    carbsRange: searchParams.get("carbsRange") || "0",
+    fatRange: searchParams.get("fatRange") || "0"
   });
 
   const handleFilterChange = (value: string, filterName: string) => {
@@ -39,7 +45,12 @@ export function FilterBar({ className }: FilterBarProps) {
     
     // Update the URL with new params
     setSearchParams(newParams);
-  }, [filters, setSearchParams]);
+    
+    // Call the onFilterChange callback if provided
+    if (onFilterChange) {
+      onFilterChange(filters);
+    }
+  }, [filters, setSearchParams, onFilterChange]);
 
   return (
     <div className={cn("mb-8 bg-white p-4 rounded-lg shadow-md", className)}>
@@ -51,14 +62,14 @@ export function FilterBar({ className }: FilterBarProps) {
           <div className="flex flex-col w-full">
             <div className="flex justify-between items-center mb-1">
               <Label className="text-sm font-medium">칼로리</Label>
-              <span className="text-sm text-gray-500">{filters.calories || 0} kcal 이하</span>
+              <span className="text-sm text-gray-500">{filters.calorieRange || 0} kcal 이하</span>
             </div>
             <Slider
               defaultValue={[0]}
               max={1000}
               step={100}
-              value={[parseInt(filters.calories) || 0]}
-              onValueChange={(value) => handleFilterChange(value[0].toString(), "calories")}
+              value={[parseInt(filters.calorieRange) || 0]}
+              onValueChange={(value) => handleFilterChange(value[0].toString(), "calorieRange")}
               className="mb-4"
             />
           </div>
@@ -67,14 +78,14 @@ export function FilterBar({ className }: FilterBarProps) {
           <div className="flex flex-col w-full">
             <div className="flex justify-between items-center mb-1">
               <Label className="text-sm font-medium">단백질</Label>
-              <span className="text-sm text-gray-500">{filters.protein || 0}g 이하</span>
+              <span className="text-sm text-gray-500">{filters.proteinRange || 0}g 이하</span>
             </div>
             <Slider
               defaultValue={[0]}
               max={50}
               step={5}
-              value={[parseInt(filters.protein) || 0]}
-              onValueChange={(value) => handleFilterChange(value[0].toString(), "protein")}
+              value={[parseInt(filters.proteinRange) || 0]}
+              onValueChange={(value) => handleFilterChange(value[0].toString(), "proteinRange")}
               className="mb-4"
             />
           </div>
@@ -83,14 +94,14 @@ export function FilterBar({ className }: FilterBarProps) {
           <div className="flex flex-col w-full">
             <div className="flex justify-between items-center mb-1">
               <Label className="text-sm font-medium">탄수화물</Label>
-              <span className="text-sm text-gray-500">{filters.carbs || 0}g 이하</span>
+              <span className="text-sm text-gray-500">{filters.carbsRange || 0}g 이하</span>
             </div>
             <Slider
               defaultValue={[0]}
               max={100}
               step={10}
-              value={[parseInt(filters.carbs) || 0]}
-              onValueChange={(value) => handleFilterChange(value[0].toString(), "carbs")}
+              value={[parseInt(filters.carbsRange) || 0]}
+              onValueChange={(value) => handleFilterChange(value[0].toString(), "carbsRange")}
               className="mb-4"
             />
           </div>
@@ -99,14 +110,14 @@ export function FilterBar({ className }: FilterBarProps) {
           <div className="flex flex-col w-full">
             <div className="flex justify-between items-center mb-1">
               <Label className="text-sm font-medium">지방</Label>
-              <span className="text-sm text-gray-500">{filters.fat || 0}g 이하</span>
+              <span className="text-sm text-gray-500">{filters.fatRange || 0}g 이하</span>
             </div>
             <Slider
               defaultValue={[0]}
               max={50}
               step={5}
-              value={[parseInt(filters.fat) || 0]}
-              onValueChange={(value) => handleFilterChange(value[0].toString(), "fat")}
+              value={[parseInt(filters.fatRange) || 0]}
+              onValueChange={(value) => handleFilterChange(value[0].toString(), "fatRange")}
               className="mb-4"
             />
           </div>
