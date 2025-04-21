@@ -128,7 +128,7 @@ export default function SearchResults() {
       </div>
       
       {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4">
           {Array.from({ length: 6 }).map((_, index) => (
             <Card key={index} className="overflow-hidden bg-white border border-pink-100 rounded-xl">
               <Skeleton className="h-48 w-full" />
@@ -159,8 +159,8 @@ export default function SearchResults() {
           <p className="text-sm text-gray-500">다른 검색어로 시도해 보세요.</p>
         </div>
       ) : viewType === 'grid' ? (
-        // 바둑판형 뷰 (Grid View) - 2열 구성으로 변경
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        // 바둑판형 뷰 (Grid View) - 강제로 항상 2열 구성으로 변경
+        <div className="grid grid-cols-2 gap-4">
           {Array.isArray(searchResults) && searchResults.map((product: Product) => (
             <Card 
               key={product.id}
