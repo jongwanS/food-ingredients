@@ -1,122 +1,68 @@
-import { useState, useRef, useEffect } from "react";
-import { useLocation } from "wouter";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { cn } from "@/lib/utils";
-import { ProductSearchResult } from "@/types";
+import { useState, FormEvent } from 'react';
+import { useLocation } from 'wouter';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Search } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { useSearchParams } from '@/hooks/use-search-params';
 
 interface SearchBarProps {
   className?: string;
+  placeholder?: string;
   mobile?: boolean;
 }
 
-export function SearchBar({ className, mobile = false }: SearchBarProps) {
-  const [, navigate] = useLocation();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const searchRef = useRef<HTMLDivElement>(null);
+export function SearchBar({ className, placeholder = "메뉴 이름 또는 프랜차이즈로 검색", mobile = false }: SearchBarProps) {
+  const [searchParams] = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState<string>(searchParams.get('q') || '');
+  const [, setLocation] = useLocation();
 
-  // Fetch search suggestions based on the current search term
-  const { data: suggestions, isLoading } = useQuery({
-    queryKey: ['/api/search', { query: searchTerm }],
-    queryFn: () => fetch(`/api/search?query=${encodeURIComponent(searchTerm)}`).then(res => res.json()),
-    enabled: searchTerm.length > 1,
-  });
-
-  // Handle clicking outside to close suggestions
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setShowSuggestions(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  const handleSearch = () => {
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    
     if (searchTerm.trim()) {
-      navigate(`/search?query=${encodeURIComponent(searchTerm)}`);
-      setShowSuggestions(false);
+      // 기존 필터 유지
+      const filters = {
+        calorieRange: searchParams.get('calorieRange') || '',
+        proteinRange: searchParams.get('proteinRange') || '',
+        carbsRange: searchParams.get('carbsRange') || '',
+        fatRange: searchParams.get('fatRange') || ''
+      };
+      
+      // URL 쿼리 생성
+      let query = `?q=${encodeURIComponent(searchTerm.trim())}`;
+      
+      // 필터 조건 추가
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value) {
+          query += `&${key}=${encodeURIComponent(value)}`;
+        }
+      });
+      
+      // 검색 결과 페이지로 이동
+      setLocation(`/search${query}`);
     }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleSearch();
-    }
-  };
-
-  const handleSuggestionClick = (suggestion: ProductSearchResult) => {
-    navigate(`/product/${suggestion.id}`);
-    setShowSuggestions(false);
-    setSearchTerm("");
   };
 
   return (
-    <div 
-      ref={searchRef}
-      className={cn(
-        "relative",
-        mobile ? "w-full" : "w-full md:w-2/3 lg:w-1/2",
-        className
-      )}
-    >
+    <form onSubmit={handleSubmit} className={cn("relative", className)}>
       <div className="relative">
         <Input
           type="text"
-          placeholder="메뉴 또는 프랜차이즈 검색 (예: 빅맥, 맥도날드)"
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary pr-10"
           value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-            if (e.target.value.length > 1) {
-              setShowSuggestions(true);
-            } else {
-              setShowSuggestions(false);
-            }
-          }}
-          onKeyDown={handleKeyDown}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder={placeholder}
+          className="pr-10 pl-4 py-2 border-2 border-primary/20 focus:border-primary/50 rounded-full"
         />
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-primary"
-          onClick={handleSearch}
+        <Button 
+          type="submit"
+          size="icon" 
+          variant="ghost" 
+          className="absolute right-0 top-0 h-full rounded-r-full text-primary/80 hover:text-primary hover:bg-primary/5"
         >
           <Search className="h-5 w-5" />
         </Button>
       </div>
-      
-      {/* Search Suggestions */}
-      {showSuggestions && searchTerm.length > 1 && (
-        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg overflow-hidden">
-          {isLoading ? (
-            <div className="py-3 px-4 text-gray-500 text-sm">검색 중...</div>
-          ) : suggestions && suggestions.length > 0 ? (
-            <ul className="py-1 max-h-60 overflow-auto">
-              {suggestions.map((suggestion: ProductSearchResult) => (
-                <li 
-                  key={suggestion.id}
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                  onClick={() => handleSuggestionClick(suggestion)}
-                >
-                  <span className="font-bold">{suggestion.franchiseName || "프랜차이즈"}</span> - {suggestion.name}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div className="py-3 px-4 text-gray-500 text-sm">
-              {searchTerm.length > 1 ? "검색 결과가 없습니다." : "검색어를 입력하세요."}
-            </div>
-          )}
-        </div>
-      )}
-    </div>
+    </form>
   );
 }
