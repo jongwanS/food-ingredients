@@ -157,7 +157,39 @@ export class MemStorage implements IStorage {
 
   async createProduct(insertProduct: InsertProduct): Promise<Product> {
     const id = this.currentProductId++;
-    const product: Product = { ...insertProduct, id };
+    
+    // 필수 필드에 기본값 설정 (description은 null이 될 수 있음)
+    const normalizedAllergens: number[] | null = 
+      insertProduct.allergens && Array.isArray(insertProduct.allergens) ? 
+      insertProduct.allergens : null;
+    
+    const product: Product = { 
+      // 먼저 원래 insertProduct에서 allergens 제거 (명시적으로 처리)
+      name: insertProduct.name,
+      franchiseId: insertProduct.franchiseId,
+      imageUrl: insertProduct.imageUrl,
+      calories: insertProduct.calories,
+      protein: insertProduct.protein,
+      carbs: insertProduct.carbs,
+      fat: insertProduct.fat,
+      
+      // 나머지 필드는 null 값이 허용됨
+      id,
+      description: insertProduct.description || null,
+      saturatedFat: insertProduct.saturatedFat || null,
+      transFat: insertProduct.transFat || null,
+      cholesterol: insertProduct.cholesterol || null, 
+      sodium: insertProduct.sodium || null,
+      fiber: insertProduct.fiber || null,
+      sugar: insertProduct.sugar || null,
+      calcium: insertProduct.calcium || null,
+      iron: insertProduct.iron || null,
+      vitaminD: insertProduct.vitaminD || null,
+      allergens: normalizedAllergens,
+      featuredProduct: insertProduct.featuredProduct !== undefined ? 
+        insertProduct.featuredProduct : false
+    };
+    
     this._products.set(id, product);
     return product;
   }
@@ -165,11 +197,27 @@ export class MemStorage implements IStorage {
   async searchProducts(params: ProductSearchParams): Promise<Product[]> {
     let results = Array.from(this._products.values());
 
-    // Filter by search query (searches in name)
+    // Filter by search query (searches in name, description and category/franchise)
     if (params.query) {
       const queryLower = params.query.toLowerCase();
+      
+      // 검색어가 '치킨'인 경우, 치킨 카테고리의 프랜차이즈 ID 목록 가져오기
+      const isChickenSearch = queryLower === '치킨' || queryLower === 'chicken';
+      const chickenCategoryId = 2; // 치킨 카테고리 ID (카테고리 데이터에서 확인)
+      
+      // 치킨 카테고리에 속한 프랜차이즈 ID 목록
+      const chickenFranchiseIds = isChickenSearch ? 
+        Array.from(this._franchises.values())
+          .filter(franchise => franchise.categoryId === chickenCategoryId)
+          .map(franchise => franchise.id) : [];
+      
       results = results.filter(product => 
-        product.name.toLowerCase().includes(queryLower)
+        // 이름에 검색어 포함
+        product.name.toLowerCase().includes(queryLower) ||
+        // 설명에 검색어 포함 (설명이 있는 경우만)
+        (product.description && product.description.toLowerCase().includes(queryLower)) || 
+        // 치킨 검색 시 치킨 카테고리 프랜차이즈에 속한 제품도 포함
+        (isChickenSearch && chickenFranchiseIds.includes(product.franchiseId))
       );
     }
 
