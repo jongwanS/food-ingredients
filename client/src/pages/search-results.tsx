@@ -99,17 +99,26 @@ export default function SearchResults() {
   
   // 검색 실행 함수
   const handleSearch = () => {
+    // 빈 검색어 허용 (필터만으로도 검색)
+    const newParams = new URLSearchParams(searchParams);
+    
+    // 검색어 업데이트 (빈 값이면 제거)
     if (searchInput.trim()) {
-      // URL 파라미터 업데이트
-      const newParams = new URLSearchParams(searchParams);
-      newParams.set("q", searchInput);
-      setSearchParams(newParams);
-      
-      // 쿼리 무효화하여 새로운 검색 결과 로드
-      queryClient.invalidateQueries({ 
-        queryKey: ['/api/search'] 
-      });
+      newParams.set("q", searchInput.trim());
+    } else {
+      newParams.delete("q");
     }
+    
+    // 현재 필터값들 유지
+    setSearchParams(newParams);
+    
+    // 쿼리 무효화하여 새로운 검색 결과 로드
+    queryClient.invalidateQueries({ 
+      queryKey: ['/api/search'] 
+    });
+    
+    // 페이지 최상단으로 스크롤
+    window.scrollTo(0, 0);
   };
   
   // Enter 키 누르면 검색 실행
@@ -149,7 +158,7 @@ export default function SearchResults() {
   
   return (
     <>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-4">
         <div className="flex items-center">
           <Search className="w-6 h-6 text-primary mr-2" />
           <h1 className="text-3xl font-heading font-bold gradient-text">검색 결과</h1>
@@ -160,6 +169,24 @@ export default function SearchResults() {
           className="border-primary/20 hover:bg-primary/5 hover:text-primary"
         >
           홈으로 돌아가기
+        </Button>
+      </div>
+
+      {/* 검색 입력 필드 */}
+      <div className="flex gap-2 mb-6">
+        <div className="relative flex-grow">
+          <Input
+            type="text"
+            placeholder="메뉴 이름으로 검색..."
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="pl-10 shadow-sm"
+          />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+        </div>
+        <Button onClick={handleSearch} className="shadow-sm">
+          검색
         </Button>
       </div>
 
