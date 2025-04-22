@@ -170,12 +170,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Search API endpoint
   app.get("/api/search", async (req, res) => {
     try {
+      // 디버깅을 위한 로그 추가
+      console.log("Search API called with params:", req.query);
+      
       // 직접 파라미터를 추출하여 처리
       const searchParams: any = {
         query: req.query.query,
         franchiseId: req.query.franchiseId ? parseInt(req.query.franchiseId as string) : undefined,
         categoryId: req.query.categoryId ? parseInt(req.query.categoryId as string) : undefined
       };
+      
+      // 디버깅을 위한 추가 로그
+      console.log("Parsed search params:", searchParams);
       
       // Handle range-based filters
       const parsedParams: any = { ...searchParams };

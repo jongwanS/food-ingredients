@@ -223,7 +223,7 @@ export class MemStorage implements IStorage {
         .map(franchise => franchise.id);
       
       // 중복 제거하여 모든 매칭되는 프랜차이즈 ID 목록 생성
-      const allMatchingFranchiseIds = [...new Set([...matchingFranchiseIds, ...franchisesMatchingQuery])];
+      const allMatchingFranchiseIds = Array.from(new Set([...matchingFranchiseIds, ...franchisesMatchingQuery]));
       
       results = results.filter(product => 
         // 1. 이름에 검색어 포함
