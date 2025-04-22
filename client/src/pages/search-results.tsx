@@ -121,7 +121,22 @@ export default function SearchResults() {
   
   // 필터 변경 시 실행할 함수
   const handleFilterChange = (newFilters: any) => {
-    // 필터 변경 시 쿼리 무효화하여 새로운 검색 결과 로드
+    // 필터 변경 시 URL 파라미터도 함께 업데이트
+    const newParams = new URLSearchParams(searchParams);
+    
+    // 필터 파라미터 추가 (값이 없으면 삭제)
+    Object.entries(newFilters).forEach(([key, value]) => {
+      if (value) {
+        newParams.set(key, String(value));
+      } else {
+        newParams.delete(key);
+      }
+    });
+    
+    // URL 업데이트
+    setSearchParams(newParams);
+    
+    // 쿼리 무효화하여 새로운 검색 결과 로드
     queryClient.invalidateQueries({ 
       queryKey: ['/api/search'] 
     });
@@ -134,14 +149,40 @@ export default function SearchResults() {
   
   return (
     <>
+      <div className="flex justify-between items-center mb-6">
+        <div className="flex items-center">
+          <Search className="w-6 h-6 text-primary mr-2" />
+          <h1 className="text-3xl font-heading font-bold gradient-text">검색 결과</h1>
+        </div>
+        <Button 
+          variant="outline" 
+          onClick={() => navigate('/')}
+          className="border-primary/20 hover:bg-primary/5 hover:text-primary"
+        >
+          홈으로 돌아가기
+        </Button>
+      </div>
+
       <FilterBar onFilterChange={handleFilterChange} />
       
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center">
-            <Search className="w-6 h-6 text-primary mr-2" />
-            <h1 className="text-3xl font-heading font-bold gradient-text">검색 결과</h1>
-          </div>
+      <div className="mb-8 mt-6">
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-gray-600 bg-pink-50/60 py-2 px-4 rounded-lg inline-block border border-pink-100 shadow-sm">
+            {query ? (
+              <span>
+                <span className="font-semibold text-pink-700">"{query}"</span>에 대한 검색 결과입니다
+              </span>
+            ) : (
+              <span>
+                <span className="font-semibold text-pink-700">필터 적용</span> 검색 결과입니다
+              </span>
+            )}
+            {(calorieRange || proteinRange || carbsRange || fatRange) && (
+              <span className="ml-2 text-xs bg-pink-200/70 px-2 py-1 rounded-full">
+                필터 적용됨
+              </span>
+            )}
+          </p>
           
           {/* 뷰 타입 전환 버튼 */}
           <div className="flex bg-pink-50 rounded-lg p-1 border border-pink-100">
@@ -165,41 +206,6 @@ export default function SearchResults() {
             </Button>
           </div>
         </div>
-        
-        {/* 검색 입력 필드 추가 */}
-        <div className="flex gap-2 mb-4">
-          <div className="relative flex-grow">
-            <Input
-              type="text"
-              placeholder="메뉴 이름으로 검색..."
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              className="pl-10 shadow-sm"
-            />
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          </div>
-          <Button onClick={handleSearch} className="shadow-sm">
-            검색
-          </Button>
-        </div>
-        
-        <p className="text-gray-600 bg-pink-50/60 py-2 px-4 rounded-lg inline-block border border-pink-100 shadow-sm">
-          {query ? (
-            <span>
-              <span className="font-semibold text-pink-700">"{query}"</span>에 대한 검색 결과입니다
-            </span>
-          ) : (
-            <span>
-              <span className="font-semibold text-pink-700">필터 적용</span> 검색 결과입니다
-            </span>
-          )}
-          {(calorieRange || proteinRange || carbsRange || fatRange) && (
-            <span className="ml-2 text-xs bg-pink-200/70 px-2 py-1 rounded-full">
-              필터 적용됨
-            </span>
-          )}
-        </p>
       </div>
       
       {isLoading ? (

@@ -161,7 +161,7 @@ export class MemStorage implements IStorage {
     // 필수 필드에 기본값 설정 (description은 null이 될 수 있음)
     const normalizedAllergens: number[] | null = 
       insertProduct.allergens && Array.isArray(insertProduct.allergens) ? 
-      insertProduct.allergens : null;
+      [...insertProduct.allergens] : null;
     
     const product: Product = { 
       // 먼저 원래 insertProduct에서 allergens 제거 (명시적으로 처리)
