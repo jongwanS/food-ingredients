@@ -15,7 +15,8 @@ export function CategoryGrid() {
   });
   
   const handleCategorySelect = (categoryId: number) => {
-    navigate(`/category/${categoryId}`);
+    // 카테고리 ID로 직접 검색 결과 페이지로 이동
+    navigate(`/search?categoryId=${categoryId}`);
   };
   
   if (isLoading) {

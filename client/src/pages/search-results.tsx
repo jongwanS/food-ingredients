@@ -23,6 +23,7 @@ export default function SearchResults() {
   const proteinRange = searchParams.get("proteinRange") || "";
   const carbsRange = searchParams.get("carbsRange") || "";
   const fatRange = searchParams.get("fatRange") || "";
+  const categoryId = searchParams.get("categoryId") ? parseInt(searchParams.get("categoryId") || "0") : undefined;
   
   // 검색창 초기값 설정
   useEffect(() => {
@@ -44,6 +45,7 @@ export default function SearchResults() {
   if (proteinRange) filterParams.append("proteinRange", proteinRange);
   if (carbsRange) filterParams.append("carbsRange", carbsRange);
   if (fatRange) filterParams.append("fatRange", fatRange);
+  if (categoryId) filterParams.append("categoryId", categoryId.toString());
   
   // 검색 쿼리 함수
   const fetchSearchResults = async () => {
@@ -63,9 +65,9 @@ export default function SearchResults() {
   
   // Fetch search results (TypeScript 오류 수정)
   const { data: searchResults, isLoading, error } = useQuery({
-    queryKey: ['/api/search', { query, calorieRange, proteinRange, carbsRange, fatRange }],
+    queryKey: ['/api/search', { query, calorieRange, proteinRange, carbsRange, fatRange, categoryId }],
     queryFn: fetchSearchResults,
-    enabled: hasSearchConditions
+    enabled: hasSearchConditions || categoryId !== undefined
   });
   
   // Fetch allergens for badges
