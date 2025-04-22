@@ -29,6 +29,13 @@ export default function SearchResults() {
     setSearchInput(query);
   }, [query]);
   
+  // 검색할 조건이 있는지 확인 (검색어 또는 필터 중 하나라도)
+  const hasSearchConditions = query.length > 0 || 
+                             !!calorieRange || 
+                             !!proteinRange || 
+                             !!carbsRange || 
+                             !!fatRange;
+  
   // Create query parameter string
   const filterParams = new URLSearchParams();
   filterParams.append("q", query);
@@ -38,24 +45,27 @@ export default function SearchResults() {
   if (carbsRange) filterParams.append("carbsRange", carbsRange);
   if (fatRange) filterParams.append("fatRange", fatRange);
   
-  // Fetch search results
-  const { data: searchResults, isLoading, error } = useQuery({
-    queryKey: ['/api/search', { query, calorieRange, proteinRange, carbsRange, fatRange }],
-    queryFn: async () => {
-      try {
-        const res = await fetch(`/api/search?${filterParams.toString()}`);
-        if (!res.ok) {
-          console.error('검색 API 응답 오류:', res.status);
-          return [];
-        }
-        const data = await res.json();
-        return Array.isArray(data) ? data : [];
-      } catch (err) {
-        console.error('검색 API 요청 오류:', err);
+  // 검색 쿼리 함수
+  const fetchSearchResults = async () => {
+    try {
+      const res = await fetch(`/api/search?${filterParams.toString()}`);
+      if (!res.ok) {
+        console.error('검색 API 응답 오류:', res.status);
         return [];
       }
-    },
-    enabled: query.length > 0
+      const data = await res.json();
+      return Array.isArray(data) ? data : [];
+    } catch (err) {
+      console.error('검색 API 요청 오류:', err);
+      return [];
+    }
+  };
+  
+  // Fetch search results (TypeScript 오류 수정)
+  const { data: searchResults, isLoading, error } = useQuery({
+    queryKey: ['/api/search', { query, calorieRange, proteinRange, carbsRange, fatRange }],
+    queryFn: fetchSearchResults,
+    enabled: hasSearchConditions
   });
   
   // Fetch allergens for badges
@@ -175,7 +185,20 @@ export default function SearchResults() {
         </div>
         
         <p className="text-gray-600 bg-pink-50/60 py-2 px-4 rounded-lg inline-block border border-pink-100 shadow-sm">
-          <span className="font-semibold text-pink-700">"{query}"</span>에 대한 검색 결과입니다
+          {query ? (
+            <span>
+              <span className="font-semibold text-pink-700">"{query}"</span>에 대한 검색 결과입니다
+            </span>
+          ) : (
+            <span>
+              <span className="font-semibold text-pink-700">필터 적용</span> 검색 결과입니다
+            </span>
+          )}
+          {(calorieRange || proteinRange || carbsRange || fatRange) && (
+            <span className="ml-2 text-xs bg-pink-200/70 px-2 py-1 rounded-full">
+              필터 적용됨
+            </span>
+          )}
         </p>
       </div>
       
