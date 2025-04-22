@@ -201,23 +201,37 @@ export class MemStorage implements IStorage {
     if (params.query) {
       const queryLower = params.query.toLowerCase();
       
-      // 검색어가 '치킨'인 경우, 치킨 카테고리의 프랜차이즈 ID 목록 가져오기
-      const isChickenSearch = queryLower === '치킨' || queryLower === 'chicken';
-      const chickenCategoryId = 2; // 치킨 카테고리 ID (카테고리 데이터에서 확인)
+      // 검색어가 카테고리와 관련된 경우 (예: 치킨, 햄버거 등)
+      // 카테고리 정보 가져오기
+      const matchingCategories = Array.from(this._categories.values())
+        .filter(category => 
+          category.name.toLowerCase().includes(queryLower) || 
+          category.nameKorean.toLowerCase().includes(queryLower)
+        );
       
-      // 치킨 카테고리에 속한 프랜차이즈 ID 목록
-      const chickenFranchiseIds = isChickenSearch ? 
-        Array.from(this._franchises.values())
-          .filter(franchise => franchise.categoryId === chickenCategoryId)
-          .map(franchise => franchise.id) : [];
+      // 카테고리 ID 목록
+      const matchingCategoryIds = matchingCategories.map(category => category.id);
+      
+      // 해당 카테고리에 속한 프랜차이즈 ID 목록
+      const matchingFranchiseIds = Array.from(this._franchises.values())
+        .filter(franchise => matchingCategoryIds.includes(franchise.categoryId))
+        .map(franchise => franchise.id);
+      
+      // 프랜차이즈 이름도 검색어와 매칭되는지 확인
+      const franchisesMatchingQuery = Array.from(this._franchises.values())
+        .filter(franchise => franchise.name.toLowerCase().includes(queryLower))
+        .map(franchise => franchise.id);
+      
+      // 중복 제거하여 모든 매칭되는 프랜차이즈 ID 목록 생성
+      const allMatchingFranchiseIds = [...new Set([...matchingFranchiseIds, ...franchisesMatchingQuery])];
       
       results = results.filter(product => 
-        // 이름에 검색어 포함
+        // 1. 이름에 검색어 포함
         product.name.toLowerCase().includes(queryLower) ||
-        // 설명에 검색어 포함 (설명이 있는 경우만)
+        // 2. 설명에 검색어 포함 (설명이 있는 경우만)
         (product.description && product.description.toLowerCase().includes(queryLower)) || 
-        // 치킨 검색 시 치킨 카테고리 프랜차이즈에 속한 제품도 포함
-        (isChickenSearch && chickenFranchiseIds.includes(product.franchiseId))
+        // 3. 카테고리 또는 프랜차이즈 이름이 검색어와 일치하는 제품 포함
+        allMatchingFranchiseIds.includes(product.franchiseId)
       );
     }
 
