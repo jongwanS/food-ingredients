@@ -65,11 +65,12 @@ export default function SearchResults() {
     }
   };
   
-  // Fetch search results - 기본 검색 결과를 가져오기
+  // 기본 검색 결과를 가져온다 (queryKey에 카테고리와 검색어만 포함)
   const { data: initialSearchResults, isLoading, error } = useQuery({
     queryKey: ['/api/search', { query, categoryId }],
     queryFn: fetchSearchResults,
-    enabled: hasSearchConditions || categoryId !== undefined
+    enabled: hasSearchConditions || categoryId !== undefined,
+    staleTime: 1000 * 60 * 5 // 5분 동안 결과 캐시
   });
   
   // 클라이언트 측에서 검색 결과 필터링 (영양소 기준)

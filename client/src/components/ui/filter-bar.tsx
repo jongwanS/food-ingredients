@@ -73,6 +73,15 @@ export function FilterBar({ className, onFilterChange }: FilterBarProps) {
               step={100}
               value={[parseInt(filters.calorieRange) || 0]}
               onValueChange={(value) => handleFilterChange(value[0].toString(), "calorieRange")}
+              onValueCommit={(value) => {
+                // 값이 변경되면 즉시 onFilterChange 호출
+                if (onFilterChange) {
+                  onFilterChange({
+                    ...filters,
+                    calorieRange: value[0].toString()
+                  });
+                }
+              }}
               className="mb-4"
             />
           </div>
@@ -89,6 +98,15 @@ export function FilterBar({ className, onFilterChange }: FilterBarProps) {
               step={5}
               value={[parseInt(filters.proteinRange) || 0]}
               onValueChange={(value) => handleFilterChange(value[0].toString(), "proteinRange")}
+              onValueCommit={(value) => {
+                // 값이 변경되면 즉시 onFilterChange 호출
+                if (onFilterChange) {
+                  onFilterChange({
+                    ...filters,
+                    proteinRange: value[0].toString()
+                  });
+                }
+              }}
               className="mb-4"
             />
           </div>
@@ -105,6 +123,15 @@ export function FilterBar({ className, onFilterChange }: FilterBarProps) {
               step={10}
               value={[parseInt(filters.carbsRange) || 0]}
               onValueChange={(value) => handleFilterChange(value[0].toString(), "carbsRange")}
+              onValueCommit={(value) => {
+                // 값이 변경되면 즉시 onFilterChange 호출
+                if (onFilterChange) {
+                  onFilterChange({
+                    ...filters,
+                    carbsRange: value[0].toString()
+                  });
+                }
+              }}
               className="mb-4"
             />
           </div>
@@ -121,6 +148,15 @@ export function FilterBar({ className, onFilterChange }: FilterBarProps) {
               step={5}
               value={[parseInt(filters.fatRange) || 0]}
               onValueChange={(value) => handleFilterChange(value[0].toString(), "fatRange")}
+              onValueCommit={(value) => {
+                // 값이 변경되면 즉시 onFilterChange 호출
+                if (onFilterChange) {
+                  onFilterChange({
+                    ...filters,
+                    fatRange: value[0].toString()
+                  });
+                }
+              }}
               className="mb-4"
             />
           </div>
