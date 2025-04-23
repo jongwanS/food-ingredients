@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import * as React from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { useSearchParams } from "@/hooks/use-search-params";
@@ -41,10 +42,11 @@ export default function SearchResults() {
   const filterParams = new URLSearchParams();
   filterParams.append("q", query);
   
-  if (calorieRange) filterParams.append("calorieRange", calorieRange);
-  if (proteinRange) filterParams.append("proteinRange", proteinRange);
-  if (carbsRange) filterParams.append("carbsRange", carbsRange);
-  if (fatRange) filterParams.append("fatRange", fatRange);
+  // 영양소 필터는 클라이언트 측에서 처리하므로 서버 요청에 포함하지 않음
+  // if (calorieRange) filterParams.append("calorieRange", calorieRange);
+  // if (proteinRange) filterParams.append("proteinRange", proteinRange);
+  // if (carbsRange) filterParams.append("carbsRange", carbsRange);
+  // if (fatRange) filterParams.append("fatRange", fatRange);
   if (categoryId) filterParams.append("categoryId", categoryId.toString());
   
   // 검색 쿼리 함수
@@ -63,12 +65,48 @@ export default function SearchResults() {
     }
   };
   
-  // Fetch search results (TypeScript 오류 수정)
-  const { data: searchResults, isLoading, error } = useQuery({
-    queryKey: ['/api/search', { query, calorieRange, proteinRange, carbsRange, fatRange, categoryId }],
+  // Fetch search results - 기본 검색 결과를 가져오기
+  const { data: initialSearchResults, isLoading, error } = useQuery({
+    queryKey: ['/api/search', { query, categoryId }],
     queryFn: fetchSearchResults,
     enabled: hasSearchConditions || categoryId !== undefined
   });
+  
+  // 클라이언트 측에서 검색 결과 필터링 (영양소 기준)
+  const searchResults = useMemo(() => {
+    if (!initialSearchResults || !Array.isArray(initialSearchResults)) return [];
+    
+    // 필터 값이 모두 없으면 전체 결과 반환
+    if (!calorieRange && !proteinRange && !carbsRange && !fatRange) {
+      return initialSearchResults;
+    }
+    
+    // 필터링 적용
+    return initialSearchResults.filter(product => {
+      // 칼로리 필터
+      if (calorieRange && parseInt(calorieRange) > 0) {
+        if (product.calories > parseInt(calorieRange)) return false;
+      }
+      
+      // 단백질 필터
+      if (proteinRange && parseInt(proteinRange) > 0) {
+        if (product.protein > parseInt(proteinRange)) return false;
+      }
+      
+      // 탄수화물 필터
+      if (carbsRange && parseInt(carbsRange) > 0) {
+        if (product.carbs > parseInt(carbsRange)) return false;
+      }
+      
+      // 지방 필터
+      if (fatRange && parseInt(fatRange) > 0) {
+        if (product.fat > parseInt(fatRange)) return false;
+      }
+      
+      // 모든 필터 조건을 통과한 경우
+      return true;
+    });
+  }, [initialSearchResults, calorieRange, proteinRange, carbsRange, fatRange]);
   
   // Fetch allergens for badges
   const { data: allergens } = useQuery({
@@ -144,13 +182,13 @@ export default function SearchResults() {
       }
     });
     
-    // URL 업데이트
+    // URL 업데이트 (필터링은 클라이언트 측에서 처리하므로 서버 쿼리는 무효화하지 않음)
     setSearchParams(newParams);
     
-    // 쿼리 무효화하여 새로운 검색 결과 로드
-    queryClient.invalidateQueries({ 
-      queryKey: ['/api/search'] 
-    });
+    // 이제 서버 쿼리를 무효화하지 않고 클라이언트 측에서 필터링합니다
+    // queryClient.invalidateQueries({ 
+    //   queryKey: ['/api/search'] 
+    // });
   };
 
   // Scroll to top on page load
