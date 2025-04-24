@@ -157,23 +157,52 @@ export async function loadProductData(): Promise<Product[]> {
         // 중복 제거
         const uniqueAllergens = Array.from(new Set(allergenIds));
         
-        // 제품 정보 생성
+        // 제품 무게 추정 (g 단위)
+        // 카테고리별 평균 중량 추정
+        let estimatedWeight = 0;
+        if (category.includes('버거')) {
+          estimatedWeight = 250; // 버거 평균 무게 (g)
+        } else if (category.includes('치킨')) {
+          estimatedWeight = 200; // 치킨류 평균 무게 (g)
+        } else if (category.includes('피자')) {
+          estimatedWeight = 300; // 피자 슬라이스 평균 무게 (g)
+        } else if (category.includes('샌드위치')) {
+          estimatedWeight = 220; // 샌드위치 평균 무게 (g)
+        } else if (category.includes('커피') || category.includes('음료')) {
+          estimatedWeight = 350; // 음료 평균 무게 (mL)
+        } else if (category.includes('디저트') || category.includes('케이크')) {
+          estimatedWeight = 120; // 디저트류 평균 무게 (g)
+        } else {
+          estimatedWeight = 200; // 기본 추정 무게 (g)
+        }
+        
+        // 특정 키워드에 따라 중량 추가 조정
+        if (productName.includes('더블') || productName.includes('라지') || productName.includes('빅')) {
+          estimatedWeight *= 1.5; // 더블/라지/빅 메뉴는 50% 더 무거움
+        } else if (productName.includes('미니') || productName.includes('스몰')) {
+          estimatedWeight *= 0.7; // 미니/스몰 메뉴는 30% 더 가벼움
+        }
+        
+        // 100g당 영양성분을 전체 제품 영양성분으로 환산 (중량 기반)
+        const weightFactor = estimatedWeight / 100; // 100g 대비 비율
+        
+        // 제품 정보 생성 (영양성분 환산 적용)
         const product: Product = {
           id: productId++,
           name: productName,
           franchiseId: franchiseInfo.id,
           description: `${franchiseName}의 ${productName} 메뉴입니다.`,
           imageUrl: imageUrl,
-          calories: Number(item['에너지(kcal)']) || 0,
-          protein: Number(item['단백질(g)']) || 0,
-          carbs: Number(item['탄수화물(g)']) || 0,
-          fat: Number(item['지방(g)']) || 0,
-          saturatedFat: item['포화지방산(g)'] ? Number(item['포화지방산(g)']) : null,
-          transFat: item['트랜스지방산(g)'] ? Number(item['트랜스지방산(g)']) : null,
-          cholesterol: item['콜레스테롤(mg)'] ? Number(item['콜레스테롤(mg)']) : null,
-          sodium: item['나트륨(mg)'] ? Number(item['나트륨(mg)']) : null,
+          calories: Math.round(Number(item['에너지(kcal)']) * weightFactor) || 0,
+          protein: Math.round(Number(item['단백질(g)']) * weightFactor * 10) / 10 || 0,
+          carbs: Math.round(Number(item['탄수화물(g)']) * weightFactor * 10) / 10 || 0,
+          fat: Math.round(Number(item['지방(g)']) * weightFactor * 10) / 10 || 0,
+          saturatedFat: item['포화지방산(g)'] ? Math.round(Number(item['포화지방산(g)']) * weightFactor * 10) / 10 : null,
+          transFat: item['트랜스지방산(g)'] ? Math.round(Number(item['트랜스지방산(g)']) * weightFactor * 10) / 10 : null,
+          cholesterol: item['콜레스테롤(mg)'] ? Math.round(Number(item['콜레스테롤(mg)']) * weightFactor) : null,
+          sodium: item['나트륨(mg)'] ? Math.round(Number(item['나트륨(mg)']) * weightFactor) : null,
           fiber: null,
-          sugar: item['당류(g)'] ? Number(item['당류(g)']) : null,
+          sugar: item['당류(g)'] ? Math.round(Number(item['당류(g)']) * weightFactor * 10) / 10 : null,
           calcium: null,
           iron: null,
           vitaminD: null,
