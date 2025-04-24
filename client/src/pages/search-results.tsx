@@ -70,7 +70,8 @@ export default function SearchResults() {
     queryKey: ['/api/search', { query, categoryId }],
     queryFn: fetchSearchResults,
     enabled: hasSearchConditions || categoryId !== undefined,
-    staleTime: 1000 * 60 * 5 // 5분 동안 결과 캐시
+    staleTime: 1000 * 60 * 5, // 5분 동안 결과 캐시
+    refetchOnWindowFocus: false // 창 포커스 시 자동 재요청 방지
   });
   
   // 초기 검색 결과와 필터된 결과를 별도로 관리
