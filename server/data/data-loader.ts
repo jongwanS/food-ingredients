@@ -72,26 +72,60 @@ const allergens: Allergen[] = [
 
 // 프랜차이즈 정보 매핑
 const franchiseMap: { [key: string]: { id: number, categoryId: number, logoUrl: string } } = {
+  // 1. 버거 카테고리
   "맥도날드": { id: 1, categoryId: 1, logoUrl: "https://via.placeholder.com/200x200/FFC72C/D82A2A?text=M" },
   "버거킹": { id: 2, categoryId: 1, logoUrl: "https://via.placeholder.com/200x200/0033A0/ED7902?text=BK" },
   "롯데리아": { id: 3, categoryId: 1, logoUrl: "https://via.placeholder.com/200x200/DA291C/FFFFFF?text=L" },
-  "KFC": { id: 4, categoryId: 1, logoUrl: "https://via.placeholder.com/200x200/F40027/FFFFFF?text=KFC" }, // KFC를 버거(1) 카테고리로 변경
-  "BBQ": { id: 5, categoryId: 2, logoUrl: "https://via.placeholder.com/200x200/800020/FFFFFF?text=BBQ" },
-  "도미노피자": { id: 6, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/006491/FFFFFF?text=DP" },
-  "스타벅스": { id: 7, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/00704A/FFFFFF?text=SB" },
-  "투썸플레이스": { id: 8, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/B80F0A/FFFFFF?text=TS" },
-  // 피자 프랜차이즈 추가 (카테고리 3 = 피자)
-  "피자헛": { id: 9, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/EE3124/FFFFFF?text=PH" },
-  "미스터피자": { id: 10, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/007236/FFFFFF?text=MP" },
-  "파파존스": { id: 11, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/006491/FFFFFF?text=PJ" },
-  "피자알볼로": { id: 12, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/DB0007/FFFFFF?text=PA" },
-  "피자마루": { id: 13, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/D62F28/FFFFFF?text=PM" },
-  "피자스쿨": { id: 14, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/F26D21/FFFFFF?text=PS" },
-  "청년피자": { id: 15, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/1B75BC/FFFFFF?text=YP" },
-  "임실N치즈피자": { id: 16, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/FFC20E/FFFFFF?text=IC" },
-  "7번가피자": { id: 17, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/F15A29/FFFFFF?text=7P" },
-  "피자나라치킨공주": { id: 18, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/00A651/FFFFFF?text=PC" },
-  "피자에땅": { id: 19, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/A31F34/FFFFFF?text=PT" }
+  "KFC": { id: 4, categoryId: 1, logoUrl: "https://via.placeholder.com/200x200/F40027/FFFFFF?text=KFC" },
+  "맘스터치": { id: 5, categoryId: 1, logoUrl: "https://via.placeholder.com/200x200/ED1C24/FFFFFF?text=MT" },
+  "노브랜드버거": { id: 6, categoryId: 1, logoUrl: "https://via.placeholder.com/200x200/1E3D7B/FFFFFF?text=NB" },
+  "프랭크버거": { id: 7, categoryId: 1, logoUrl: "https://via.placeholder.com/200x200/E1251B/FFFFFF?text=FB" },
+  "앤티앤스": { id: 8, categoryId: 1, logoUrl: "https://via.placeholder.com/200x200/4EA13E/FFFFFF?text=AA" },
+  
+  // 2. 치킨 카테고리
+  "BBQ": { id: 9, categoryId: 2, logoUrl: "https://via.placeholder.com/200x200/800020/FFFFFF?text=BBQ" },
+  "교촌치킨": { id: 10, categoryId: 2, logoUrl: "https://via.placeholder.com/200x200/1A1A1A/FFFFFF?text=KY" },
+  "굽네치킨": { id: 11, categoryId: 2, logoUrl: "https://via.placeholder.com/200x200/FF6E2C/FFFFFF?text=GP" },
+  "호식이두마리치킨": { id: 12, categoryId: 2, logoUrl: "https://via.placeholder.com/200x200/FF4C4C/FFFFFF?text=HS" },
+  "치킨플러스": { id: 13, categoryId: 2, logoUrl: "https://via.placeholder.com/200x200/C73232/FFFFFF?text=CP" },
+  "자담치킨": { id: 14, categoryId: 2, logoUrl: "https://via.placeholder.com/200x200/FFCE32/000000?text=JD" },
+  "또래오래": { id: 15, categoryId: 2, logoUrl: "https://via.placeholder.com/200x200/FDBA0D/FFFFFF?text=TR" },
+  "멕시카나": { id: 16, categoryId: 2, logoUrl: "https://via.placeholder.com/200x200/BD2222/FFFFFF?text=MX" },
+  
+  // 3. 피자 카테고리
+  "도미노피자": { id: 17, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/006491/FFFFFF?text=DP" },
+  "피자헛": { id: 18, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/EE3124/FFFFFF?text=PH" },
+  "미스터피자": { id: 19, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/007236/FFFFFF?text=MP" },
+  "파파존스": { id: 20, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/006491/FFFFFF?text=PJ" },
+  "피자알볼로": { id: 21, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/DB0007/FFFFFF?text=PA" },
+  "피자마루": { id: 22, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/D62F28/FFFFFF?text=PM" },
+  "피자스쿨": { id: 23, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/F26D21/FFFFFF?text=PS" },
+  "청년피자": { id: 24, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/1B75BC/FFFFFF?text=YP" },
+  "임실N치즈피자": { id: 25, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/FFC20E/FFFFFF?text=IC" },
+  "7번가피자": { id: 26, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/F15A29/FFFFFF?text=7P" },
+  "피자나라치킨공주": { id: 27, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/00A651/FFFFFF?text=PC" },
+  "피자에땅": { id: 28, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/A31F34/FFFFFF?text=PT" },
+  
+  // 4. 커피/음료 카테고리
+  "스타벅스": { id: 29, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/00704A/FFFFFF?text=SB" },
+  "투썸플레이스": { id: 30, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/B80F0A/FFFFFF?text=TS" },
+  "이디야": { id: 31, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/1E3D94/FFFFFF?text=ED" },
+  "메가커피": { id: 32, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/FFCE32/000000?text=MG" },
+  "빽다방": { id: 33, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/FFCE32/000000?text=PK" },
+  "커피빈": { id: 34, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/572C1A/FFFFFF?text=CB" },
+  "할리스": { id: 35, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/C7001F/FFFFFF?text=HL" },
+  "더벤티": { id: 36, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/0081C6/FFFFFF?text=TV" },
+  "컴포즈커피": { id: 37, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/003B49/FFFFFF?text=CP" },
+  
+  // 5. 디저트/베이커리 카테고리
+  "파리바게뜨": { id: 38, categoryId: 5, logoUrl: "https://via.placeholder.com/200x200/0066B3/FFFFFF?text=PB" },
+  "뚜레쥬르": { id: 39, categoryId: 5, logoUrl: "https://via.placeholder.com/200x200/0066A6/FFFFFF?text=TL" },
+  "던킨도너츠": { id: 40, categoryId: 5, logoUrl: "https://via.placeholder.com/200x200/FF671F/FFFFFF?text=DD" },
+  "크리스피크림도넛": { id: 41, categoryId: 5, logoUrl: "https://via.placeholder.com/200x200/00A650/FFFFFF?text=KK" },
+  "배스킨라빈스": { id: 42, categoryId: 5, logoUrl: "https://via.placeholder.com/200x200/F2207F/FFFFFF?text=BR" },
+  "디저트39": { id: 43, categoryId: 5, logoUrl: "https://via.placeholder.com/200x200/A2216F/FFFFFF?text=D39" },
+  "크로플덕오리아가씨": { id: 44, categoryId: 5, logoUrl: "https://via.placeholder.com/200x200/E57319/FFFFFF?text=CR" },
+  "와플대학": { id: 45, categoryId: 5, logoUrl: "https://via.placeholder.com/200x200/F7931E/FFFFFF?text=WU" }
 };
 
 // 프랜차이즈 정보 생성
