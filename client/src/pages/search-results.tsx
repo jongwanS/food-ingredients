@@ -65,12 +65,12 @@ export default function SearchResults() {
     }
   };
   
-  // 기본 검색 결과를 가져온다 (queryKey에 카테고리와 검색어만 포함)
+  // 검색 결과를 가져온다 (URL 변경시마다 다시 불러옴)
   const { data: initialSearchResults, isLoading, error } = useQuery({
-    queryKey: ['/api/search', { query, categoryId }],
+    queryKey: ['/api/search', query, categoryId], // query를 직접 포함시켜 변경시 재요청
     queryFn: fetchSearchResults,
     enabled: hasSearchConditions || categoryId !== undefined,
-    staleTime: 1000 * 60 * 5, // 5분 동안 결과 캐시
+    staleTime: 0, // 캐싱하지 않음 (항상 최신 결과)
     refetchOnWindowFocus: false // 창 포커스 시 자동 재요청 방지
   });
   
@@ -167,13 +167,14 @@ export default function SearchResults() {
   
   // 검색 실행 함수
   const handleSearch = () => {
+    // 검색어 체크 (빈 값이면 무시)
+    if (!searchInput.trim()) return;
+    
     // 새 검색을 위한 파라미터 생성 (기존 파라미터 복사하지 않고 새로 생성)
     const newParams = new URLSearchParams();
     
-    // 검색어 설정 (빈 값이면 제거)
-    if (searchInput.trim()) {
-      newParams.set("q", searchInput.trim());
-    }
+    // 검색어 설정
+    newParams.set("q", searchInput.trim());
     
     // 현재 URL에서 필터 파라미터 가져오기 - 최신값 보장
     const currentCalorieRange = searchParams.get("calorieRange") || "";
@@ -189,18 +190,13 @@ export default function SearchResults() {
     if (currentFatRange) newParams.set("fatRange", currentFatRange);
     if (currentCategoryId) newParams.set("categoryId", currentCategoryId);
     
+    console.log("검색 실행:", searchInput, newParams.toString());
+    
     // URL 업데이트 (새 검색 파라미터로)
     setSearchParams(newParams);
     
-    // 쿼리 무효화하여 새로운 검색 결과 로드
-    queryClient.invalidateQueries({ 
-      queryKey: ['/api/search'] 
-    });
-    
     // 페이지 최상단으로 스크롤
     window.scrollTo(0, 0);
-    
-    console.log("검색 실행:", searchInput, newParams.toString());
   };
   
   // Enter 키 누르면 검색 실행
