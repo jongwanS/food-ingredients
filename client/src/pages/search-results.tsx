@@ -12,12 +12,48 @@ import { Heart, AlertCircle, Search, Store, Grid, List, Loader } from "lucide-re
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BannerAd, ResponsiveAd } from "@/components/ui/advertisement";
+import { useToast } from "@/hooks/use-toast";
 
 export default function SearchResults() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [, navigate] = useLocation();
   const [viewType, setViewType] = useState<'grid' | 'list'>('grid');
   const [searchInput, setSearchInput] = useState("");
+  const [favoriteProducts, setFavoriteProducts] = useState<number[]>([]);
+  const { toast } = useToast();
+  
+  // 로컬 스토리지에서 좋아요 상태 로드
+  useEffect(() => {
+    const loadFavorites = () => {
+      try {
+        const storedFavorites = localStorage.getItem('favorites');
+        if (storedFavorites) {
+          const parsedFavorites = JSON.parse(storedFavorites);
+          if (Array.isArray(parsedFavorites)) {
+            const favoriteIds = parsedFavorites.map((fav: any) => fav.id);
+            setFavoriteProducts(favoriteIds);
+          }
+        }
+      } catch (error) {
+        console.error('좋아요 목록을 불러오는 중 오류가 발생했습니다:', error);
+      }
+    };
+    
+    loadFavorites();
+    
+    // 스토리지 변경 이벤트 리스너
+    const handleStorageChange = () => {
+      loadFavorites();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('favoritesUpdated', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('favoritesUpdated', handleStorageChange);
+    };
+  }, []);
   
   // 무한 스크롤을 위한 상태
   const [visibleItems, setVisibleItems] = useState(20);
@@ -204,6 +240,69 @@ export default function SearchResults() {
   
   const handleProductSelect = (productId: number) => {
     navigate(`/product/${productId}`);
+  };
+  
+  // 좋아요 토글 함수
+  const toggleFavorite = (e: React.MouseEvent, product: Product) => {
+    e.stopPropagation(); // 상품 클릭 이벤트 전파 방지
+    
+    try {
+      const favoritesString = localStorage.getItem('favorites');
+      let favorites = [];
+      
+      if (favoritesString) {
+        favorites = JSON.parse(favoritesString);
+        if (!Array.isArray(favorites)) favorites = [];
+      }
+      
+      const index = favorites.findIndex((item: any) => item.id === product.id);
+      
+      if (index >= 0) {
+        // 좋아요 삭제
+        favorites.splice(index, 1);
+        toast({
+          title: "좋아요 삭제",
+          description: "목록에서 삭제되었습니다.",
+          variant: "default",
+        });
+      } else {
+        // 좋아요 추가 - 필요한 정보만 저장
+        favorites.push({
+          id: product.id,
+          name: product.name,
+          description: product.description,
+          franchiseId: product.franchiseId,
+          calories: product.calories,
+          protein: product.protein,
+          fat: product.fat,
+          carbs: product.carbs
+        });
+        
+        toast({
+          title: "좋아요 추가",
+          description: "목록에 추가되었습니다.",
+          variant: "default",
+        });
+      }
+      
+      // 로컬스토리지에 저장
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+      
+      // 좋아요 목록 상태 업데이트
+      const favoriteIds = favorites.map((item: any) => item.id);
+      setFavoriteProducts(favoriteIds);
+      
+      // 커스텀 이벤트 발생 (헤더의 카운트 업데이트를 위해)
+      window.dispatchEvent(new Event('favoritesUpdated'));
+      
+    } catch (e) {
+      console.error('좋아요 처리 중 오류 발생:', e);
+      toast({
+        title: "오류 발생",
+        description: "좋아요 처리 중 문제가 발생했습니다.",
+        variant: "destructive",
+      });
+    }
   };
   
   // 검색 실행 함수
@@ -420,7 +519,21 @@ export default function SearchResults() {
                 className="aspect-square bg-white rounded-xl shadow-sm overflow-hidden card-hover border border-pink-100 cursor-pointer"
                 onClick={() => handleProductSelect(product.id)}
               >
-                <div className="h-full w-full flex flex-col p-3">
+                <div className="h-full w-full flex flex-col p-3 relative">
+                  {/* 좋아요 버튼 */}
+                  <Button
+                    variant="ghost" 
+                    size="icon"
+                    className={`absolute top-0 right-0 h-7 w-7 p-0 ${
+                      favoriteProducts.includes(product.id) 
+                        ? 'text-pink-500' 
+                        : 'text-gray-400 hover:text-pink-400'
+                    }`}
+                    onClick={(e) => toggleFavorite(e, product)}
+                  >
+                    <Heart className={`h-5 w-5 ${favoriteProducts.includes(product.id) ? 'fill-current' : ''}`} />
+                  </Button>
+
                   {/* 프랜차이즈 정보 */}
                   <div className="flex justify-center text-xs font-medium text-pink-600 mb-1">
                     <div className="bg-pink-50 py-0.5 px-2 rounded-full w-fit flex items-center">
@@ -493,9 +606,23 @@ export default function SearchResults() {
               )}
               
               <div 
-                className="bg-white rounded-xl shadow-sm overflow-hidden card-hover border border-pink-100 cursor-pointer p-4"
+                className="bg-white rounded-xl shadow-sm overflow-hidden card-hover border border-pink-100 cursor-pointer p-4 relative"
                 onClick={() => handleProductSelect(product.id)}
               >
+                {/* 좋아요 버튼 */}
+                <Button
+                  variant="ghost" 
+                  size="icon"
+                  className={`absolute top-2 right-2 h-8 w-8 p-0 z-10 ${
+                    favoriteProducts.includes(product.id) 
+                      ? 'text-pink-500 bg-pink-50/80' 
+                      : 'text-gray-400 hover:text-pink-400 bg-white/80'
+                  }`}
+                  onClick={(e) => toggleFavorite(e, product)}
+                >
+                  <Heart className={`h-5 w-5 ${favoriteProducts.includes(product.id) ? 'fill-current' : ''}`} />
+                </Button>
+
                 <div className="flex flex-wrap md:flex-nowrap">
                   <div className="w-full md:w-8/12">
                     <div className="flex items-center text-xs font-medium text-pink-600 mb-2">
