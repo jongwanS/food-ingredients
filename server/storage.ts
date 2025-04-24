@@ -197,42 +197,49 @@ export class MemStorage implements IStorage {
   async searchProducts(params: ProductSearchParams): Promise<Product[]> {
     let results = Array.from(this._products.values());
 
-    // Filter by search query (searches in name, description and category/franchise)
+    // Filter by search query (searches in name, description ONLY)
     if (params.query) {
       const queryLower = params.query.toLowerCase();
       
-      // 검색어가 카테고리와 관련된 경우 (예: 치킨, 햄버거 등)
-      // 카테고리 정보 가져오기
-      const matchingCategories = Array.from(this._categories.values())
-        .filter(category => 
-          category.name.toLowerCase().includes(queryLower) || 
-          category.nameKorean.toLowerCase().includes(queryLower)
-        );
-      
-      // 카테고리 ID 목록
-      const matchingCategoryIds = matchingCategories.map(category => category.id);
-      
-      // 해당 카테고리에 속한 프랜차이즈 ID 목록
-      const matchingFranchiseIds = Array.from(this._franchises.values())
-        .filter(franchise => matchingCategoryIds.includes(franchise.categoryId))
-        .map(franchise => franchise.id);
-      
-      // 프랜차이즈 이름도 검색어와 매칭되는지 확인
-      const franchisesMatchingQuery = Array.from(this._franchises.values())
-        .filter(franchise => franchise.name.toLowerCase().includes(queryLower))
-        .map(franchise => franchise.id);
-      
-      // 중복 제거하여 모든 매칭되는 프랜차이즈 ID 목록 생성
-      const allMatchingFranchiseIds = Array.from(new Set([...matchingFranchiseIds, ...franchisesMatchingQuery]));
-      
+      // 검색 로직 개선: 이름과 설명만 검색 (다른 카테고리와 연관성 없는 제품이 나오지 않도록)
       results = results.filter(product => 
-        // 1. 이름에 검색어 포함
+        // 1. 이름에 검색어 포함 (정확한 일치 우선)
+        product.name.toLowerCase() === queryLower ||
         product.name.toLowerCase().includes(queryLower) ||
         // 2. 설명에 검색어 포함 (설명이 있는 경우만)
-        (product.description && product.description.toLowerCase().includes(queryLower)) || 
-        // 3. 카테고리 또는 프랜차이즈 이름이 검색어와 일치하는 제품 포함
-        allMatchingFranchiseIds.includes(product.franchiseId)
+        (product.description && product.description.toLowerCase().includes(queryLower))
       );
+      
+      // 결과가 없을 경우에만 카테고리/프랜차이즈 기반 검색
+      if (results.length === 0) {
+        // 검색어가 카테고리와 관련된 경우 (예: 치킨, 햄버거 등)
+        const matchingCategories = Array.from(this._categories.values())
+          .filter(category => 
+            category.name.toLowerCase() === queryLower || 
+            category.nameKorean.toLowerCase() === queryLower
+          );
+        
+        // 카테고리 ID 목록
+        const matchingCategoryIds = matchingCategories.map(category => category.id);
+        
+        // 해당 카테고리에 속한 프랜차이즈 ID 목록
+        const matchingFranchiseIds = Array.from(this._franchises.values())
+          .filter(franchise => matchingCategoryIds.includes(franchise.categoryId))
+          .map(franchise => franchise.id);
+        
+        // 프랜차이즈 이름과 검색어 정확히 일치하는 것만 검색
+        const franchisesMatchingQuery = Array.from(this._franchises.values())
+          .filter(franchise => franchise.name.toLowerCase() === queryLower)
+          .map(franchise => franchise.id);
+        
+        // 중복 제거하여 모든 매칭되는 프랜차이즈 ID 목록 생성
+        const allMatchingFranchiseIds = Array.from(new Set([...matchingFranchiseIds, ...franchisesMatchingQuery]));
+        
+        results = Array.from(this._products.values()).filter(product => 
+          // 정확히 일치하는 카테고리나 프랜차이즈에 속한 제품만 포함
+          allMatchingFranchiseIds.includes(product.franchiseId)
+        );
+      }
     }
 
     // Filter by franchise ID
