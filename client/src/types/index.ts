@@ -24,6 +24,7 @@ export interface Product {
   id: number;
   name: string;
   franchiseId: number;
+  categoryId?: number;
   description?: string;
   imageUrl: string;
   calories: number;
