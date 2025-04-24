@@ -159,15 +159,21 @@ export function ProductList({ franchiseId }: ProductListProps) {
               </div>
               <div className="flex items-center bg-green-50 px-2 py-1 rounded-md">
                 <span className="w-3 h-3 rounded-full bg-green-500 mr-2"></span>
-                <span className="text-gray-700">{product.protein}g 단백질</span>
+                <span className="text-gray-700">
+                  {product.protein !== null ? `${product.protein}g 단백질` : '단백질 정보 없음'}
+                </span>
               </div>
               <div className="flex items-center bg-blue-50 px-2 py-1 rounded-md">
                 <span className="w-3 h-3 rounded-full bg-blue-500 mr-2"></span>
-                <span className="text-gray-700">{product.carbs}g 탄수화물</span>
+                <span className="text-gray-700">
+                  {product.carbs !== null ? `${product.carbs}g 탄수화물` : '탄수화물 정보 없음'}
+                </span>
               </div>
               <div className="flex items-center bg-yellow-50 px-2 py-1 rounded-md">
                 <span className="w-3 h-3 rounded-full bg-yellow-500 mr-2"></span>
-                <span className="text-gray-700">{product.fat}g 지방</span>
+                <span className="text-gray-700">
+                  {product.fat !== null ? `${product.fat}g 지방` : '지방 정보 없음'}
+                </span>
               </div>
             </div>
           </CardContent>
