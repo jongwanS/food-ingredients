@@ -6,6 +6,7 @@ import {
   products, type Product, type InsertProduct,
   type ProductSearchParams
 } from "@shared/schema";
+import * as dataLoader from './data/data-loader';
 
 // Storage interface for all CRUD operations
 export interface IStorage {
@@ -64,8 +65,11 @@ export class MemStorage implements IStorage {
     this.currentAllergenId = 1;
     this.currentProductId = 1;
     
-    // Initialize with sample data
+    // 데이터 초기화 (비동기)
     this.initializeData();
+    
+    // data-loader 초기화 호출
+    dataLoader.initializeData();
   }
 
   // User methods (keep for reference)
@@ -332,254 +336,49 @@ export class MemStorage implements IStorage {
     return results;
   }
 
-  // Initialize sample data
-  private initializeData() {
-    // Sample allergens
-    const allergenData: InsertAllergen[] = [
-      { name: "Wheat", nameKorean: "밀" },
-      { name: "Milk", nameKorean: "유제품" },
-      { name: "Eggs", nameKorean: "계란" },
-      { name: "Fish", nameKorean: "생선" },
-      { name: "Shellfish", nameKorean: "조개류" },
-      { name: "Peanuts", nameKorean: "땅콩" },
-      { name: "Tree Nuts", nameKorean: "견과류" },
-      { name: "Soy", nameKorean: "대두" }
-    ];
-    
-    allergenData.forEach(allergen => {
-      this.createAllergen(allergen);
-    });
-
-    // Sample categories with cute emoji-style icons (copyright-free)
-    const categoryData: InsertCategory[] = [
-      { name: "Burger", nameKorean: "버거", imageUrl: "https://cdn-icons-png.flaticon.com/512/6978/6978255.png" },
-      { name: "Chicken", nameKorean: "치킨", imageUrl: "https://cdn-icons-png.flaticon.com/512/7342/7342616.png" },
-      { name: "Pizza", nameKorean: "피자", imageUrl: "https://cdn-icons-png.flaticon.com/512/6978/6978292.png" },
-      { name: "Coffee/Drinks", nameKorean: "커피/음료", imageUrl: "https://cdn-icons-png.flaticon.com/512/6816/6816550.png" },
-      { name: "Dessert", nameKorean: "디저트", imageUrl: "https://cdn-icons-png.flaticon.com/512/3361/3361447.png" },
-      { name: "Korean", nameKorean: "한식", imageUrl: "https://cdn-icons-png.flaticon.com/512/2689/2689588.png" },
-      { name: "Japanese", nameKorean: "일식", imageUrl: "https://cdn-icons-png.flaticon.com/512/2252/2252075.png" },
-      { name: "Chinese", nameKorean: "중식", imageUrl: "https://cdn-icons-png.flaticon.com/512/2518/2518046.png" }
-    ];
-    
-    const categories: Category[] = [];
-    categoryData.forEach(category => {
-      this.createCategory(category).then(cat => categories.push(cat));
-    });
-
-    // Sample franchises for burger category
-    const franchiseData: InsertFranchise[] = [
-      { name: "맥도날드", categoryId: 1, logoUrl: "https://via.placeholder.com/200x200/FFC72C/D82A2A?text=M" },
-      { name: "버거킹", categoryId: 1, logoUrl: "https://via.placeholder.com/200x200/0033A0/ED7902?text=BK" },
-      { name: "롯데리아", categoryId: 1, logoUrl: "https://via.placeholder.com/200x200/DA291C/FFFFFF?text=L" },
-      { name: "KFC", categoryId: 2, logoUrl: "https://via.placeholder.com/200x200/F40027/FFFFFF?text=KFC" },
-      { name: "BBQ", categoryId: 2, logoUrl: "https://via.placeholder.com/200x200/800020/FFFFFF?text=BBQ" },
-      { name: "도미노피자", categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/006491/FFFFFF?text=DP" },
-      { name: "스타벅스", categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/00704A/FFFFFF?text=SB" },
-      { name: "투썸플레이스", categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/B80F0A/FFFFFF?text=TS" }
-    ];
-    
-    const franchises: Franchise[] = [];
-    franchiseData.forEach(franchise => {
-      this.createFranchise(franchise).then(fr => franchises.push(fr));
-    });
-
-    // Sample products for McDonald's
-    const productData: InsertProduct[] = [
-      {
-        name: "빅맥",
-        franchiseId: 1,
-        description: "두 장의 순 쇠고기 패티에 빅맥만의 특별한 소스, 신선한 양상추, 치즈, 피클, 양파를 넣어 다양한 맛과 식감의 조화를 완성한 버거",
-        imageUrl: "https://cdn-icons-png.flaticon.com/512/5787/5787204.png",
-        calories: 563,
-        protein: 27,
-        carbs: 45,
-        fat: 30,
-        saturatedFat: 11,
-        transFat: 1,
-        cholesterol: 85,
-        sodium: 1010,
-        fiber: 3,
-        sugar: 9,
-        calcium: 25,
-        iron: 5,
-        vitaminD: 0,
-        allergens: [1, 2, 3, 8],
-        featuredProduct: true
-      },
-      {
-        name: "쿼터파운더 치즈",
-        franchiseId: 1,
-        description: "쿼터파운더 치즈는 100% 신선한 쇠고기 패티와 치즈, 양파, 피클이 들어간 클래식한 버거입니다.",
-        imageUrl: "https://cdn-icons-png.flaticon.com/512/5787/5787253.png",
-        calories: 630,
-        protein: 37,
-        carbs: 40,
-        fat: 35,
-        saturatedFat: 16,
-        transFat: 1,
-        cholesterol: 115,
-        sodium: 1250,
-        fiber: 3,
-        sugar: 10,
-        calcium: 30,
-        iron: 6,
-        vitaminD: 0,
-        allergens: [1, 2, 8],
-        featuredProduct: false
-      },
-      {
-        name: "더블쿼터파운더치즈 버거",
-        franchiseId: 1,
-        description: "두 장의 100% 신선한 쇠고기 패티와 풍부한 치즈, 양파, 피클이 어우러진 프리미엄 버거입니다.",
-        imageUrl: "https://cdn-icons-png.flaticon.com/512/5787/5787253.png",
-        calories: 740,
-        protein: 48,
-        carbs: 40,
-        fat: 42,
-        saturatedFat: 21,
-        transFat: 2,
-        cholesterol: 145,
-        sodium: 1520,
-        fiber: 3,
-        sugar: 9,
-        calcium: 35,
-        iron: 8,
-        vitaminD: 0,
-        allergens: [1, 2, 8],
-        featuredProduct: true
-      },
-      {
-        name: "맥치킨",
-        franchiseId: 1,
-        description: "맥치킨은 바삭한 치킨 패티와 신선한 양상추, 마요네즈가 들어간 샌드위치입니다.",
-        imageUrl: "https://cdn-icons-png.flaticon.com/512/5787/5787247.png",
-        calories: 470,
-        protein: 21,
-        carbs: 42,
-        fat: 27,
-        saturatedFat: 5,
-        transFat: 0,
-        cholesterol: 65,
-        sodium: 800,
-        fiber: 2,
-        sugar: 5,
-        calcium: 15,
-        iron: 3,
-        vitaminD: 0,
-        allergens: [1, 3, 8],
-        featuredProduct: false
-      },
-      {
-        name: "불고기 버거",
-        franchiseId: 3,
-        description: "한국적인 맛의 불고기 소스와 패티가 조화를 이루는 롯데리아의 대표 버거",
-        imageUrl: "https://cdn-icons-png.flaticon.com/512/5787/5787211.png",
-        calories: 490,
-        protein: 20,
-        carbs: 55,
-        fat: 22,
-        saturatedFat: 7,
-        transFat: 0,
-        cholesterol: 60,
-        sodium: 900,
-        fiber: 2,
-        sugar: 15,
-        calcium: 10,
-        iron: 4,
-        vitaminD: 0,
-        allergens: [1, 2, 8],
-        featuredProduct: true
-      },
-      {
-        name: "와퍼",
-        franchiseId: 2,
-        description: "불에 직접 구운 100% 순쇠고기 패티와 신선한 야채가 들어간 버거킹의 대표 메뉴",
-        imageUrl: "https://cdn-icons-png.flaticon.com/512/5787/5787262.png",
-        calories: 670,
-        protein: 29,
-        carbs: 51,
-        fat: 40,
-        saturatedFat: 13,
-        transFat: 1,
-        cholesterol: 90,
-        sodium: 1020,
-        fiber: 3,
-        sugar: 11,
-        calcium: 20,
-        iron: 5,
-        vitaminD: 0,
-        allergens: [1, 2, 8],
-        featuredProduct: true
-      },
-      {
-        name: "오리지널 치킨",
-        franchiseId: 4,
-        description: "KFC만의 비밀 레시피로 양념한 후 튀겨낸, 바삭하고 육즙이 풍부한 치킨",
-        imageUrl: "https://cdn-icons-png.flaticon.com/512/7993/7993268.png",
-        calories: 380,
-        protein: 35,
-        carbs: 9,
-        fat: 23,
-        saturatedFat: 6,
-        transFat: 0,
-        cholesterol: 120,
-        sodium: 830,
-        fiber: 0,
-        sugar: 0,
-        calcium: 5,
-        iron: 2,
-        vitaminD: 0,
-        allergens: [1, 3],
-        featuredProduct: true
-      },
-      {
-        name: "아메리카노",
-        franchiseId: 7,
-        description: "진한 에스프레소와 뜨거운 물을 섞어 스타벅스의 깊고 풍부한 맛을 느낄 수 있는 음료",
-        imageUrl: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500",
-        calories: 5,
-        protein: 0,
-        carbs: 0,
-        fat: 0,
-        saturatedFat: 0,
-        transFat: 0,
-        cholesterol: 0,
-        sodium: 10,
-        fiber: 0,
-        sugar: 0,
-        calcium: 0,
-        iron: 0,
-        vitaminD: 0,
-        allergens: [],
-        featuredProduct: true
-      },
-      {
-        name: "카페 라떼",
-        franchiseId: 7,
-        description: "진한 에스프레소와 스팀 밀크가 어우러져 부드러운 맛을 내는 클래식한 커피 음료",
-        imageUrl: "https://images.unsplash.com/photo-1582202656844-15fddf4637b8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500",
-        calories: 190,
-        protein: 13,
-        carbs: 19,
-        fat: 7,
-        saturatedFat: 4,
-        transFat: 0,
-        cholesterol: 30,
-        sodium: 170,
-        fiber: 0,
-        sugar: 18,
-        calcium: 40,
-        iron: 0,
-        vitaminD: 15,
-        allergens: [2],
-        featuredProduct: false
+  // Initialize data from data-loader
+  private async initializeData() {
+    try {
+      // 알러젠 데이터 로드
+      const allergenData = dataLoader.getAllergens();
+      for (const allergen of allergenData) {
+        const { id, ...insertData } = allergen;
+        await this.createAllergen(insertData as InsertAllergen);
       }
-    ];
-    
-    productData.forEach(product => {
-      this.createProduct(product);
-    });
+      console.log("알러젠 데이터 로드 완료");
+
+      // 카테고리 데이터 로드
+      const categoryData = dataLoader.getCategories();
+      for (const category of categoryData) {
+        const { id, ...insertData } = category;
+        await this.createCategory(insertData as InsertCategory);
+      }
+      console.log("카테고리 데이터 로드 완료");
+
+      // 프랜차이즈 데이터 로드
+      const franchiseData = dataLoader.getFranchises();
+      for (const franchise of franchiseData) {
+        const { id, ...insertData } = franchise;
+        await this.createFranchise(insertData as InsertFranchise);
+      }
+      console.log("프랜차이즈 데이터 로드 완료");
+
+      // 제품 데이터 로드 (비동기)
+      const products = await dataLoader.loadProductData();
+      for (const product of products) {
+        const { id, ...insertData } = product;
+        
+        // 저장소 내부 정보에 의존하지 않도록 중복 확인
+        if (!this._products.has(id)) {
+          await this.createProduct(insertData as InsertProduct);
+        }
+      }
+      console.log(`총 ${this._products.size}개 제품 로드 완료`);
+    } catch (error) {
+      console.error("데이터 초기화 중 오류 발생:", error);
+    }
+
+
   }
 }
 

@@ -155,7 +155,7 @@ export async function loadProductData(): Promise<Product[]> {
         }
         
         // 중복 제거
-        const uniqueAllergens = [...new Set(allergenIds)];
+        const uniqueAllergens = Array.from(new Set(allergenIds));
         
         // 제품 정보 생성
         const product: Product = {
@@ -168,12 +168,12 @@ export async function loadProductData(): Promise<Product[]> {
           protein: Number(item['단백질(g)']) || 0,
           carbs: Number(item['탄수화물(g)']) || 0,
           fat: Number(item['지방(g)']) || 0,
-          saturatedFat: Number(item['포화지방산(g)']) || undefined,
-          transFat: Number(item['트랜스지방산(g)']) || undefined,
-          cholesterol: Number(item['콜레스테롤(mg)']) || undefined,
-          sodium: Number(item['나트륨(mg)']) || undefined,
+          saturatedFat: item['포화지방산(g)'] ? Number(item['포화지방산(g)']) : null,
+          transFat: item['트랜스지방산(g)'] ? Number(item['트랜스지방산(g)']) : null,
+          cholesterol: item['콜레스테롤(mg)'] ? Number(item['콜레스테롤(mg)']) : null,
+          sodium: item['나트륨(mg)'] ? Number(item['나트륨(mg)']) : null,
           fiber: null,
-          sugar: Number(item['당류(g)']) || undefined,
+          sugar: item['당류(g)'] ? Number(item['당류(g)']) : null,
           calcium: null,
           iron: null,
           vitaminD: null,
