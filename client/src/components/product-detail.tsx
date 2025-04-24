@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { AllergyBadge } from "@/components/allergy-badge";
 import { ArrowLeft, Heart, Droplet, AlertCircle, Gauge, Flame, Store } from "lucide-react";
 import { BannerAd, ResponsiveAd } from "@/components/ui/advertisement";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProductDetailProps {
   productId: number;
