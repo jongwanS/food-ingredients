@@ -98,9 +98,17 @@ export default function Home() {
         </div>
       )}
       
+      {/* 카테고리 위 광고 배너 */}
+      <BannerAd className="my-8" />
+      
       <h2 className="text-3xl font-heading font-bold mb-6">카테고리</h2>
       
       <CategoryGrid />
+      
+      {/* 카테고리 아래 반응형 광고 */}
+      <div className="mt-12 mb-8">
+        <ResponsiveAd />
+      </div>
     </>
   );
 }

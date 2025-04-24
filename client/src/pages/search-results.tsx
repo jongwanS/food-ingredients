@@ -11,6 +11,7 @@ import { Product } from "@/types";
 import { Heart, AlertCircle, Search, Store, Grid, List } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { BannerAd, ResponsiveAd, InArticleAd } from "@/components/ui/advertisement";
 
 export default function SearchResults() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -285,6 +286,9 @@ export default function SearchResults() {
 
       <FilterBar onFilterChange={handleFilterChange} />
       
+      {/* 검색 필터 아래 광고 배너 */}
+      <BannerAd className="my-6" />
+      
       <div className="mb-8 mt-6">
         <div className="flex items-center justify-between mb-4">
           <p className="text-gray-600 bg-pink-50/60 py-2 px-4 rounded-lg inline-block border border-pink-100 shadow-sm">
@@ -480,6 +484,13 @@ export default function SearchResults() {
               </div>
             </Card>
           ))}
+        </div>
+      )}
+      
+      {/* 결과 목록 아래에 반응형 광고 추가 */}
+      {!isLoading && Array.isArray(searchResults) && searchResults.length > 0 && (
+        <div className="mt-12">
+          <ResponsiveAd />
         </div>
       )}
     </>
