@@ -48,21 +48,21 @@ export interface KoreanFoodItem {
 
 // 카테고리 목록 (하드코딩)
 const categories: Category[] = [
-  { id: 1, name: "Burger", nameKorean: "버거", imageUrl: "https://cdn-icons-png.flaticon.com/512/6978/6978255.png" },
-  { id: 2, name: "Chicken", nameKorean: "치킨", imageUrl: "https://cdn-icons-png.flaticon.com/512/7342/7342616.png" },
-  { id: 3, name: "Pizza", nameKorean: "피자", imageUrl: "https://cdn-icons-png.flaticon.com/512/6978/6978292.png" },
-  { id: 4, name: "Coffee/Drinks", nameKorean: "커피/음료", imageUrl: "https://cdn-icons-png.flaticon.com/512/6816/6816550.png" },
-  { id: 5, name: "Dessert", nameKorean: "디저트/베이커리", imageUrl: "https://cdn-icons-png.flaticon.com/512/3361/3361447.png" },
-  { id: 6, name: "Korean", nameKorean: "한식", imageUrl: "https://cdn-icons-png.flaticon.com/512/2689/2689588.png" },
-  { id: 7, name: "Japanese", nameKorean: "일식", imageUrl: "https://cdn-icons-png.flaticon.com/512/2252/2252075.png" },
-  { id: 8, name: "Chinese", nameKorean: "중식", imageUrl: "https://cdn-icons-png.flaticon.com/512/2518/2518046.png" },
-  { id: 9, name: "Tea/Bubble Tea", nameKorean: "차/밀크티", imageUrl: "https://cdn-icons-png.flaticon.com/512/2935/2935416.png" },
-  { id: 10, name: "Waffle/Toast", nameKorean: "와플/토스트", imageUrl: "https://cdn-icons-png.flaticon.com/512/5339/5339150.png" },
-  { id: 11, name: "Meal Kit", nameKorean: "밀키트", imageUrl: "https://cdn-icons-png.flaticon.com/512/1147/1147805.png" },
-  { id: 12, name: "Smoothie/Juice", nameKorean: "스무디/주스", imageUrl: "https://cdn-icons-png.flaticon.com/512/4489/4489244.png" },
-  { id: 13, name: "Snack", nameKorean: "분식", imageUrl: "https://cdn-icons-png.flaticon.com/512/3075/3075977.png" },
-  { id: 14, name: "Western", nameKorean: "양식", imageUrl: "https://cdn-icons-png.flaticon.com/512/2252/2252075.png" },
-  { id: 15, name: "Nuts", nameKorean: "견과류", imageUrl: "https://cdn-icons-png.flaticon.com/512/2771/2771406.png" }
+  { id: 1, name: "Burger", nameKorean: "버거", imageUrl: "" },
+  { id: 2, name: "Chicken", nameKorean: "치킨", imageUrl: "" },
+  { id: 3, name: "Pizza", nameKorean: "피자", imageUrl: "" },
+  { id: 4, name: "Coffee/Drinks", nameKorean: "커피/음료", imageUrl: "" },
+  { id: 5, name: "Dessert", nameKorean: "디저트/베이커리", imageUrl: "" },
+  { id: 6, name: "Korean", nameKorean: "한식", imageUrl: "" },
+  { id: 7, name: "Japanese", nameKorean: "일식", imageUrl: "" },
+  { id: 8, name: "Chinese", nameKorean: "중식", imageUrl: "" },
+  { id: 9, name: "Tea/Bubble Tea", nameKorean: "차/밀크티", imageUrl: "" },
+  { id: 10, name: "Waffle/Toast", nameKorean: "와플/토스트", imageUrl: "" },
+  { id: 11, name: "Meal Kit", nameKorean: "밀키트", imageUrl: "" },
+  { id: 12, name: "Smoothie/Juice", nameKorean: "스무디/주스", imageUrl: "" },
+  { id: 13, name: "Snack", nameKorean: "분식", imageUrl: "" },
+  { id: 14, name: "Western", nameKorean: "양식", imageUrl: "" },
+  { id: 15, name: "Nuts", nameKorean: "견과류", imageUrl: "" }
 ];
 
 // 알러젠 목록 (하드코딩)
@@ -80,108 +80,108 @@ const allergens: Allergen[] = [
 // 프랜차이즈 정보 매핑
 const franchiseMap: { [key: string]: { id: number, categoryId: number, logoUrl: string } } = {
   // 1. 버거 카테고리
-  "맥도날드": { id: 1, categoryId: 1, logoUrl: "https://via.placeholder.com/200x200/FFC72C/D82A2A?text=M" },
-  "버거킹": { id: 2, categoryId: 1, logoUrl: "https://via.placeholder.com/200x200/0033A0/ED7902?text=BK" },
-  "롯데리아": { id: 3, categoryId: 1, logoUrl: "https://via.placeholder.com/200x200/DA291C/FFFFFF?text=L" },
-  "KFC": { id: 4, categoryId: 1, logoUrl: "https://via.placeholder.com/200x200/F40027/FFFFFF?text=KFC" },
-  "맘스터치": { id: 5, categoryId: 1, logoUrl: "https://via.placeholder.com/200x200/ED1C24/FFFFFF?text=MT" },
-  "노브랜드버거": { id: 6, categoryId: 1, logoUrl: "https://via.placeholder.com/200x200/1E3D7B/FFFFFF?text=NB" },
-  "프랭크버거": { id: 7, categoryId: 1, logoUrl: "https://via.placeholder.com/200x200/E1251B/FFFFFF?text=FB" },
-  "앤티앤스": { id: 8, categoryId: 1, logoUrl: "https://via.placeholder.com/200x200/4EA13E/FFFFFF?text=AA" },
+  "맥도날드": { id: 1, categoryId: 1, logoUrl: "" },
+  "버거킹": { id: 2, categoryId: 1, logoUrl: "" },
+  "롯데리아": { id: 3, categoryId: 1, logoUrl: "" },
+  "KFC": { id: 4, categoryId: 1, logoUrl: "" },
+  "맘스터치": { id: 5, categoryId: 1, logoUrl: "" },
+  "노브랜드버거": { id: 6, categoryId: 1, logoUrl: "" },
+  "프랭크버거": { id: 7, categoryId: 1, logoUrl: "" },
+  "앤티앤스": { id: 8, categoryId: 1, logoUrl: "" },
   
   // 2. 치킨 카테고리
-  "BBQ": { id: 9, categoryId: 2, logoUrl: "https://via.placeholder.com/200x200/800020/FFFFFF?text=BBQ" },
-  "교촌치킨": { id: 10, categoryId: 2, logoUrl: "https://via.placeholder.com/200x200/1A1A1A/FFFFFF?text=KY" },
-  "굽네치킨": { id: 11, categoryId: 2, logoUrl: "https://via.placeholder.com/200x200/FF6E2C/FFFFFF?text=GP" },
-  "호식이두마리치킨": { id: 12, categoryId: 2, logoUrl: "https://via.placeholder.com/200x200/FF4C4C/FFFFFF?text=HS" },
-  "치킨플러스": { id: 13, categoryId: 2, logoUrl: "https://via.placeholder.com/200x200/C73232/FFFFFF?text=CP" },
-  "자담치킨": { id: 14, categoryId: 2, logoUrl: "https://via.placeholder.com/200x200/FFCE32/000000?text=JD" },
-  "또래오래": { id: 15, categoryId: 2, logoUrl: "https://via.placeholder.com/200x200/FDBA0D/FFFFFF?text=TR" },
-  "멕시카나": { id: 16, categoryId: 2, logoUrl: "https://via.placeholder.com/200x200/BD2222/FFFFFF?text=MX" },
-  "비비큐": { id: 17, categoryId: 2, logoUrl: "https://via.placeholder.com/200x200/E31837/FFFFFF?text=VQ" },
+  "BBQ": { id: 9, categoryId: 2, logoUrl: "" },
+  "교촌치킨": { id: 10, categoryId: 2, logoUrl: "" },
+  "굽네치킨": { id: 11, categoryId: 2, logoUrl: "" },
+  "호식이두마리치킨": { id: 12, categoryId: 2, logoUrl: "" },
+  "치킨플러스": { id: 13, categoryId: 2, logoUrl: "" },
+  "자담치킨": { id: 14, categoryId: 2, logoUrl: "" },
+  "또래오래": { id: 15, categoryId: 2, logoUrl: "" },
+  "멕시카나": { id: 16, categoryId: 2, logoUrl: "" },
+  "비비큐": { id: 17, categoryId: 2, logoUrl: "" },
   
   // 3. 피자 카테고리
-  "도미노피자": { id: 18, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/006491/FFFFFF?text=DP" },
-  "피자헛": { id: 19, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/EE3124/FFFFFF?text=PH" },
-  "미스터피자": { id: 20, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/007236/FFFFFF?text=MP" },
-  "파파존스": { id: 21, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/006491/FFFFFF?text=PJ" },
-  "피자알볼로": { id: 22, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/DB0007/FFFFFF?text=PA" },
-  "피자마루": { id: 23, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/D62F28/FFFFFF?text=PM" },
-  "피자스쿨": { id: 24, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/F26D21/FFFFFF?text=PS" },
-  "청년피자": { id: 25, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/1B75BC/FFFFFF?text=YP" },
-  "임실N치즈피자": { id: 26, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/FFC20E/FFFFFF?text=IC" },
-  "7번가피자": { id: 27, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/F15A29/FFFFFF?text=7P" },
-  "피자나라치킨공주": { id: 28, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/00A651/FFFFFF?text=PC" },
-  "피자에땅": { id: 29, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/A31F34/FFFFFF?text=PT" },
+  "도미노피자": { id: 18, categoryId: 3, logoUrl: "" },
+  "피자헛": { id: 19, categoryId: 3, logoUrl: "" },
+  "미스터피자": { id: 20, categoryId: 3, logoUrl: "" },
+  "파파존스": { id: 21, categoryId: 3, logoUrl: "" },
+  "피자알볼로": { id: 22, categoryId: 3, logoUrl: "" },
+  "피자마루": { id: 23, categoryId: 3, logoUrl: "" },
+  "피자스쿨": { id: 24, categoryId: 3, logoUrl: "" },
+  "청년피자": { id: 25, categoryId: 3, logoUrl: "" },
+  "임실N치즈피자": { id: 26, categoryId: 3, logoUrl: "" },
+  "7번가피자": { id: 27, categoryId: 3, logoUrl: "" },
+  "피자나라치킨공주": { id: 28, categoryId: 3, logoUrl: "" },
+  "피자에땅": { id: 29, categoryId: 3, logoUrl: "" },
   
   // 4. 커피/음료 카테고리
-  "스타벅스": { id: 30, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/00704A/FFFFFF?text=SB" },
-  "투썸플레이스": { id: 31, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/B80F0A/FFFFFF?text=TS" },
-  "이디야": { id: 32, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/1E3D94/FFFFFF?text=ED" },
-  "메가커피": { id: 33, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/FFCE32/000000?text=MG" },
-  "빽다방": { id: 34, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/FFCE32/000000?text=PK" },
-  "커피빈": { id: 35, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/572C1A/FFFFFF?text=CB" },
-  "할리스": { id: 36, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/C7001F/FFFFFF?text=HL" },
-  "더벤티": { id: 37, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/0081C6/FFFFFF?text=TV" },
-  "컴포즈커피": { id: 38, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/003B49/FFFFFF?text=CP" },
-  "엔제리너스": { id: 39, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/880000/FFFFFF?text=AN" },
-  "파스쿠찌": { id: 40, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/0066B3/FFFFFF?text=PC" },
-  "드롭탑": { id: 41, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/472F91/FFFFFF?text=DT" },
-  "탐앤탐스": { id: 42, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/DB0007/FFFFFF?text=TT" },
-  "매머드 익스프레스": { id: 43, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/BA0C2F/FFFFFF?text=MM" },
-  "토프레소": { id: 44, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/000000/FFFFFF?text=TO" },
-  "더리터": { id: 45, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/0033A0/FFFFFF?text=TL" },
-  "바나프레소": { id: 46, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/FFD800/000000?text=BP" },
-  "블루샥": { id: 47, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/0081C6/FFFFFF?text=BS" },
+  "스타벅스": { id: 30, categoryId: 4, logoUrl: "" },
+  "투썸플레이스": { id: 31, categoryId: 4, logoUrl: "" },
+  "이디야": { id: 32, categoryId: 4, logoUrl: "" },
+  "메가커피": { id: 33, categoryId: 4, logoUrl: "" },
+  "빽다방": { id: 34, categoryId: 4, logoUrl: "" },
+  "커피빈": { id: 35, categoryId: 4, logoUrl: "" },
+  "할리스": { id: 36, categoryId: 4, logoUrl: "" },
+  "더벤티": { id: 37, categoryId: 4, logoUrl: "" },
+  "컴포즈커피": { id: 38, categoryId: 4, logoUrl: "" },
+  "엔제리너스": { id: 39, categoryId: 4, logoUrl: "" },
+  "파스쿠찌": { id: 40, categoryId: 4, logoUrl: "" },
+  "드롭탑": { id: 41, categoryId: 4, logoUrl: "" },
+  "탐앤탐스": { id: 42, categoryId: 4, logoUrl: "" },
+  "매머드 익스프레스": { id: 43, categoryId: 4, logoUrl: "" },
+  "토프레소": { id: 44, categoryId: 4, logoUrl: "" },
+  "더리터": { id: 45, categoryId: 4, logoUrl: "" },
+  "바나프레소": { id: 46, categoryId: 4, logoUrl: "" },
+  "블루샥": { id: 47, categoryId: 4, logoUrl: "" },
   
   // 5. 디저트/베이커리 카테고리
-  "파리바게뜨": { id: 48, categoryId: 5, logoUrl: "https://via.placeholder.com/200x200/0066B3/FFFFFF?text=PB" },
-  "뚜레쥬르": { id: 49, categoryId: 5, logoUrl: "https://via.placeholder.com/200x200/0066A6/FFFFFF?text=TL" },
-  "던킨도너츠": { id: 50, categoryId: 5, logoUrl: "https://via.placeholder.com/200x200/FF671F/FFFFFF?text=DD" },
-  "크리스피크림도넛": { id: 51, categoryId: 5, logoUrl: "https://via.placeholder.com/200x200/00A650/FFFFFF?text=KK" },
-  "배스킨라빈스": { id: 52, categoryId: 5, logoUrl: "https://via.placeholder.com/200x200/F2207F/FFFFFF?text=BR" },
-  "디저트39": { id: 53, categoryId: 5, logoUrl: "https://via.placeholder.com/200x200/A2216F/FFFFFF?text=D39" },
-  "크로플덕오리아가씨": { id: 54, categoryId: 5, logoUrl: "https://via.placeholder.com/200x200/E57319/FFFFFF?text=CR" },
-  "망원동티라미수": { id: 55, categoryId: 5, logoUrl: "https://via.placeholder.com/200x200/8B4513/FFFFFF?text=MT" },
-  "롤링핀": { id: 56, categoryId: 5, logoUrl: "https://via.placeholder.com/200x200/C39B5F/FFFFFF?text=RP" },
-  "크라상점": { id: 57, categoryId: 5, logoUrl: "https://via.placeholder.com/200x200/E9AB62/FFFFFF?text=CS" },
-  "못난이꽈배기": { id: 58, categoryId: 5, logoUrl: "https://via.placeholder.com/200x200/EFB82C/FFFFFF?text=KW" },
-  "요거트아이스크림의 정석": { id: 59, categoryId: 5, logoUrl: "https://via.placeholder.com/200x200/F2F2F2/FF69B4?text=YO" },
-  "스트릿츄러스": { id: 60, categoryId: 5, logoUrl: "https://via.placeholder.com/200x200/E67E22/FFFFFF?text=SC" },
-  "로띠번": { id: 61, categoryId: 5, logoUrl: "https://via.placeholder.com/200x200/C39B5F/FFFFFF?text=RT" },
-  "비토랩": { id: 62, categoryId: 5, logoUrl: "https://via.placeholder.com/200x200/795548/FFFFFF?text=VT" },
+  "파리바게뜨": { id: 48, categoryId: 5, logoUrl: "" },
+  "뚜레쥬르": { id: 49, categoryId: 5, logoUrl: "" },
+  "던킨도너츠": { id: 50, categoryId: 5, logoUrl: "" },
+  "크리스피크림도넛": { id: 51, categoryId: 5, logoUrl: "" },
+  "배스킨라빈스": { id: 52, categoryId: 5, logoUrl: "" },
+  "디저트39": { id: 53, categoryId: 5, logoUrl: "" },
+  "크로플덕오리아가씨": { id: 54, categoryId: 5, logoUrl: "" },
+  "망원동티라미수": { id: 55, categoryId: 5, logoUrl: "" },
+  "롤링핀": { id: 56, categoryId: 5, logoUrl: "" },
+  "크라상점": { id: 57, categoryId: 5, logoUrl: "" },
+  "못난이꽈배기": { id: 58, categoryId: 5, logoUrl: "" },
+  "요거트아이스크림의 정석": { id: 59, categoryId: 5, logoUrl: "" },
+  "스트릿츄러스": { id: 60, categoryId: 5, logoUrl: "" },
+  "로띠번": { id: 61, categoryId: 5, logoUrl: "" },
+  "비토랩": { id: 62, categoryId: 5, logoUrl: "" },
   
   // 9. 차/밀크티 카테고리
-  "공차": { id: 63, categoryId: 9, logoUrl: "https://via.placeholder.com/200x200/A52A2A/FFFFFF?text=GC" },
-  "팔공티": { id: 64, categoryId: 9, logoUrl: "https://via.placeholder.com/200x200/8B4513/FFFFFF?text=P8" },
-  "따삐오": { id: 65, categoryId: 9, logoUrl: "https://via.placeholder.com/200x200/FF69B4/FFFFFF?text=TP" },
-  "달콤": { id: 66, categoryId: 9, logoUrl: "https://via.placeholder.com/200x200/FA8072/FFFFFF?text=DS" },
+  "공차": { id: 63, categoryId: 9, logoUrl: "" },
+  "팔공티": { id: 64, categoryId: 9, logoUrl: "" },
+  "따삐오": { id: 65, categoryId: 9, logoUrl: "" },
+  "달콤": { id: 66, categoryId: 9, logoUrl: "" },
   
   // 10. 와플/토스트 카테고리
-  "와플대학": { id: 67, categoryId: 10, logoUrl: "https://via.placeholder.com/200x200/F7931E/FFFFFF?text=WU" },
-  "베러댄와플": { id: 68, categoryId: 10, logoUrl: "https://via.placeholder.com/200x200/F4B350/FFFFFF?text=BW" },
-  "와플칸": { id: 69, categoryId: 10, logoUrl: "https://via.placeholder.com/200x200/E9B665/FFFFFF?text=WK" },
+  "와플대학": { id: 67, categoryId: 10, logoUrl: "" },
+  "베러댄와플": { id: 68, categoryId: 10, logoUrl: "" },
+  "와플칸": { id: 69, categoryId: 10, logoUrl: "" },
   
   // 11. 밀키트 카테고리
-  "CJ 쿡킷": { id: 70, categoryId: 11, logoUrl: "https://via.placeholder.com/200x200/E31837/FFFFFF?text=CK" },
-  "GS 리테일 심플리쿡": { id: 71, categoryId: 11, logoUrl: "https://via.placeholder.com/200x200/003B71/FFFFFF?text=GS" },
-  "HY 잇츠온": { id: 72, categoryId: 11, logoUrl: "https://via.placeholder.com/200x200/0066B3/FFFFFF?text=HY" },
-  "신세계푸드 피코크": { id: 73, categoryId: 11, logoUrl: "https://via.placeholder.com/200x200/4B7BAF/FFFFFF?text=PC" },
+  "CJ 쿡킷": { id: 70, categoryId: 11, logoUrl: "" },
+  "GS 리테일 심플리쿡": { id: 71, categoryId: 11, logoUrl: "" },
+  "HY 잇츠온": { id: 72, categoryId: 11, logoUrl: "" },
+  "신세계푸드 피코크": { id: 73, categoryId: 11, logoUrl: "" },
   
   // 12. 스무디/주스 카테고리
-  "스무디킹": { id: 74, categoryId: 12, logoUrl: "https://via.placeholder.com/200x200/F2A629/FFFFFF?text=SK" },
-  "마이요거트립": { id: 75, categoryId: 12, logoUrl: "https://via.placeholder.com/200x200/F75E73/FFFFFF?text=MY" },
-  "요거프레소": { id: 76, categoryId: 12, logoUrl: "https://via.placeholder.com/200x200/BFFFC0/6F00FF?text=YP" },
-  "아임일리터": { id: 77, categoryId: 12, logoUrl: "https://via.placeholder.com/200x200/2980B9/FFFFFF?text=1L" },
+  "스무디킹": { id: 74, categoryId: 12, logoUrl: "" },
+  "마이요거트립": { id: 75, categoryId: 12, logoUrl: "" },
+  "요거프레소": { id: 76, categoryId: 12, logoUrl: "" },
+  "아임일리터": { id: 77, categoryId: 12, logoUrl: "" },
   
   // 13. 분식 카테고리
-  "송사부수제쌀고로케": { id: 78, categoryId: 13, logoUrl: "https://via.placeholder.com/200x200/F39C12/FFFFFF?text=SS" },
-  "마리웨일237": { id: 79, categoryId: 13, logoUrl: "https://via.placeholder.com/200x200/1ABC9C/FFFFFF?text=MW" },
-  "츄러스1500": { id: 80, categoryId: 13, logoUrl: "https://via.placeholder.com/200x200/F1C40F/FFFFFF?text=CH" },
+  "송사부수제쌀고로케": { id: 78, categoryId: 13, logoUrl: "" },
+  "마리웨일237": { id: 79, categoryId: 13, logoUrl: "" },
+  "츄러스1500": { id: 80, categoryId: 13, logoUrl: "" },
   
   // 15. 견과류 카테고리
-  "코코호도": { id: 81, categoryId: 15, logoUrl: "https://via.placeholder.com/200x200/8D6E63/FFFFFF?text=CH" },
-  "호밀호두": { id: 82, categoryId: 15, logoUrl: "https://via.placeholder.com/200x200/795548/FFFFFF?text=HM" }
+  "코코호도": { id: 81, categoryId: 15, logoUrl: "" },
+  "호밀호두": { id: 82, categoryId: 15, logoUrl: "" }
 };
 
 // 프랜차이즈 정보 생성
@@ -336,57 +336,8 @@ export async function loadProductData(): Promise<Product[]> {
           categoryId = 15; // 견과류 카테고리
         }
         
-        // 랜덤 이미지 URL (카테고리별로 다른 이미지 선택)
-        let imageUrl = "https://cdn-icons-png.flaticon.com/512/5787/5787253.png"; // 기본 이미지
-        
-        // 카테고리 ID에 따라 이미지 설정
-        switch (categoryId) {
-          case 1: // 버거
-            imageUrl = "https://cdn-icons-png.flaticon.com/512/5787/5787253.png";
-            break;
-          case 2: // 치킨
-            imageUrl = "https://cdn-icons-png.flaticon.com/512/7993/7993268.png";
-            break;
-          case 3: // 피자
-            imageUrl = "https://cdn-icons-png.flaticon.com/512/6978/6978292.png";
-            break;
-          case 4: // 커피/음료
-            imageUrl = "https://images.unsplash.com/photo-1509042239860-f550ce710b93?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500";
-            break;
-          case 5: // 디저트
-            imageUrl = "https://cdn-icons-png.flaticon.com/512/3361/3361447.png";
-            break;
-          case 6: // 한식
-            imageUrl = "https://cdn-icons-png.flaticon.com/512/2689/2689588.png";
-            break;
-          case 7: // 일식
-            imageUrl = "https://cdn-icons-png.flaticon.com/512/2252/2252075.png";
-            break;
-          case 8: // 중식
-            imageUrl = "https://cdn-icons-png.flaticon.com/512/2518/2518046.png";
-            break;
-          case 9: // 차/밀크티
-            imageUrl = "https://cdn-icons-png.flaticon.com/512/2935/2935416.png";
-            break;
-          case 10: // 와플/토스트
-            imageUrl = "https://cdn-icons-png.flaticon.com/512/5339/5339150.png";
-            break;
-          case 11: // 밀키트
-            imageUrl = "https://cdn-icons-png.flaticon.com/512/1147/1147805.png";
-            break;
-          case 12: // 스무디/주스
-            imageUrl = "https://cdn-icons-png.flaticon.com/512/4489/4489244.png";
-            break;
-          case 13: // 분식
-            imageUrl = "https://cdn-icons-png.flaticon.com/512/3075/3075977.png";
-            break;
-          case 14: // 양식
-            imageUrl = "https://cdn-icons-png.flaticon.com/512/2252/2252075.png";
-            break;
-          case 15: // 견과류
-            imageUrl = "https://cdn-icons-png.flaticon.com/512/2771/2771406.png";
-            break;
-        }
+        // 이미지 URL은 빈 문자열로 설정
+        let imageUrl = "";
         
         // 알러젠 임의 할당 (실제 데이터에 따라 조정 필요)
         const allergenIds: number[] = [];
