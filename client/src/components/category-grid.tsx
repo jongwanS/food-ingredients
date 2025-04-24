@@ -4,15 +4,39 @@ import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Category } from "@/types";
 import { Sparkles } from "lucide-react";
+import { useState, useEffect } from "react";
 
 export function CategoryGrid() {
   const [, navigate] = useLocation();
+  const [filteredCategories, setFilteredCategories] = useState<Category[]>([]);
   
   // Fetch categories from API
   const { data: categories, isLoading, error } = useQuery({
     queryKey: ['/api/categories'],
     queryFn: () => fetch('/api/categories').then(res => res.json()),
   });
+  
+  // Fetch franchises to check which categories have associated franchises
+  const { data: franchises } = useQuery({
+    queryKey: ['/api/franchises'],
+    queryFn: () => fetch('/api/franchises').then(res => res.json()),
+    enabled: !isLoading && !!categories,
+  });
+  
+  // Filter out categories that don't have associated franchises
+  useEffect(() => {
+    if (categories && franchises) {
+      // Get unique category IDs from franchises
+      const categoryIds = new Set(franchises.map((franchise: any) => franchise.categoryId));
+      
+      // Filter categories to only those that have at least one franchise
+      const validCategories = categories.filter((category: Category) => 
+        categoryIds.has(category.id)
+      );
+      
+      setFilteredCategories(validCategories);
+    }
+  }, [categories, franchises]);
   
   const handleCategorySelect = (categoryId: number) => {
     // 카테고리 ID에 해당하는 프랜차이즈 목록 페이지로 이동
@@ -42,7 +66,7 @@ export function CategoryGrid() {
   
   return (
     <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
-      {categories?.map((category: Category) => (
+      {filteredCategories.map((category: Category) => (
         <div 
           key={category.id}
           className="aspect-square category-card card-hover rounded-xl overflow-hidden cursor-pointer"
