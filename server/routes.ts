@@ -175,7 +175,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // 직접 파라미터를 추출하여 처리
       const searchParams: any = {
-        query: req.query.query,
+        query: req.query.q || req.query.query, // q 파라미터 지원 (프론트엔드에서 q로 보내는 경우)
         franchiseId: req.query.franchiseId ? parseInt(req.query.franchiseId as string) : undefined,
         categoryId: req.query.categoryId ? parseInt(req.query.categoryId as string) : undefined
       };

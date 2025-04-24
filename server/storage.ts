@@ -201,12 +201,55 @@ export class MemStorage implements IStorage {
     if (params.query) {
       const queryLower = params.query.toLowerCase();
       
-      // 검색 로직 개선: 이름과 설명만 검색 (다른 카테고리와 연관성 없는 제품이 나오지 않도록)
-      results = results.filter(product => 
-        // 1. 이름에 검색어 포함 (정확한 일치 우선)
+      // 먼저 단어 완전 일치 검색
+      const exactMatches = results.filter(product => 
         product.name.toLowerCase() === queryLower ||
+        (product.description && product.description.toLowerCase() === queryLower)
+      );
+      
+      if (exactMatches.length > 0) {
+        return exactMatches;
+      }
+      
+      // 단어 부분 일치 검색 (더 정확한 매칭)
+      // 특수 케이스: "더블쿼터파운더" -> "더블", "쿼터", "파운더" 각각 검색
+      const searchTokens = queryLower.split(/[\s-_]/);
+      
+      // 모든 토큰이 제품 이름에 포함된 제품 검색 (AND 조건)
+      const tokenMatches = results.filter(product => {
+        const productNameLower = product.name.toLowerCase();
+        const productDescLower = product.description ? product.description.toLowerCase() : '';
+        
+        // 모든 토큰이 제품명에 포함되어 있는지 확인
+        return searchTokens.every(token => 
+          productNameLower.includes(token) || 
+          productDescLower.includes(token)
+        );
+      });
+      
+      if (tokenMatches.length > 0) {
+        return tokenMatches;
+      }
+      
+      // 일부 토큰만 포함된 제품 검색 (OR 조건)
+      const partialMatches = results.filter(product => {
+        const productNameLower = product.name.toLowerCase();
+        const productDescLower = product.description ? product.description.toLowerCase() : '';
+        
+        // 일부 토큰이라도 제품명에 포함되어 있는지 확인
+        return searchTokens.some(token => 
+          productNameLower.includes(token) || 
+          productDescLower.includes(token)
+        );
+      });
+      
+      if (partialMatches.length > 0) {
+        return partialMatches;
+      }
+      
+      // 마지막으로 전체 문자열 부분 일치 검색
+      results = results.filter(product => 
         product.name.toLowerCase().includes(queryLower) ||
-        // 2. 설명에 검색어 포함 (설명이 있는 경우만)
         (product.description && product.description.toLowerCase().includes(queryLower))
       );
       
@@ -384,6 +427,27 @@ export class MemStorage implements IStorage {
         vitaminD: 0,
         allergens: [1, 2, 8],
         featuredProduct: false
+      },
+      {
+        name: "더블쿼터파운더치즈 버거",
+        franchiseId: 1,
+        description: "두 장의 100% 신선한 쇠고기 패티와 풍부한 치즈, 양파, 피클이 어우러진 프리미엄 버거입니다.",
+        imageUrl: "https://cdn-icons-png.flaticon.com/512/5787/5787253.png",
+        calories: 740,
+        protein: 48,
+        carbs: 40,
+        fat: 42,
+        saturatedFat: 21,
+        transFat: 2,
+        cholesterol: 145,
+        sodium: 1520,
+        fiber: 3,
+        sugar: 9,
+        calcium: 35,
+        iron: 8,
+        vitaminD: 0,
+        allergens: [1, 2, 8],
+        featuredProduct: true
       },
       {
         name: "맥치킨",
