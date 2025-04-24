@@ -83,7 +83,7 @@ export function FilterBar({ className, onFilterChange }: FilterBarProps) {
           <div className="flex flex-col w-full">
             <div className="flex justify-between items-center mb-1">
               <Label className="text-sm font-medium">단백질</Label>
-              <span className="text-sm text-gray-500">{filters.proteinRange || 0}g 이하</span>
+              <span className="text-sm text-gray-500">{filters.proteinRange || 0}g 이상</span>
             </div>
             <Slider
               defaultValue={[0]}

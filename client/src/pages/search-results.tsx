@@ -224,10 +224,10 @@ export default function SearchResults() {
         console.log(`칼로리 필터 (${newFilters.calorieRange} kcal 이하) 적용 후: ${filtered.length}개`);
       }
       
-      // 단백질 필터
+      // 단백질 필터 (이상으로 변경)
       if (newFilters.proteinRange && parseInt(newFilters.proteinRange) > 0) {
-        filtered = filtered.filter(p => p.protein <= parseInt(newFilters.proteinRange));
-        console.log(`단백질 필터 (${newFilters.proteinRange}g 이하) 적용 후: ${filtered.length}개`);
+        filtered = filtered.filter(p => p.protein >= parseInt(newFilters.proteinRange));
+        console.log(`단백질 필터 (${newFilters.proteinRange}g 이상) 적용 후: ${filtered.length}개`);
       }
       
       // 탄수화물 필터
