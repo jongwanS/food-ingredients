@@ -79,7 +79,19 @@ const franchiseMap: { [key: string]: { id: number, categoryId: number, logoUrl: 
   "BBQ": { id: 5, categoryId: 2, logoUrl: "https://via.placeholder.com/200x200/800020/FFFFFF?text=BBQ" },
   "도미노피자": { id: 6, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/006491/FFFFFF?text=DP" },
   "스타벅스": { id: 7, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/00704A/FFFFFF?text=SB" },
-  "투썸플레이스": { id: 8, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/B80F0A/FFFFFF?text=TS" }
+  "투썸플레이스": { id: 8, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/B80F0A/FFFFFF?text=TS" },
+  // 피자 프랜차이즈 추가 (카테고리 3 = 피자)
+  "피자헛": { id: 9, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/EE3124/FFFFFF?text=PH" },
+  "미스터피자": { id: 10, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/007236/FFFFFF?text=MP" },
+  "파파존스": { id: 11, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/006491/FFFFFF?text=PJ" },
+  "피자알볼로": { id: 12, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/DB0007/FFFFFF?text=PA" },
+  "피자마루": { id: 13, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/D62F28/FFFFFF?text=PM" },
+  "피자스쿨": { id: 14, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/F26D21/FFFFFF?text=PS" },
+  "청년피자": { id: 15, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/1B75BC/FFFFFF?text=YP" },
+  "임실N치즈피자": { id: 16, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/FFC20E/FFFFFF?text=IC" },
+  "7번가피자": { id: 17, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/F15A29/FFFFFF?text=7P" },
+  "피자나라치킨공주": { id: 18, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/00A651/FFFFFF?text=PC" },
+  "피자에땅": { id: 19, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/A31F34/FFFFFF?text=PT" }
 };
 
 // 프랜차이즈 정보 생성
