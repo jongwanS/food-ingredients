@@ -121,13 +121,21 @@ export default function SearchResults() {
     setFilteredResults(filtered);
   };
   
-  // 초기 검색 결과가 변경되거나 필터가 변경될 때마다 필터 적용
+  // 초기 검색 결과가 로드되면 필터 적용
   useEffect(() => {
-    console.log('필터 또는 검색 결과가 변경됨');
+    console.log('초기 검색 결과 변경됨:', initialSearchResults?.length);
     if (initialSearchResults) {
       applyFilters(initialSearchResults);
     }
-  }, [initialSearchResults, calorieRange, proteinRange, carbsRange, fatRange]);
+  }, [initialSearchResults]);
+  
+  // 필터값 변경 시 필터 적용 (별도 useEffect로 분리)
+  useEffect(() => {
+    console.log('필터 변경됨:', { calorieRange, proteinRange, carbsRange, fatRange });
+    if (initialSearchResults) {
+      applyFilters(initialSearchResults);
+    }
+  }, [calorieRange, proteinRange, carbsRange, fatRange]);
   
   // 필터링된 검색 결과 (UI에서 표시할 데이터)
   const searchResults = filteredResults;
