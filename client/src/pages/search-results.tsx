@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { useSearchParams } from "@/hooks/use-search-params";
@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AllergyBadge } from "@/components/allergy-badge";
 import { Product } from "@/types";
-import { Heart, AlertCircle, Search, Store, Grid, List } from "lucide-react";
+import { Heart, AlertCircle, Search, Store, Grid, List, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BannerAd, ResponsiveAd, InArticleAd } from "@/components/ui/advertisement";
@@ -18,7 +18,8 @@ export default function SearchResults() {
   const [, navigate] = useLocation();
   const [viewType, setViewType] = useState<'grid' | 'list'>('grid');
   const [searchInput, setSearchInput] = useState("");
-  const queryClient = useQueryClient();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20; // 한 페이지에 표시할 항목 수
   
   const query = searchParams.get("q") || "";
   const calorieRange = searchParams.get("calorieRange") || "";
@@ -116,6 +117,8 @@ export default function SearchResults() {
     
     console.log(`최종 필터링 결과 수: ${filtered.length}`);
     setFilteredResults(filtered);
+    // 페이지 변경 시 항상 첫 페이지로 리셋
+    setCurrentPage(1);
   }, [calorieRange, proteinRange, carbsRange, fatRange]);
   
   // 초기 검색 결과가 로드되면 필터 적용
@@ -134,8 +137,86 @@ export default function SearchResults() {
     }
   }, [calorieRange, proteinRange, carbsRange, fatRange, initialSearchResults, applyFilters]);
   
-  // 필터링된 검색 결과 (UI에서 표시할 데이터)
-  const searchResults = filteredResults;
+  // 페이징 처리된 결과
+  const paginatedResults = useMemo(() => {
+    // 페이지 변경 시 실행됨
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredResults.slice(startIndex, endIndex);
+  }, [filteredResults, currentPage, itemsPerPage]);
+  
+  // 전체 페이지 수 계산
+  const totalPages = Math.max(1, Math.ceil(filteredResults.length / itemsPerPage));
+  
+  // 페이지 변경 핸들러
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo(0, 0);
+  };
+  
+  // 페이지네이션 컴포넌트
+  const Pagination = () => {
+    // 5페이지 이하면 모든 페이지 표시, 그 이상이면 현재 페이지 주변만 표시
+    const pageNumbers = [];
+    const maxPageButtons = 5;
+    
+    if (totalPages <= maxPageButtons) {
+      // 페이지 수가 적으면 모두 표시
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      // 페이지 수가 많으면 현재 페이지 주변만 표시
+      let startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2));
+      let endPage = Math.min(totalPages, startPage + maxPageButtons - 1);
+      
+      // 끝 페이지가 최대값에 도달하면 시작 페이지를 조정
+      if (endPage === totalPages) {
+        startPage = Math.max(1, endPage - maxPageButtons + 1);
+      }
+      
+      for (let i = startPage; i <= endPage; i++) {
+        pageNumbers.push(i);
+      }
+    }
+    
+    if (totalPages <= 1) return null;
+    
+    return (
+      <div className="flex justify-center items-center mt-8 space-x-1">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+          disabled={currentPage === 1}
+          className="h-8 w-8"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </Button>
+        
+        {pageNumbers.map((page) => (
+          <Button
+            key={page}
+            variant={currentPage === page ? "default" : "outline"}
+            onClick={() => handlePageChange(page)}
+            className={`h-8 w-8 ${currentPage === page ? 'bg-primary text-primary-foreground' : ''}`}
+          >
+            {page}
+          </Button>
+        ))}
+        
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+          disabled={currentPage === totalPages}
+          className="h-8 w-8"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      </div>
+    );
+  };
   
   // Fetch allergens for badges
   const { data: allergens } = useQuery({
@@ -242,6 +323,7 @@ export default function SearchResults() {
       
       console.log(`최종 필터링 결과 수: ${filtered.length}`);
       setFilteredResults(filtered);
+      setCurrentPage(1); // 필터 변경 시 첫 페이지로 이동
     }
   };
 
@@ -357,7 +439,7 @@ export default function SearchResults() {
           <p className="text-primary mb-2 font-semibold">검색 중 오류가 발생했습니다.</p>
           <p className="text-sm text-gray-600">잠시 후 다시 시도해 주세요.</p>
         </div>
-      ) : (!Array.isArray(searchResults) || searchResults.length === 0) ? (
+      ) : (!Array.isArray(filteredResults) || filteredResults.length === 0) ? (
         <div className="text-center py-12 bg-pink-50/50 rounded-lg p-8">
           <Search className="w-12 h-12 text-pink-300 mx-auto mb-4 opacity-50" />
           <p className="text-gray-600 mb-2 font-semibold">검색 결과가 없습니다.</p>
@@ -365,162 +447,175 @@ export default function SearchResults() {
         </div>
       ) : viewType === 'grid' ? (
         // 바둑판형 뷰 (Grid View)
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {Array.isArray(searchResults) && searchResults.map((product: Product, index: number) => (
-            <>
-              {/* 4개마다 광고 추가 */}
-              {index > 0 && index % 8 === 0 && (
-                <div key={`ad-${index}`} className="col-span-full my-2">
-                  <ResponsiveAd />
-                </div>
-              )}
-            
-              <div 
-                key={product.id}
-                className="aspect-square bg-white rounded-xl shadow-sm overflow-hidden card-hover border border-pink-100 cursor-pointer"
-                onClick={() => handleProductSelect(product.id)}
-              >
-                <div className="h-full w-full flex flex-col p-3">
-                  {/* 프랜차이즈 정보 */}
-                  <div className="flex justify-center text-xs font-medium text-pink-600 mb-1">
-                    <div className="bg-pink-50 py-0.5 px-2 rounded-full w-fit flex items-center">
-                      <Store className="h-2.5 w-2.5 mr-1" />
-                      {getFranchiseName(product.franchiseId)}
-                    </div>
+        <>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {paginatedResults.map((product, index) => (
+              <React.Fragment key={`product-${product.id}`}>
+                {/* 4개마다 광고 추가 */}
+                {index > 0 && index % 8 === 0 && (
+                  <div key={`ad-${index}`} className="col-span-full my-2">
+                    <ResponsiveAd />
                   </div>
-                
-                  {/* 제품 이름 영역 */}
-                  <div className="mb-2 text-center">
-                    <h3 className="text-base font-heading font-semibold gradient-text line-clamp-2">{product.name}</h3>
-                    {product.featuredProduct && (
-                      <div className="inline-flex mt-1 bg-pink-500/90 text-white text-xs py-0.5 px-1.5 rounded-full shadow-sm items-center">
-                        <Heart className="h-2.5 w-2.5 mr-0.5" /> 인기
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* 알러지 정보 */}
-                  {product.allergens && product.allergens.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mb-2 justify-center">
-                      {getAllergenNames(product.allergens as number[]).slice(0, 2).map((allergen, idx) => (
-                        <AllergyBadge key={idx} name={allergen as string} className="text-xs" />
-                      ))}
-                      {getAllergenNames(product.allergens as number[]).length > 2 && (
-                        <span className="text-xs text-pink-600">+{getAllergenNames(product.allergens as number[]).length - 2}</span>
-                      )}
-                    </div>
-                  )}
-                  
-                  {/* 영양 정보 */}
-                  <div className="grid grid-cols-2 gap-1 text-xs mt-auto">
-                    <div className="flex items-center bg-pink-50 px-1.5 py-1 rounded-md">
-                      <span className="w-2 h-2 rounded-full bg-primary mr-1"></span>
-                      <span className="text-gray-700">{product.calories} kcal</span>
-                    </div>
-                    <div className="flex items-center bg-green-50 px-1.5 py-1 rounded-md">
-                      <span className="w-2 h-2 rounded-full bg-green-500 mr-1"></span>
-                      <span className="text-gray-700 truncate">
-                        {product.protein !== null ? `${product.protein}g 단백질` : '정보 없음'}
-                      </span>
-                    </div>
-                    <div className="flex items-center bg-blue-50 px-1.5 py-1 rounded-md">
-                      <span className="w-2 h-2 rounded-full bg-blue-500 mr-1"></span>
-                      <span className="text-gray-700 truncate">
-                        {product.carbs !== null ? `${product.carbs}g 탄수화물` : '정보 없음'}
-                      </span>
-                    </div>
-                    <div className="flex items-center bg-yellow-50 px-1.5 py-1 rounded-md">
-                      <span className="w-2 h-2 rounded-full bg-yellow-500 mr-1"></span>
-                      <span className="text-gray-700 truncate">
-                        {product.fat !== null ? `${product.fat}g 지방` : '정보 없음'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </>
-          ))}
-        </div>
-      ) : (
-        // 목록형 뷰 (List View)
-        <div className="flex flex-col gap-4">
-          {Array.isArray(searchResults) && searchResults.map((product: Product, index: number) => (
-            <>
-              {/* 3개마다 광고 추가 */}
-              {index > 0 && index % 3 === 0 && (
-                <div key={`ad-list-${index}`} className="my-2">
-                  <BannerAd />
-                </div>
-              )}
+                )}
               
-              <div 
-                key={product.id}
-                className="bg-white rounded-xl shadow-sm overflow-hidden card-hover border border-pink-100 cursor-pointer p-4"
-                onClick={() => handleProductSelect(product.id)}
-              >
-                <div className="flex flex-wrap md:flex-nowrap">
-                  <div className="w-full md:w-8/12">
-                    <div className="flex items-center text-xs font-medium text-pink-600 mb-2">
+                <div 
+                  className="aspect-square bg-white rounded-xl shadow-sm overflow-hidden card-hover border border-pink-100 cursor-pointer"
+                  onClick={() => handleProductSelect(product.id)}
+                >
+                  <div className="h-full w-full flex flex-col p-3">
+                    {/* 프랜차이즈 정보 */}
+                    <div className="flex justify-center text-xs font-medium text-pink-600 mb-1">
                       <div className="bg-pink-50 py-0.5 px-2 rounded-full w-fit flex items-center">
                         <Store className="h-2.5 w-2.5 mr-1" />
                         {getFranchiseName(product.franchiseId)}
                       </div>
-                      
+                    </div>
+                  
+                    {/* 제품 이름 영역 */}
+                    <div className="mb-2 text-center">
+                      <h3 className="text-base font-heading font-semibold gradient-text line-clamp-2">{product.name}</h3>
                       {product.featuredProduct && (
-                        <div className="ml-2 bg-pink-500/90 text-white text-xs py-0.5 px-1.5 rounded-full flex items-center">
+                        <div className="inline-flex mt-1 bg-pink-500/90 text-white text-xs py-0.5 px-1.5 rounded-full shadow-sm items-center">
                           <Heart className="h-2.5 w-2.5 mr-0.5" /> 인기
                         </div>
                       )}
                     </div>
                     
-                    <h3 className="text-lg font-heading font-semibold mb-2 gradient-text">{product.name}</h3>
-                    
+                    {/* 알러지 정보 */}
                     {product.allergens && product.allergens.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mb-3">
-                        {getAllergenNames(product.allergens as number[]).map((allergen, idx) => (
-                          <AllergyBadge key={idx} name={allergen as string} />
+                      <div className="flex flex-wrap gap-1 mb-2 justify-center">
+                        {getAllergenNames(product.allergens as number[]).slice(0, 2).map((allergen, idx) => (
+                          <AllergyBadge key={idx} name={allergen as string} className="text-xs" />
                         ))}
+                        {getAllergenNames(product.allergens as number[]).length > 2 && (
+                          <span className="text-xs text-pink-600">+{getAllergenNames(product.allergens as number[]).length - 2}</span>
+                        )}
                       </div>
                     )}
-                  </div>
-                  
-                  <div className="w-full md:w-4/12 mt-3 md:mt-0 md:pl-4 md:border-l border-pink-50">
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      <div className="flex items-center bg-pink-50 px-2 py-1 rounded-md">
-                        <span className="w-2.5 h-2.5 rounded-full bg-primary mr-1.5"></span>
+                    
+                    {/* 영양 정보 */}
+                    <div className="grid grid-cols-2 gap-1 text-xs mt-auto">
+                      <div className="flex items-center bg-pink-50 px-1.5 py-1 rounded-md">
+                        <span className="w-2 h-2 rounded-full bg-primary mr-1"></span>
                         <span className="text-gray-700">{product.calories} kcal</span>
                       </div>
-                      <div className="flex items-center bg-green-50 px-2 py-1 rounded-md">
-                        <span className="w-2.5 h-2.5 rounded-full bg-green-500 mr-1.5"></span>
+                      <div className="flex items-center bg-green-50 px-1.5 py-1 rounded-md">
+                        <span className="w-2 h-2 rounded-full bg-green-500 mr-1"></span>
                         <span className="text-gray-700 truncate">
-                          {product.protein !== null ? `${product.protein}g 단백질` : '정보 없음'}
+                          {product.protein !== null ? `${product.protein}g 단백질` : '-'}
                         </span>
                       </div>
-                      <div className="flex items-center bg-blue-50 px-2 py-1 rounded-md">
-                        <span className="w-2.5 h-2.5 rounded-full bg-blue-500 mr-1.5"></span>
+                      <div className="flex items-center bg-blue-50 px-1.5 py-1 rounded-md">
+                        <span className="w-2 h-2 rounded-full bg-blue-500 mr-1"></span>
                         <span className="text-gray-700 truncate">
-                          {product.carbs !== null ? `${product.carbs}g 탄수화물` : '정보 없음'}
+                          {product.carbs !== null ? `${product.carbs}g 탄수화물` : '-'}
                         </span>
                       </div>
-                      <div className="flex items-center bg-yellow-50 px-2 py-1 rounded-md">
-                        <span className="w-2.5 h-2.5 rounded-full bg-yellow-500 mr-1.5"></span>
+                      <div className="flex items-center bg-yellow-50 px-1.5 py-1 rounded-md">
+                        <span className="w-2 h-2 rounded-full bg-yellow-500 mr-1"></span>
                         <span className="text-gray-700 truncate">
-                          {product.fat !== null ? `${product.fat}g 지방` : '정보 없음'}
+                          {product.fat !== null ? `${product.fat}g 지방` : '-'}
                         </span>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </>
-          ))}
-        </div>
+              </React.Fragment>
+            ))}
+          </div>
+          <Pagination />
+        </>
+      ) : (
+        // 목록형 뷰 (List View)
+        <>
+          <div className="flex flex-col gap-4">
+            {paginatedResults.map((product, index) => (
+              <React.Fragment key={`product-list-${product.id}`}>
+                {/* 3개마다 광고 추가 */}
+                {index > 0 && index % 3 === 0 && (
+                  <div key={`ad-list-${index}`} className="my-2">
+                    <BannerAd />
+                  </div>
+                )}
+                
+                <div 
+                  className="bg-white rounded-xl shadow-sm overflow-hidden card-hover border border-pink-100 cursor-pointer p-4"
+                  onClick={() => handleProductSelect(product.id)}
+                >
+                  <div className="flex flex-wrap md:flex-nowrap">
+                    <div className="w-full md:w-8/12">
+                      <div className="flex items-center text-xs font-medium text-pink-600 mb-2">
+                        <div className="bg-pink-50 py-0.5 px-2 rounded-full w-fit flex items-center">
+                          <Store className="h-2.5 w-2.5 mr-1" />
+                          {getFranchiseName(product.franchiseId)}
+                        </div>
+                        
+                        {product.featuredProduct && (
+                          <div className="ml-2 bg-pink-500/90 text-white text-xs py-0.5 px-1.5 rounded-full flex items-center">
+                            <Heart className="h-2.5 w-2.5 mr-0.5" /> 인기
+                          </div>
+                        )}
+                      </div>
+                      
+                      <h3 className="text-lg font-heading font-semibold mb-2 gradient-text">{product.name}</h3>
+                      
+                      {product.allergens && product.allergens.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mb-3">
+                          {getAllergenNames(product.allergens as number[]).map((allergen, idx) => (
+                            <AllergyBadge key={idx} name={allergen as string} />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="w-full md:w-4/12 mt-3 md:mt-0 md:pl-4 md:border-l border-pink-50">
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div className="flex items-center bg-pink-50 px-2 py-1 rounded-md">
+                          <span className="w-2.5 h-2.5 rounded-full bg-primary mr-1.5"></span>
+                          <span className="text-gray-700">{product.calories} kcal</span>
+                        </div>
+                        <div className="flex items-center bg-green-50 px-2 py-1 rounded-md">
+                          <span className="w-2.5 h-2.5 rounded-full bg-green-500 mr-1.5"></span>
+                          <span className="text-gray-700 truncate">
+                            {product.protein !== null ? `${product.protein}g 단백질` : '-'}
+                          </span>
+                        </div>
+                        <div className="flex items-center bg-blue-50 px-2 py-1 rounded-md">
+                          <span className="w-2.5 h-2.5 rounded-full bg-blue-500 mr-1.5"></span>
+                          <span className="text-gray-700 truncate">
+                            {product.carbs !== null ? `${product.carbs}g 탄수화물` : '-'}
+                          </span>
+                        </div>
+                        <div className="flex items-center bg-yellow-50 px-2 py-1 rounded-md">
+                          <span className="w-2.5 h-2.5 rounded-full bg-yellow-500 mr-1.5"></span>
+                          <span className="text-gray-700 truncate">
+                            {product.fat !== null ? `${product.fat}g 지방` : '-'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </React.Fragment>
+            ))}
+          </div>
+          <Pagination />
+        </>
       )}
       
       {/* 결과 목록 아래에 반응형 광고 추가 */}
-      {!isLoading && Array.isArray(searchResults) && searchResults.length > 0 && (
+      {!isLoading && Array.isArray(filteredResults) && filteredResults.length > 0 && (
         <div className="mt-12">
           <ResponsiveAd />
+        </div>
+      )}
+      
+      {/* 검색 결과 통계 */}
+      {filteredResults.length > 0 && (
+        <div className="mt-8 text-center text-sm text-gray-500">
+          총 <span className="font-medium text-primary">{filteredResults.length}</span>개 결과 중 
+          <span className="font-medium text-primary"> {(currentPage - 1) * itemsPerPage + 1}</span>-
+          <span className="font-medium text-primary">{Math.min(currentPage * itemsPerPage, filteredResults.length)}</span>번 표시 중
         </div>
       )}
     </>
