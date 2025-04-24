@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "@/hooks/use-search-params";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { Button } from "@/components/ui/button";
+import { RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface FilterBarProps {
@@ -40,6 +42,29 @@ export function FilterBar({ className, onFilterChange }: FilterBarProps) {
     }
   }, [filters, onFilterChange]);
 
+  // 필터 초기화 함수
+  const resetFilters = useCallback(() => {
+    const defaultFilters = {
+      calorieRange: "0",
+      proteinRange: "0",
+      carbsRange: "0",
+      fatRange: "0"
+    };
+    
+    setFilters(defaultFilters);
+    
+    if (onFilterChange) {
+      onFilterChange(defaultFilters);
+    }
+    
+    // URL 파라미터에서 필터 값 제거
+    const newParams = new URLSearchParams(searchParams);
+    Object.keys(defaultFilters).forEach(key => {
+      newParams.delete(key);
+    });
+    setSearchParams(newParams);
+  }, [onFilterChange, searchParams, setSearchParams]);
+
   useEffect(() => {
     // Update URL search params when filters change
     const newParams = new URLSearchParams(searchParams);
@@ -57,10 +82,28 @@ export function FilterBar({ className, onFilterChange }: FilterBarProps) {
     setSearchParams(newParams);
   }, [filters, setSearchParams]);
 
+  // 활성화된 필터가 있는지 확인
+  const hasActiveFilters = Object.values(filters).some(value => value !== "0" && value !== "");
+
   return (
     <div className={cn("mb-8 bg-white p-4 rounded-lg shadow-md", className)}>
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-        <h2 className="text-xl font-heading font-bold mb-4 md:mb-0">필터</h2>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+        <div className="flex items-center">
+          <h2 className="text-xl font-heading font-bold">필터</h2>
+          
+          {/* 필터 초기화 버튼 */}
+          {hasActiveFilters && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={resetFilters}
+              className="ml-3 text-xs text-pink-600 hover:text-pink-700 hover:bg-pink-50 border border-pink-100"
+            >
+              <RotateCcw className="h-3.5 w-3.5 mr-1" />
+              필터 초기화
+            </Button>
+          )}
+        </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full md:w-auto">
           {/* Calories Filter */}
