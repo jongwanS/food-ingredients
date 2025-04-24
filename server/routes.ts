@@ -212,7 +212,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const proteinRange = req.query.proteinRange as string;
         // 숫자로 직접 전달되는 경우 (슬라이더에서 직접 설정한 값)
         if (!isNaN(Number(proteinRange)) && Number(proteinRange) > 0) {
-          parsedParams.maxProtein = Number(proteinRange);
+          // 단백질은 "이상" 필터링이 더 유용함 (헬스 유저들이 단백질 높은 제품 찾기 위해)
+          parsedParams.minProtein = Number(proteinRange);
         }
         // 기존 문자열 패턴 지원 (하위 호환성)
         else if (proteinRange === "0-10") {
