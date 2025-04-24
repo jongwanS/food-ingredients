@@ -126,25 +126,66 @@ export async function loadProductData(): Promise<Product[]> {
       for (const item of menuItems) {
         // 식품명에서 카테고리 제거 (예: "버거_빅맥" -> "빅맥")
         const nameParts = item.식품명.split('_');
-        const category = nameParts[0] || '';
+        const productCategory = nameParts[0] || '';
         const productName = nameParts.length > 1 ? nameParts[1] : item.식품명;
+        
+        // 카테고리 ID 결정 (명시적 카테고리 매핑)
+        let categoryId = franchiseInfo.categoryId; // 기본값은 프랜차이즈 카테고리
+        
+        // 제품명이나 카테고리명에 따라 카테고리 자동 분류
+        if (productCategory.includes('버거') || 
+            productName.toLowerCase().includes('버거') || 
+            productName.toLowerCase().includes('와퍼') ||
+            productName.toLowerCase().includes('불고기') ||
+            franchiseName === 'KFC') {
+          categoryId = 1; // 버거 카테고리
+        } else if (productCategory.includes('치킨') || 
+                  productName.toLowerCase().includes('치킨') || 
+                  productName.toLowerCase().includes('윙') ||
+                  productName.toLowerCase().includes('봉')) {
+          categoryId = 2; // 치킨 카테고리
+        } else if (productCategory.includes('피자') || 
+                  productName.toLowerCase().includes('피자')) {
+          categoryId = 3; // 피자 카테고리
+        } else if (productCategory.includes('커피') || 
+                  productCategory.includes('음료') ||
+                  productName.toLowerCase().includes('커피') ||
+                  productName.toLowerCase().includes('라떼') ||
+                  productName.toLowerCase().includes('에스프레소')) {
+          categoryId = 4; // 커피/음료 카테고리
+        } else if (productCategory.includes('디저트') || 
+                  productCategory.includes('케이크') ||
+                  productName.toLowerCase().includes('케이크') ||
+                  productName.toLowerCase().includes('쿠키') ||
+                  productName.toLowerCase().includes('마카롱')) {
+          categoryId = 5; // 디저트 카테고리
+        }
         
         // 랜덤 이미지 URL (카테고리별로 다른 이미지 선택)
         let imageUrl = "https://cdn-icons-png.flaticon.com/512/5787/5787253.png"; // 기본 이미지
         
-        if (category.includes('버거')) {
-          imageUrl = "https://cdn-icons-png.flaticon.com/512/5787/5787253.png";
-        } else if (category.includes('치킨')) {
-          imageUrl = "https://cdn-icons-png.flaticon.com/512/7993/7993268.png";
-        } else if (category.includes('피자')) {
-          imageUrl = "https://cdn-icons-png.flaticon.com/512/6978/6978292.png";
-        } else if (category.includes('커피') || category.includes('음료')) {
-          imageUrl = "https://images.unsplash.com/photo-1509042239860-f550ce710b93?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500";
+        // 카테고리 ID에 따라 이미지 설정
+        switch (categoryId) {
+          case 1: // 버거
+            imageUrl = "https://cdn-icons-png.flaticon.com/512/5787/5787253.png";
+            break;
+          case 2: // 치킨
+            imageUrl = "https://cdn-icons-png.flaticon.com/512/7993/7993268.png";
+            break;
+          case 3: // 피자
+            imageUrl = "https://cdn-icons-png.flaticon.com/512/6978/6978292.png";
+            break;
+          case 4: // 커피/음료
+            imageUrl = "https://images.unsplash.com/photo-1509042239860-f550ce710b93?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=500";
+            break;
+          case 5: // 디저트
+            imageUrl = "https://cdn-icons-png.flaticon.com/512/3361/3361447.png";
+            break;
         }
         
         // 알러젠 임의 할당 (실제 데이터에 따라 조정 필요)
         const allergenIds: number[] = [];
-        if (category.includes('버거') || category.includes('샌드위치')) {
+        if (productCategory.includes('버거') || productCategory.includes('샌드위치')) {
           allergenIds.push(1, 2, 8); // 밀, 유제품, 대두
         }
         if (productName.toLowerCase().includes('치즈')) {
@@ -160,20 +201,31 @@ export async function loadProductData(): Promise<Product[]> {
         // 제품 무게 추정 (g 단위)
         // 카테고리별 평균 중량 추정
         let estimatedWeight = 0;
-        if (category.includes('버거')) {
-          estimatedWeight = 250; // 버거 평균 무게 (g)
-        } else if (category.includes('치킨')) {
-          estimatedWeight = 200; // 치킨류 평균 무게 (g)
-        } else if (category.includes('피자')) {
-          estimatedWeight = 300; // 피자 슬라이스 평균 무게 (g)
-        } else if (category.includes('샌드위치')) {
-          estimatedWeight = 220; // 샌드위치 평균 무게 (g)
-        } else if (category.includes('커피') || category.includes('음료')) {
-          estimatedWeight = 350; // 음료 평균 무게 (mL)
-        } else if (category.includes('디저트') || category.includes('케이크')) {
-          estimatedWeight = 120; // 디저트류 평균 무게 (g)
-        } else {
-          estimatedWeight = 200; // 기본 추정 무게 (g)
+        
+        // 카테고리 ID에 따른 추정 무게 설정
+        switch (categoryId) {
+          case 1: // 버거
+            estimatedWeight = 250; // 버거 평균 무게 (g)
+            break;
+          case 2: // 치킨
+            estimatedWeight = 200; // 치킨류 평균 무게 (g)
+            break;
+          case 3: // 피자
+            estimatedWeight = 300; // 피자 슬라이스 평균 무게 (g)
+            break;
+          case 4: // 커피/음료
+            estimatedWeight = 350; // 음료 평균 무게 (mL)
+            break;
+          case 5: // 디저트
+            estimatedWeight = 120; // 디저트류 평균 무게 (g)
+            break;
+          default:
+            // 제품 이름에 따른 추정
+            if (productName.toLowerCase().includes('샌드위치')) {
+              estimatedWeight = 220; // 샌드위치 평균 무게 (g)
+            } else {
+              estimatedWeight = 200; // 기본 추정 무게 (g)
+            }
         }
         
         // 특정 키워드에 따라 중량 추가 조정
@@ -208,6 +260,7 @@ export async function loadProductData(): Promise<Product[]> {
           franchiseId: franchiseInfo.id,
           description: `${franchiseName}의 ${productName} 메뉴입니다.`,
           imageUrl: imageUrl,
+          categoryId: categoryId, // 자동 분류된 카테고리 ID 설정
           calories: Math.round(Number(item['에너지(kcal)']) * weightFactor) || 0,
           protein: Math.round(Number(item['단백질(g)']) * weightFactor * 10) / 10 || 0,
           carbs: Math.round(Number(item['탄수화물(g)']) * weightFactor * 10) / 10 || 0,

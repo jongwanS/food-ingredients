@@ -71,6 +71,7 @@ export const products = pgTable("products", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   franchiseId: integer("franchise_id").notNull(),
+  categoryId: integer("category_id"), // 자동 분류된 카테고리 ID
   description: text("description"),
   imageUrl: text("image_url").notNull(),
   calories: integer("calories").notNull(),
@@ -93,6 +94,7 @@ export const products = pgTable("products", {
 export const insertProductSchema = createInsertSchema(products).pick({
   name: true,
   franchiseId: true,
+  categoryId: true,
   description: true,
   imageUrl: true,
   calories: true,
