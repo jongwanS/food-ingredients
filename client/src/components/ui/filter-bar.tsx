@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "@/hooks/use-search-params";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
@@ -23,15 +23,22 @@ export function FilterBar({ className, onFilterChange }: FilterBarProps) {
     fatRange: searchParams.get("fatRange") || "0"
   });
 
-  const handleFilterChange = (value: string, filterName: string) => {
+  const handleFilterChange = useCallback((value: string, filterName: string) => {
     // 값이 0인 경우 필터 제거 (빈 문자열로 설정)
     const newValue = value === "0" || value === "all" ? "" : value;
     
-    setFilters(prev => ({
-      ...prev,
+    const updatedFilters = {
+      ...filters,
       [filterName]: newValue
-    }));
-  };
+    };
+    
+    setFilters(updatedFilters);
+    
+    // 값 변경 시 즉시 콜백 호출하여 실시간 필터링
+    if (onFilterChange) {
+      onFilterChange(updatedFilters);
+    }
+  }, [filters, onFilterChange]);
 
   useEffect(() => {
     // Update URL search params when filters change
@@ -48,12 +55,7 @@ export function FilterBar({ className, onFilterChange }: FilterBarProps) {
     
     // Update the URL with new params
     setSearchParams(newParams);
-    
-    // Call the onFilterChange callback if provided
-    if (onFilterChange) {
-      onFilterChange(filters);
-    }
-  }, [filters, setSearchParams, onFilterChange]);
+  }, [filters, setSearchParams]);
 
   return (
     <div className={cn("mb-8 bg-white p-4 rounded-lg shadow-md", className)}>
@@ -73,15 +75,6 @@ export function FilterBar({ className, onFilterChange }: FilterBarProps) {
               step={100}
               value={[parseInt(filters.calorieRange) || 0]}
               onValueChange={(value) => handleFilterChange(value[0].toString(), "calorieRange")}
-              onValueCommit={(value) => {
-                // 값이 변경되면 즉시 onFilterChange 호출
-                if (onFilterChange) {
-                  onFilterChange({
-                    ...filters,
-                    calorieRange: value[0].toString()
-                  });
-                }
-              }}
               className="mb-4"
             />
           </div>
@@ -98,15 +91,6 @@ export function FilterBar({ className, onFilterChange }: FilterBarProps) {
               step={5}
               value={[parseInt(filters.proteinRange) || 0]}
               onValueChange={(value) => handleFilterChange(value[0].toString(), "proteinRange")}
-              onValueCommit={(value) => {
-                // 값이 변경되면 즉시 onFilterChange 호출
-                if (onFilterChange) {
-                  onFilterChange({
-                    ...filters,
-                    proteinRange: value[0].toString()
-                  });
-                }
-              }}
               className="mb-4"
             />
           </div>
@@ -123,15 +107,6 @@ export function FilterBar({ className, onFilterChange }: FilterBarProps) {
               step={10}
               value={[parseInt(filters.carbsRange) || 0]}
               onValueChange={(value) => handleFilterChange(value[0].toString(), "carbsRange")}
-              onValueCommit={(value) => {
-                // 값이 변경되면 즉시 onFilterChange 호출
-                if (onFilterChange) {
-                  onFilterChange({
-                    ...filters,
-                    carbsRange: value[0].toString()
-                  });
-                }
-              }}
               className="mb-4"
             />
           </div>
@@ -148,15 +123,6 @@ export function FilterBar({ className, onFilterChange }: FilterBarProps) {
               step={5}
               value={[parseInt(filters.fatRange) || 0]}
               onValueChange={(value) => handleFilterChange(value[0].toString(), "fatRange")}
-              onValueCommit={(value) => {
-                // 값이 변경되면 즉시 onFilterChange 호출
-                if (onFilterChange) {
-                  onFilterChange({
-                    ...filters,
-                    fatRange: value[0].toString()
-                  });
-                }
-              }}
               className="mb-4"
             />
           </div>

@@ -74,16 +74,19 @@ export default function SearchResults() {
   });
   
   // 클라이언트 측에서 검색 결과 필터링 (영양소 기준)
-  const searchResults = useMemo(() => {
-    if (!initialSearchResults || !Array.isArray(initialSearchResults)) return [];
+  const [filteredResults, setFilteredResults] = useState<Product[]>([]);
+  
+  // 필터링 함수를 별도로 정의
+  const applyFilters = (results: Product[]) => {
+    if (!results || !Array.isArray(results)) return [];
     
     // 필터 값이 모두 없으면 전체 결과 반환
     if (!calorieRange && !proteinRange && !carbsRange && !fatRange) {
-      return initialSearchResults;
+      return results;
     }
     
     // 필터링 적용
-    return initialSearchResults.filter(product => {
+    return results.filter(product => {
       // 칼로리 필터
       if (calorieRange && parseInt(calorieRange) > 0) {
         if (product.calories > parseInt(calorieRange)) return false;
@@ -107,7 +110,17 @@ export default function SearchResults() {
       // 모든 필터 조건을 통과한 경우
       return true;
     });
+  };
+  
+  // 초기 검색 결과가 변경되거나 필터가 변경될 때마다 필터링된 결과 업데이트
+  useEffect(() => {
+    if (initialSearchResults) {
+      setFilteredResults(applyFilters(initialSearchResults));
+    }
   }, [initialSearchResults, calorieRange, proteinRange, carbsRange, fatRange]);
+  
+  // 필터링된 결과를 사용
+  const searchResults = filteredResults;
   
   // Fetch allergens for badges
   const { data: allergens } = useQuery({
@@ -169,27 +182,12 @@ export default function SearchResults() {
     }
   };
   
-  // 필터 변경 시 실행할 함수
+  // 필터 변경 시 실행할 함수 - FilterBar로부터 호출됨
   const handleFilterChange = (newFilters: any) => {
-    // 필터 변경 시 URL 파라미터도 함께 업데이트
-    const newParams = new URLSearchParams(searchParams);
-    
-    // 필터 파라미터 추가 (값이 없으면 삭제)
-    Object.entries(newFilters).forEach(([key, value]) => {
-      if (value) {
-        newParams.set(key, String(value));
-      } else {
-        newParams.delete(key);
-      }
-    });
-    
-    // URL 업데이트 (필터링은 클라이언트 측에서 처리하므로 서버 쿼리는 무효화하지 않음)
-    setSearchParams(newParams);
-    
-    // 이제 서버 쿼리를 무효화하지 않고 클라이언트 측에서 필터링합니다
-    // queryClient.invalidateQueries({ 
-    //   queryKey: ['/api/search'] 
-    // });
+    console.log("필터 변경됨:", newFilters); // 디버깅용
+
+    // 필터 파라미터는 FilterBar에서 이미 URL에 업데이트됨
+    // 여기서는 아무것도 할 필요가 없음 (useEffect에서 URL 파라미터 변경 감지하여 필터링)
   };
 
   // Scroll to top on page load
