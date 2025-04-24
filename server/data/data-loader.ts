@@ -472,8 +472,39 @@ export async function searchProducts(query?: string, categoryId?: number, franch
   if (query) {
     const queryLower = query.toLowerCase();
     
+    // 먼저 제품 카테고리 이름이나 프랜차이즈 이름 기반으로 검색 (정확성 향상)
+    const categoryMatches = categories.find(cat => 
+      cat.name.toLowerCase().includes(queryLower) || 
+      cat.nameKorean.toLowerCase().includes(queryLower)
+    );
+    
+    // 카테고리에 해당하는 프랜차이즈 목록
+    let categoryFranchiseIds: number[] = [];
+    if (categoryMatches) {
+      categoryFranchiseIds = franchises
+        .filter(f => f.categoryId === categoryMatches.id)
+        .map(f => f.id);
+      
+      // 이 카테고리에 속한 프랜차이즈의 제품만 필터링
+      if (categoryFranchiseIds.length > 0) {
+        results = results.filter(p => categoryFranchiseIds.includes(p.franchiseId));
+        
+        // 카테고리 이름과 제품 이름에 모두 검색어가 포함된 제품이 있으면 우선 반환
+        const categoryAndNameMatches = results.filter(p => 
+          p.name.toLowerCase().includes(queryLower)
+        );
+        
+        if (categoryAndNameMatches.length > 0) {
+          return categoryAndNameMatches;
+        }
+        
+        // 카테고리 검색 결과가 있으면 반환 (좀 더 정확한 카테고리 검색 결과)
+        return results;
+      }
+    }
+    
     // 검색어를 토큰으로 분리 (예: "더블쿼터파운더" -> ["더블", "쿼터", "파운더"])
-    const searchTokens = queryLower.split(/[\s-_]/);
+    const searchTokens = queryLower.split(/[\s-_]/).filter(t => t.length > 1);
     
     // 1. 정확히 일치하는 제품 찾기
     const exactMatches = results.filter(product => 
@@ -485,14 +516,21 @@ export async function searchProducts(query?: string, categoryId?: number, franch
       return exactMatches;
     }
     
-    // 2. 모든 토큰이 제품 이름에 포함된 제품 찾기 (AND 검색)
+    // 2. 전체 검색어가 제품 이름에 포함된 경우 (부분 문자열 검색)
+    const fullQueryMatches = results.filter(product => 
+      product.name.toLowerCase().includes(queryLower)
+    );
+    
+    if (fullQueryMatches.length > 0) {
+      return fullQueryMatches;
+    }
+    
+    // 3. 모든 토큰이 제품 이름에 포함된 제품 찾기 (AND 검색, 좀 더 엄격한 기준)
     const tokenMatches = results.filter(product => {
       const productNameLower = product.name.toLowerCase();
-      const productDescLower = product.description ? product.description.toLowerCase() : '';
       
       return searchTokens.every(token => 
-        productNameLower.includes(token) || 
-        productDescLower.includes(token)
+        productNameLower.includes(token)
       );
     });
     
@@ -500,26 +538,11 @@ export async function searchProducts(query?: string, categoryId?: number, franch
       return tokenMatches;
     }
     
-    // 3. 일부 토큰이라도 포함된 제품 찾기 (OR 검색)
-    const partialMatches = results.filter(product => {
-      const productNameLower = product.name.toLowerCase();
-      const productDescLower = product.description ? product.description.toLowerCase() : '';
-      
-      return searchTokens.some(token => 
-        productNameLower.includes(token) || 
-        productDescLower.includes(token)
-      );
-    });
-    
-    if (partialMatches.length > 0) {
-      results = partialMatches;
-    } else {
-      // 4. 위의 방법으로 찾지 못했을 경우 부분 문자열 검색
-      results = results.filter(product => 
-        product.name.toLowerCase().includes(queryLower) ||
-        (product.description && product.description.toLowerCase().includes(queryLower))
-      );
-    }
+    // 4. 이름과 설명에서 검색 (좀 더 넓은 범위로 검색)
+    results = results.filter(product => 
+      product.name.toLowerCase().includes(queryLower) ||
+      (product.description && product.description.toLowerCase().includes(queryLower))
+    );
   }
   
   // 카테고리 ID로 필터링
