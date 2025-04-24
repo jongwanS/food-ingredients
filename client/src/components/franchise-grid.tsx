@@ -30,16 +30,11 @@ export function FranchiseGrid({ categoryId }: FranchiseGridProps) {
   
   if (isLoading) {
     return (
-      <div className="grid grid-cols-2 gap-4">
-        {Array.from({ length: 6 }).map((_, index) => (
-          <Card key={index} className="overflow-hidden bg-white border border-pink-100">
-            <div className="flex items-center justify-center p-6">
-              <Skeleton className="h-20 w-20 rounded-full" />
-            </div>
-            <CardContent className="p-4 border-t border-pink-50">
-              <Skeleton className="h-6 w-32 mx-auto" />
-            </CardContent>
-          </Card>
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
+        {Array.from({ length: 10 }).map((_, index) => (
+          <div key={index} className="aspect-square">
+            <Skeleton className="h-full w-full rounded-xl" />
+          </div>
         ))}
       </div>
     );
@@ -64,29 +59,22 @@ export function FranchiseGrid({ categoryId }: FranchiseGridProps) {
   }
   
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
       {franchises?.map((franchise: Franchise) => (
-        <Card 
+        <div 
           key={franchise.id}
-          className="bg-white rounded-xl shadow-sm overflow-hidden card-hover border border-pink-100"
+          className="aspect-square rounded-xl shadow-sm overflow-hidden card-hover border border-pink-100 bg-white cursor-pointer"
           onClick={() => handleFranchiseSelect(franchise.id)}
         >
-          <div className="h-48 bg-gradient-to-b from-pink-50 to-white flex items-center justify-center p-6 relative">
-            <div className="absolute top-3 right-3">
-              <ArrowRightCircle className="h-5 w-5 text-primary opacity-70" />
+          <div className="h-full w-full flex flex-col items-center justify-center p-3 relative">
+            <div className="absolute top-2 right-2">
+              <ArrowRightCircle className="h-4 w-4 text-primary opacity-70" />
             </div>
-            <div className="w-full max-w-[160px] h-auto transition-transform duration-300 hover:scale-105">
-              <img 
-                src={franchise.logoUrl} 
-                alt={franchise.name} 
-                className="w-full h-auto object-contain drop-shadow-sm"
-              />
+            <div className="flex-grow flex items-center justify-center">
+              <h3 className="text-base font-heading font-semibold text-pink-700 text-center">{franchise.name}</h3>
             </div>
           </div>
-          <CardContent className="p-4 border-t border-pink-50 text-center">
-            <h3 className="text-lg font-heading font-semibold gradient-text">{franchise.name}</h3>
-          </CardContent>
-        </Card>
+        </div>
       ))}
     </div>
   );

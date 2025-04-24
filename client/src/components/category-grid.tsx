@@ -21,10 +21,10 @@ export function CategoryGrid() {
   
   if (isLoading) {
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-        {Array.from({ length: 8 }).map((_, index) => (
-          <div key={index} className="category-card">
-            <Skeleton className="h-48 w-full rounded-lg" />
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
+        {Array.from({ length: 10 }).map((_, index) => (
+          <div key={index} className="aspect-square">
+            <Skeleton className="h-full w-full rounded-xl" />
           </div>
         ))}
       </div>
@@ -41,22 +41,17 @@ export function CategoryGrid() {
   }
   
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
       {categories?.map((category: Category) => (
         <div 
           key={category.id}
-          className="category-card card-hover rounded-xl overflow-hidden cursor-pointer"
+          className="aspect-square category-card card-hover rounded-xl overflow-hidden cursor-pointer"
           onClick={() => handleCategorySelect(category.id)}
         >
-          <div className="h-48 bg-pink-50/80 border border-pink-100 rounded-xl relative overflow-hidden flex flex-col items-center justify-center">
-            <img 
-              src={category.imageUrl} 
-              alt={category.nameKorean} 
-              className="w-24 h-24 object-contain mb-2 transition-transform duration-300 hover:scale-110"
-            />
-            <div className="category-name flex justify-center items-center mt-2 bg-white/70 rounded-full px-4 py-1 shadow-sm">
-              <h3 className="text-lg font-heading font-semibold text-pink-700">{category.nameKorean}</h3>
-              <Sparkles className="h-4 w-4 text-pink-400 ml-1" />
+          <div className="h-full w-full bg-pink-50/80 border border-pink-100 rounded-xl relative overflow-hidden flex flex-col items-center justify-center p-2">
+            <div className="category-name flex flex-col justify-center items-center text-center">
+              <h3 className="text-base font-heading font-semibold text-pink-700">{category.nameKorean}</h3>
+              <Sparkles className="h-4 w-4 text-pink-400 mt-1" />
             </div>
           </div>
         </div>
