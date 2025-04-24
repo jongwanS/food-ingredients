@@ -15,12 +15,32 @@ interface ProductDetailProps {
 
 export function ProductDetail({ productId }: ProductDetailProps) {
   const [, navigate] = useLocation();
+  const [isFavorite, setIsFavorite] = useState(false);
+  const { toast } = useToast();
   
   // Fetch product details
   const { data: product, isLoading, error } = useQuery({
     queryKey: ['/api/products', productId],
     queryFn: () => fetch(`/api/products/${productId}`).then(res => res.json()),
   });
+  
+  // 좋아요 상태 체크
+  useEffect(() => {
+    if (product) {
+      const favoritesString = localStorage.getItem('favorites');
+      if (favoritesString) {
+        try {
+          const favorites = JSON.parse(favoritesString);
+          const isProductFavorite = Array.isArray(favorites) && 
+            favorites.some((fav: any) => fav.id === product.id);
+          setIsFavorite(isProductFavorite);
+        } catch (e) {
+          console.error('로컬스토리지 에러:', e);
+          setIsFavorite(false);
+        }
+      }
+    }
+  }, [product]);
   
   // Fetch franchises for franchise name
   const { data: franchises } = useQuery({
@@ -52,6 +72,66 @@ export function ProductDetail({ productId }: ProductDetailProps) {
   const handleBack = () => {
     // Go back to previous page
     window.history.back();
+  };
+  
+  // 좋아요 토글 함수
+  const toggleFavorite = () => {
+    if (!product) return;
+    
+    try {
+      const favoritesString = localStorage.getItem('favorites');
+      let favorites = [];
+      
+      if (favoritesString) {
+        favorites = JSON.parse(favoritesString);
+        if (!Array.isArray(favorites)) favorites = [];
+      }
+      
+      // 이미 좋아요한 상품인지 확인
+      const index = favorites.findIndex((item: any) => item.id === product.id);
+      
+      if (index >= 0) {
+        // 좋아요 삭제
+        favorites.splice(index, 1);
+        setIsFavorite(false);
+        toast({
+          title: "좋아요 삭제",
+          description: "목록에서 삭제되었습니다.",
+          variant: "default",
+        });
+      } else {
+        // 좋아요 추가
+        // 필요한 정보만 저장 (용량 최적화)
+        const {
+          id, name, description, franchiseId, categoryId, calories, protein, fat, carbs
+        } = product;
+        
+        favorites.push({
+          id, name, description, franchiseId, categoryId, calories, protein, fat, carbs
+        });
+        
+        setIsFavorite(true);
+        toast({
+          title: "좋아요 추가",
+          description: "목록에 추가되었습니다.",
+          variant: "default",
+        });
+      }
+      
+      // 로컬스토리지에 저장
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+      
+      // 커스텀 이벤트 발생 (헤더의 카운트 업데이트를 위해)
+      window.dispatchEvent(new Event('favoritesUpdated'));
+      
+    } catch (e) {
+      console.error('좋아요 처리 중 오류 발생:', e);
+      toast({
+        title: "오류 발생",
+        description: "좋아요 처리 중 문제가 발생했습니다.",
+        variant: "destructive",
+      });
+    }
   };
   
   if (isLoading) {
@@ -152,13 +232,26 @@ export function ProductDetail({ productId }: ProductDetailProps) {
           </div>
         )}
         
-        <Button 
-          className="mb-6 bg-white hover:bg-white/90 text-primary shadow-sm border border-pink-200"
-          onClick={handleBack}
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          목록으로 돌아가기
-        </Button>
+        <div className="flex flex-wrap gap-3 mb-6">
+          <Button 
+            className="bg-white hover:bg-white/90 text-primary shadow-sm border border-pink-200"
+            onClick={handleBack}
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            목록으로 돌아가기
+          </Button>
+          
+          <Button
+            variant={isFavorite ? "destructive" : "secondary"}
+            onClick={toggleFavorite}
+            className={isFavorite 
+              ? "bg-pink-500 hover:bg-pink-600" 
+              : "bg-pink-100 hover:bg-pink-200 text-pink-700"}
+          >
+            <Heart className={`h-4 w-4 mr-2 ${isFavorite ? "fill-white" : ""}`} />
+            {isFavorite ? "좋아요 취소" : "좋아요 추가"}
+          </Button>
+        </div>
       </div>
       
       {/* Nutritional Information */}

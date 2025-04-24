@@ -1,10 +1,13 @@
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AllergyBadge } from "@/components/allergy-badge";
+import { Button } from "@/components/ui/button";
 import { Product } from "@/types";
 import { useSearchParams } from "@/hooks/use-search-params";
+import { useToast } from "@/hooks/use-toast";
 import { Heart, AlertCircle, Flame } from "lucide-react";
 
 interface ProductListProps {
@@ -14,6 +17,41 @@ interface ProductListProps {
 export function ProductList({ franchiseId }: ProductListProps) {
   const [, navigate] = useLocation();
   const [searchParams] = useSearchParams();
+  const [favoriteProducts, setFavoriteProducts] = useState<number[]>([]);
+  const { toast } = useToast();
+  
+  // 로컬 스토리지에서 좋아요 상태 로드
+  useEffect(() => {
+    const loadFavorites = () => {
+      try {
+        const storedFavorites = localStorage.getItem('favorites');
+        if (storedFavorites) {
+          const parsedFavorites = JSON.parse(storedFavorites);
+          if (Array.isArray(parsedFavorites)) {
+            const favoriteIds = parsedFavorites.map((fav: any) => fav.id);
+            setFavoriteProducts(favoriteIds);
+          }
+        }
+      } catch (error) {
+        console.error('좋아요 목록을 불러오는 중 오류가 발생했습니다:', error);
+      }
+    };
+    
+    loadFavorites();
+    
+    // 스토리지 변경 이벤트 리스너
+    const handleStorageChange = () => {
+      loadFavorites();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('favoritesUpdated', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('favoritesUpdated', handleStorageChange);
+    };
+  }, []);
   
   // Get filter params from URL
   const calorieRange = searchParams.get("calorieRange") || "";
@@ -74,6 +112,61 @@ export function ProductList({ franchiseId }: ProductListProps) {
     navigate(`/product/${productId}`);
   };
   
+  // 좋아요 토글 함수
+  const toggleFavorite = (e: React.MouseEvent, product: Product) => {
+    e.stopPropagation(); // 상품 클릭 이벤트 전파 방지
+    
+    try {
+      const favoritesString = localStorage.getItem('favorites');
+      let favorites = [];
+      
+      if (favoritesString) {
+        favorites = JSON.parse(favoritesString);
+        if (!Array.isArray(favorites)) favorites = [];
+      }
+      
+      const index = favorites.findIndex((item: any) => item.id === product.id);
+      
+      if (index >= 0) {
+        // 좋아요 삭제
+        favorites.splice(index, 1);
+        toast({
+          title: "좋아요 삭제",
+          description: "목록에서 삭제되었습니다.",
+          variant: "default",
+        });
+      } else {
+        // 좋아요 추가 - 필요한 정보만 저장
+        const { id, name, description, franchiseId, categoryId, calories, protein, fat, carbs } = product;
+        favorites.push({ id, name, description, franchiseId, categoryId, calories, protein, fat, carbs });
+        
+        toast({
+          title: "좋아요 추가",
+          description: "목록에 추가되었습니다.",
+          variant: "default",
+        });
+      }
+      
+      // 로컬스토리지에 저장
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+      
+      // 좋아요 목록 상태 업데이트
+      const favoriteIds = favorites.map((item: any) => item.id);
+      setFavoriteProducts(favoriteIds);
+      
+      // 커스텀 이벤트 발생 (헤더의 카운트 업데이트를 위해)
+      window.dispatchEvent(new Event('favoritesUpdated'));
+      
+    } catch (e) {
+      console.error('좋아요 처리 중 오류 발생:', e);
+      toast({
+        title: "오류 발생",
+        description: "좋아요 처리 중 문제가 발생했습니다.",
+        variant: "destructive",
+      });
+    }
+  };
+  
   // Get allergen names for a product
   const getAllergenNames = (allergenIds: number[]) => {
     if (!allergens || !allergenIds) return [];
@@ -123,7 +216,21 @@ export function ProductList({ franchiseId }: ProductListProps) {
           className="aspect-square bg-white rounded-xl shadow-sm overflow-hidden card-hover border border-pink-100 cursor-pointer"
           onClick={() => handleProductSelect(product.id)}
         >
-          <div className="h-full w-full flex flex-col p-3">
+          <div className="h-full w-full flex flex-col p-3 relative">
+            {/* 좋아요 버튼 */}
+            <Button
+              variant="ghost" 
+              size="icon"
+              className={`absolute top-0 right-0 h-7 w-7 p-0 ${
+                favoriteProducts.includes(product.id) 
+                  ? 'text-pink-500' 
+                  : 'text-gray-400 hover:text-pink-400'
+              }`}
+              onClick={(e) => toggleFavorite(e, product)}
+            >
+              <Heart className={`h-5 w-5 ${favoriteProducts.includes(product.id) ? 'fill-current' : ''}`} />
+            </Button>
+
             {/* 제품 이름 영역 */}
             <div className="mb-2 text-center">
               <h3 className="text-base font-heading font-semibold gradient-text line-clamp-2">{product.name}</h3>
