@@ -59,7 +59,10 @@ const categories: Category[] = [
   { id: 9, name: "Tea/Bubble Tea", nameKorean: "차/밀크티", imageUrl: "https://cdn-icons-png.flaticon.com/512/2935/2935416.png" },
   { id: 10, name: "Waffle/Toast", nameKorean: "와플/토스트", imageUrl: "https://cdn-icons-png.flaticon.com/512/5339/5339150.png" },
   { id: 11, name: "Meal Kit", nameKorean: "밀키트", imageUrl: "https://cdn-icons-png.flaticon.com/512/1147/1147805.png" },
-  { id: 12, name: "Smoothie/Juice", nameKorean: "스무디/주스", imageUrl: "https://cdn-icons-png.flaticon.com/512/4489/4489244.png" }
+  { id: 12, name: "Smoothie/Juice", nameKorean: "스무디/주스", imageUrl: "https://cdn-icons-png.flaticon.com/512/4489/4489244.png" },
+  { id: 13, name: "Snack", nameKorean: "분식", imageUrl: "https://cdn-icons-png.flaticon.com/512/3075/3075977.png" },
+  { id: 14, name: "Western", nameKorean: "양식", imageUrl: "https://cdn-icons-png.flaticon.com/512/2252/2252075.png" },
+  { id: 15, name: "Nuts", nameKorean: "견과류", imageUrl: "https://cdn-icons-png.flaticon.com/512/2771/2771406.png" }
 ];
 
 // 알러젠 목록 (하드코딩)
@@ -168,7 +171,17 @@ const franchiseMap: { [key: string]: { id: number, categoryId: number, logoUrl: 
   // 12. 스무디/주스 카테고리
   "스무디킹": { id: 74, categoryId: 12, logoUrl: "https://via.placeholder.com/200x200/F2A629/FFFFFF?text=SK" },
   "마이요거트립": { id: 75, categoryId: 12, logoUrl: "https://via.placeholder.com/200x200/F75E73/FFFFFF?text=MY" },
-  "요거프레소": { id: 76, categoryId: 12, logoUrl: "https://via.placeholder.com/200x200/BFFFC0/6F00FF?text=YP" }
+  "요거프레소": { id: 76, categoryId: 12, logoUrl: "https://via.placeholder.com/200x200/BFFFC0/6F00FF?text=YP" },
+  "아임일리터": { id: 77, categoryId: 12, logoUrl: "https://via.placeholder.com/200x200/2980B9/FFFFFF?text=1L" },
+  
+  // 13. 분식 카테고리
+  "송사부수제쌀고로케": { id: 78, categoryId: 13, logoUrl: "https://via.placeholder.com/200x200/F39C12/FFFFFF?text=SS" },
+  "마리웨일237": { id: 79, categoryId: 13, logoUrl: "https://via.placeholder.com/200x200/1ABC9C/FFFFFF?text=MW" },
+  "츄러스1500": { id: 80, categoryId: 13, logoUrl: "https://via.placeholder.com/200x200/F1C40F/FFFFFF?text=CH" },
+  
+  // 15. 견과류 카테고리
+  "코코호도": { id: 81, categoryId: 15, logoUrl: "https://via.placeholder.com/200x200/8D6E63/FFFFFF?text=CH" },
+  "호밀호두": { id: 82, categoryId: 15, logoUrl: "https://via.placeholder.com/200x200/795548/FFFFFF?text=HM" }
 };
 
 // 프랜차이즈 정보 생성
@@ -254,6 +267,28 @@ export async function loadProductData(): Promise<Product[]> {
                   productName.toLowerCase().includes('티라미수') ||
                   productName.toLowerCase().includes('아이스크림')) {
           categoryId = 5; // 디저트 카테고리
+        } else if (productCategory.includes('국') || 
+                  productCategory.includes('찌개') ||
+                  productCategory.includes('비빔밥') ||
+                  productName.toLowerCase().includes('비빔밥') ||
+                  productName.toLowerCase().includes('김치') ||
+                  productName.toLowerCase().includes('된장') ||
+                  productName.toLowerCase().includes('찌개') ||
+                  productName.toLowerCase().includes('국밥')) {
+          categoryId = 6; // 한식 카테고리
+        } else if (productCategory.includes('초밥') || 
+                  productCategory.includes('우동') ||
+                  productName.toLowerCase().includes('초밥') ||
+                  productName.toLowerCase().includes('스시') ||
+                  productName.toLowerCase().includes('우동') ||
+                  productName.toLowerCase().includes('돈까스')) {
+          categoryId = 7; // 일식 카테고리
+        } else if (productCategory.includes('짜장') || 
+                  productCategory.includes('짬뽕') ||
+                  productName.toLowerCase().includes('짜장') ||
+                  productName.toLowerCase().includes('짬뽕') ||
+                  productName.toLowerCase().includes('탕수육')) {
+          categoryId = 8; // 중식 카테고리
         } else if (productCategory.includes('차') || 
                   productCategory.includes('티') ||
                   productName.toLowerCase().includes('밀크티') ||
@@ -280,6 +315,25 @@ export async function loadProductData(): Promise<Product[]> {
                   productName.toLowerCase().includes('주스') ||
                   productName.toLowerCase().includes('요거트')) {
           categoryId = 12; // 스무디/주스 카테고리
+        } else if (productCategory.includes('떡볶이') || 
+                  productCategory.includes('고로케') ||
+                  productName.toLowerCase().includes('떡볶이') ||
+                  productName.toLowerCase().includes('고로케') ||
+                  productName.toLowerCase().includes('핫도그') ||
+                  productName.toLowerCase().includes('김밥')) {
+          categoryId = 13; // 분식 카테고리
+        } else if (productCategory.includes('파스타') || 
+                  productCategory.includes('스테이크') ||
+                  productName.toLowerCase().includes('파스타') ||
+                  productName.toLowerCase().includes('스테이크') ||
+                  productName.toLowerCase().includes('리조또')) {
+          categoryId = 14; // 양식 카테고리
+        } else if (productCategory.includes('호두') || 
+                  productCategory.includes('땅콩') ||
+                  productName.toLowerCase().includes('호두') ||
+                  productName.toLowerCase().includes('땅콩') ||
+                  productName.toLowerCase().includes('견과')) {
+          categoryId = 15; // 견과류 카테고리
         }
         
         // 랜덤 이미지 URL (카테고리별로 다른 이미지 선택)
@@ -301,6 +355,36 @@ export async function loadProductData(): Promise<Product[]> {
             break;
           case 5: // 디저트
             imageUrl = "https://cdn-icons-png.flaticon.com/512/3361/3361447.png";
+            break;
+          case 6: // 한식
+            imageUrl = "https://cdn-icons-png.flaticon.com/512/2689/2689588.png";
+            break;
+          case 7: // 일식
+            imageUrl = "https://cdn-icons-png.flaticon.com/512/2252/2252075.png";
+            break;
+          case 8: // 중식
+            imageUrl = "https://cdn-icons-png.flaticon.com/512/2518/2518046.png";
+            break;
+          case 9: // 차/밀크티
+            imageUrl = "https://cdn-icons-png.flaticon.com/512/2935/2935416.png";
+            break;
+          case 10: // 와플/토스트
+            imageUrl = "https://cdn-icons-png.flaticon.com/512/5339/5339150.png";
+            break;
+          case 11: // 밀키트
+            imageUrl = "https://cdn-icons-png.flaticon.com/512/1147/1147805.png";
+            break;
+          case 12: // 스무디/주스
+            imageUrl = "https://cdn-icons-png.flaticon.com/512/4489/4489244.png";
+            break;
+          case 13: // 분식
+            imageUrl = "https://cdn-icons-png.flaticon.com/512/3075/3075977.png";
+            break;
+          case 14: // 양식
+            imageUrl = "https://cdn-icons-png.flaticon.com/512/2252/2252075.png";
+            break;
+          case 15: // 견과류
+            imageUrl = "https://cdn-icons-png.flaticon.com/512/2771/2771406.png";
             break;
         }
         
