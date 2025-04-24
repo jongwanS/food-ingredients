@@ -73,42 +73,64 @@ export default function SearchResults() {
     staleTime: 1000 * 60 * 5 // 5분 동안 결과 캐시
   });
   
-  // 직접 필터링 로직 구현
-  const searchResults = useMemo(() => {
-    if (!initialSearchResults || !Array.isArray(initialSearchResults)) {
-      return [];
+  // 초기 검색 결과와 필터된 결과를 별도로 관리
+  const [filteredResults, setFilteredResults] = useState<Product[]>([]);
+  
+  // 필터 적용 함수 - 이 함수를 직접 호출하여 결과를 필터링
+  const applyFilters = (results: Product[]) => {
+    if (!results || !Array.isArray(results)) {
+      setFilteredResults([]);
+      return;
     }
     
-    // 필터 적용 (각 필터가 0이거나 비어있으면 해당 필터는 적용하지 않음)
-    return initialSearchResults.filter(product => {
+    // 필터가 없는 경우 모든 결과 표시
+    if ((!calorieRange || parseInt(calorieRange) <= 0) && 
+        (!proteinRange || parseInt(proteinRange) <= 0) && 
+        (!carbsRange || parseInt(carbsRange) <= 0) && 
+        (!fatRange || parseInt(fatRange) <= 0)) {
+      setFilteredResults(results);
+      return;
+    }
+    
+    // 필터링 적용
+    const filtered = results.filter(product => {
       // 칼로리 필터
-      const calorieFilter = calorieRange && parseInt(calorieRange) > 0;
-      if (calorieFilter && product.calories > parseInt(calorieRange)) {
-        return false;
+      if (calorieRange && parseInt(calorieRange) > 0) {
+        if (product.calories > parseInt(calorieRange)) return false;
       }
       
       // 단백질 필터
-      const proteinFilter = proteinRange && parseInt(proteinRange) > 0;
-      if (proteinFilter && product.protein > parseInt(proteinRange)) {
-        return false;
+      if (proteinRange && parseInt(proteinRange) > 0) {
+        if (product.protein > parseInt(proteinRange)) return false;
       }
       
       // 탄수화물 필터
-      const carbsFilter = carbsRange && parseInt(carbsRange) > 0; 
-      if (carbsFilter && product.carbs > parseInt(carbsRange)) {
-        return false;
+      if (carbsRange && parseInt(carbsRange) > 0) {
+        if (product.carbs > parseInt(carbsRange)) return false;
       }
       
       // 지방 필터
-      const fatFilter = fatRange && parseInt(fatRange) > 0;
-      if (fatFilter && product.fat > parseInt(fatRange)) {
-        return false;
+      if (fatRange && parseInt(fatRange) > 0) {
+        if (product.fat > parseInt(fatRange)) return false;
       }
       
       // 모든 필터 조건을 통과
       return true;
     });
+    
+    setFilteredResults(filtered);
+  };
+  
+  // 초기 검색 결과가 변경되거나 필터가 변경될 때마다 필터 적용
+  useEffect(() => {
+    console.log('필터 또는 검색 결과가 변경됨');
+    if (initialSearchResults) {
+      applyFilters(initialSearchResults);
+    }
   }, [initialSearchResults, calorieRange, proteinRange, carbsRange, fatRange]);
+  
+  // 필터링된 검색 결과 (UI에서 표시할 데이터)
+  const searchResults = filteredResults;
   
   // Fetch allergens for badges
   const { data: allergens } = useQuery({
