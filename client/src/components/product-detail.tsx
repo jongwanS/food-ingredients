@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { AllergyBadge } from "@/components/allergy-badge";
-import { ArrowLeft, Heart, Droplet, AlertCircle, Gauge, Flame } from "lucide-react";
+import { ArrowLeft, Heart, Droplet, AlertCircle, Gauge, Flame, Store } from "lucide-react";
+import { BannerAd, ResponsiveAd } from "@/components/ui/advertisement";
 
 interface ProductDetailProps {
   productId: number;
@@ -19,6 +20,33 @@ export function ProductDetail({ productId }: ProductDetailProps) {
     queryFn: () => fetch(`/api/products/${productId}`).then(res => res.json()),
   });
   
+  // Fetch franchises for franchise name
+  const { data: franchises } = useQuery({
+    queryKey: ['/api/franchises'],
+    queryFn: () => fetch('/api/franchises').then(res => res.json()),
+    enabled: !isLoading && !!product,
+  });
+  
+  // Fetch categories for category name
+  const { data: categories } = useQuery({
+    queryKey: ['/api/categories'],
+    queryFn: () => fetch('/api/categories').then(res => res.json()),
+    enabled: !isLoading && !!product,
+  });
+  
+  // Get franchise and category names
+  const getFranchiseName = (franchiseId: number) => {
+    if (!franchises) return "프랜차이즈";
+    const franchise = franchises.find((f: any) => f.id === franchiseId);
+    return franchise ? franchise.name : "프랜차이즈";
+  };
+  
+  const getCategoryName = (categoryId: number) => {
+    if (!categories) return "카테고리";
+    const category = categories.find((c: any) => c.id === categoryId);
+    return category ? category.nameKorean : "카테고리";
+  };
+  
   const handleBack = () => {
     // Go back to previous page
     window.history.back();
@@ -27,25 +55,38 @@ export function ProductDetail({ productId }: ProductDetailProps) {
   if (isLoading) {
     return (
       <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-pink-100">
-        <div className="md:flex">
-          <div className="md:w-1/2">
-            <Skeleton className="h-64 md:h-full w-full" />
+        <div className="p-6">
+          <Skeleton className="h-8 w-64 mb-4" />
+          <Skeleton className="h-4 w-full mb-2" />
+          <Skeleton className="h-4 w-full mb-2" />
+          <Skeleton className="h-4 w-3/4 mb-6" />
+          
+          <div className="flex flex-wrap gap-2 mb-4">
+            <Skeleton className="h-6 w-32 rounded-full" />
+            <Skeleton className="h-6 w-32 rounded-full" />
           </div>
-          <div className="md:w-1/2 p-6">
-            <Skeleton className="h-8 w-64 mb-4" />
-            <Skeleton className="h-4 w-full mb-2" />
-            <Skeleton className="h-4 w-full mb-2" />
-            <Skeleton className="h-4 w-3/4 mb-6" />
-            
-            <Skeleton className="h-6 w-48 mb-4" />
-            <div className="flex flex-wrap gap-2 mb-6">
-              <Skeleton className="h-6 w-20 rounded-full" />
-              <Skeleton className="h-6 w-20 rounded-full" />
-              <Skeleton className="h-6 w-20 rounded-full" />
-            </div>
-            
-            <Skeleton className="h-10 w-48 rounded-md" />
+          
+          <Skeleton className="h-6 w-48 mb-4" />
+          <div className="flex flex-wrap gap-2 mb-6">
+            <Skeleton className="h-6 w-20 rounded-full" />
+            <Skeleton className="h-6 w-20 rounded-full" />
+            <Skeleton className="h-6 w-20 rounded-full" />
           </div>
+          
+          <Skeleton className="h-10 w-48 rounded-md mb-6" />
+        </div>
+        
+        <div className="p-6 border-t border-pink-100">
+          <Skeleton className="h-7 w-48 mb-6" />
+          
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+            <Skeleton className="h-24 w-full rounded-lg" />
+            <Skeleton className="h-24 w-full rounded-lg" />
+            <Skeleton className="h-24 w-full rounded-lg" />
+            <Skeleton className="h-24 w-full rounded-lg" />
+          </div>
+          
+          <Skeleton className="h-64 w-full rounded-lg" />
         </div>
       </div>
     );
@@ -70,47 +111,51 @@ export function ProductDetail({ productId }: ProductDetailProps) {
   
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-pink-100">
-      <div className="md:flex">
-        <div className="md:w-1/2 h-64 md:h-auto bg-gray-100 relative overflow-hidden">
-          <img 
-            src={product.imageUrl} 
-            alt={product.name} 
-            className="w-full h-full object-cover"
-          />
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-heading font-bold gradient-text">{product.name}</h2>
+          
           {product.featuredProduct && (
-            <div className="absolute top-4 right-4 bg-pink-500/90 text-white text-xs py-1 px-3 rounded-full shadow-md flex items-center">
+            <div className="bg-pink-500/90 text-white text-xs py-1 px-3 rounded-full shadow-sm flex items-center">
               <Heart className="h-3 w-3 mr-1" /> 인기 메뉴
             </div>
           )}
         </div>
         
-        <div className="md:w-1/2 p-6">
-          <h2 className="text-2xl font-heading font-bold mb-2 gradient-text">{product.name}</h2>
-          <p className="text-gray-600 mb-4">{product.description}</p>
-          
-          {/* Allergy Information */}
-          {product.allergenDetails && product.allergenDetails.length > 0 && (
-            <div className="mb-6 p-4 bg-pink-50/50 rounded-lg border border-pink-100">
-              <h3 className="text-lg font-heading font-semibold mb-2 flex items-center text-pink-700">
-                <AlertCircle className="h-4 w-4 mr-2" />
-                알레르기 정보
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {product.allergenDetails.map((allergen: any, index: number) => (
-                  <AllergyBadge key={index} name={allergen.nameKorean} />
-                ))}
-              </div>
-            </div>
-          )}
-          
-          <Button 
-            className="mb-6 bg-white hover:bg-white/90 text-primary shadow-sm border border-pink-200"
-            onClick={handleBack}
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            목록으로 돌아가기
-          </Button>
+        <p className="text-gray-600 mb-4">{product.description}</p>
+        
+        {/* Franchise/Category 정보 */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          <div className="bg-pink-50 px-3 py-1.5 rounded-full text-sm text-pink-700 font-medium border border-pink-100">
+            {product.franchiseId ? `${product.franchiseName || '프랜차이즈'}` : ''}
+          </div>
+          <div className="bg-pink-100/50 px-3 py-1.5 rounded-full text-sm text-pink-700 font-medium border border-pink-100">
+            {product.categoryId ? `${product.categoryName || '카테고리'}` : ''}
+          </div>
         </div>
+        
+        {/* Allergy Information */}
+        {product.allergenDetails && product.allergenDetails.length > 0 && (
+          <div className="mb-6 p-4 bg-pink-50/50 rounded-lg border border-pink-100">
+            <h3 className="text-lg font-heading font-semibold mb-2 flex items-center text-pink-700">
+              <AlertCircle className="h-4 w-4 mr-2" />
+              알레르기 정보
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {product.allergenDetails.map((allergen: any, index: number) => (
+                <AllergyBadge key={index} name={allergen.nameKorean} />
+              ))}
+            </div>
+          </div>
+        )}
+        
+        <Button 
+          className="mb-6 bg-white hover:bg-white/90 text-primary shadow-sm border border-pink-200"
+          onClick={handleBack}
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          목록으로 돌아가기
+        </Button>
       </div>
       
       {/* Nutritional Information */}
