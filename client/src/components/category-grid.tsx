@@ -15,8 +15,8 @@ export function CategoryGrid() {
   });
   
   const handleCategorySelect = (categoryId: number) => {
-    // 카테고리 ID로 직접 검색 결과 페이지로 이동
-    navigate(`/search?categoryId=${categoryId}`);
+    // 카테고리 ID에 해당하는 프랜차이즈 목록 페이지로 이동
+    navigate(`/category/${categoryId}`);
   };
   
   if (isLoading) {

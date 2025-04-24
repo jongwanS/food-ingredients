@@ -201,10 +201,30 @@ export class MemStorage implements IStorage {
   async searchProducts(params: ProductSearchParams): Promise<Product[]> {
     let results = Array.from(this._products.values());
 
-    // Filter by search query (searches in name, description ONLY)
+    // Filter by search query (searches in name, description, and franchise name)
     if (params.query) {
       const queryLower = params.query.toLowerCase();
       
+      // 프랜차이즈 이름으로 검색
+      const franchiseMatches = Array.from(this._franchises.values())
+        .filter(franchise => 
+          franchise.name.toLowerCase().includes(queryLower) // 부분 일치
+        );
+      
+      // 매칭된 프랜차이즈가 있으면 해당 프랜차이즈의 제품만 필터링
+      if (franchiseMatches.length > 0) {
+        const matchingFranchiseIds = franchiseMatches.map(f => f.id);
+        const franchiseResults = results.filter(product => 
+          matchingFranchiseIds.includes(product.franchiseId)
+        );
+        
+        // 매칭된 프랜차이즈 제품이 있으면 그 결과를 반환
+        if (franchiseResults.length > 0) {
+          return franchiseResults;
+        }
+      }
+      
+      // 프랜차이즈 검색 결과가 없으면 제품명, 설명으로 검색 계속 진행
       // 먼저 단어 완전 일치 검색
       const exactMatches = results.filter(product => 
         product.name.toLowerCase() === queryLower ||
