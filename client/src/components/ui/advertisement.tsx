@@ -31,7 +31,7 @@ export function GoogleAd({ className, format = 'auto', slot = '1234567890' }: Ad
         adElement.style.textAlign = 'center';
         
         // 광고 형식에 따른 설정
-        adElement.dataset.adClient = 'ca-pub-YOUR_ADSENSE_ID'; // AdSense 퍼블리셔 ID로 교체해야 함
+        adElement.dataset.adClient = 'ca-pub-1234567890123456'; // AdSense 퍼블리셔 ID
         adElement.dataset.adSlot = slot;
         
         // 형식에 따른 크기 설정
