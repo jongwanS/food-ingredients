@@ -183,8 +183,23 @@ export async function loadProductData(): Promise<Product[]> {
           estimatedWeight *= 0.7; // 미니/스몰 메뉴는 30% 더 가벼움
         }
         
+        // 롯데리아 미라클 버거 같은 특별한 경우 처리
+        if (franchiseName === '롯데리아' && productName.includes('미라클')) {
+          estimatedWeight = 320; // 미라클 버거는 무게가 더 나감
+        }
+        
         // 100g당 영양성분을 전체 제품 영양성분으로 환산 (중량 기반)
         const weightFactor = estimatedWeight / 100; // 100g 대비 비율
+        
+        // 총 지방 계산 로직: 총 지방이 null이고 포화지방이 있으면 포화지방으로 총 지방 추정
+        let totalFat = Math.round(Number(item['지방(g)']) * weightFactor * 10) / 10;
+        const saturatedFat = item['포화지방산(g)'] ? Math.round(Number(item['포화지방산(g)']) * weightFactor * 10) / 10 : null;
+        
+        // 총 지방이 없지만 포화지방이 있는 경우, 포화지방을 기준으로 총 지방을 추정 (포화지방은 총 지방의 일부)
+        if ((!totalFat || isNaN(totalFat)) && saturatedFat) {
+          // 포화지방이 총 지방의 약 30-50%를 차지한다고 가정하고 계산
+          totalFat = Math.round(saturatedFat * 2 * 10) / 10; // 포화지방의 2배로 추정
+        }
         
         // 제품 정보 생성 (영양성분 환산 적용)
         const product: Product = {
@@ -196,8 +211,8 @@ export async function loadProductData(): Promise<Product[]> {
           calories: Math.round(Number(item['에너지(kcal)']) * weightFactor) || 0,
           protein: Math.round(Number(item['단백질(g)']) * weightFactor * 10) / 10 || 0,
           carbs: Math.round(Number(item['탄수화물(g)']) * weightFactor * 10) / 10 || 0,
-          fat: Math.round(Number(item['지방(g)']) * weightFactor * 10) / 10 || 0,
-          saturatedFat: item['포화지방산(g)'] ? Math.round(Number(item['포화지방산(g)']) * weightFactor * 10) / 10 : null,
+          fat: totalFat || 0, // 추정된 총 지방 사용
+          saturatedFat: saturatedFat,
           transFat: item['트랜스지방산(g)'] ? Math.round(Number(item['트랜스지방산(g)']) * weightFactor * 10) / 10 : null,
           cholesterol: item['콜레스테롤(mg)'] ? Math.round(Number(item['콜레스테롤(mg)']) * weightFactor) : null,
           sodium: item['나트륨(mg)'] ? Math.round(Number(item['나트륨(mg)']) * weightFactor) : null,
