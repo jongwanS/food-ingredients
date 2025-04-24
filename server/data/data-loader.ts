@@ -75,7 +75,7 @@ const franchiseMap: { [key: string]: { id: number, categoryId: number, logoUrl: 
   "맥도날드": { id: 1, categoryId: 1, logoUrl: "https://via.placeholder.com/200x200/FFC72C/D82A2A?text=M" },
   "버거킹": { id: 2, categoryId: 1, logoUrl: "https://via.placeholder.com/200x200/0033A0/ED7902?text=BK" },
   "롯데리아": { id: 3, categoryId: 1, logoUrl: "https://via.placeholder.com/200x200/DA291C/FFFFFF?text=L" },
-  "KFC": { id: 4, categoryId: 2, logoUrl: "https://via.placeholder.com/200x200/F40027/FFFFFF?text=KFC" },
+  "KFC": { id: 4, categoryId: 1, logoUrl: "https://via.placeholder.com/200x200/F40027/FFFFFF?text=KFC" }, // KFC를 버거(1) 카테고리로 변경
   "BBQ": { id: 5, categoryId: 2, logoUrl: "https://via.placeholder.com/200x200/800020/FFFFFF?text=BBQ" },
   "도미노피자": { id: 6, categoryId: 3, logoUrl: "https://via.placeholder.com/200x200/006491/FFFFFF?text=DP" },
   "스타벅스": { id: 7, categoryId: 4, logoUrl: "https://via.placeholder.com/200x200/00704A/FFFFFF?text=SB" },
