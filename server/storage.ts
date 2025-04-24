@@ -171,6 +171,7 @@ export class MemStorage implements IStorage {
       // 먼저 원래 insertProduct에서 allergens 제거 (명시적으로 처리)
       name: insertProduct.name,
       franchiseId: insertProduct.franchiseId,
+      categoryId: insertProduct.categoryId || null,
       imageUrl: insertProduct.imageUrl,
       calories: insertProduct.calories,
       protein: insertProduct.protein,
@@ -210,6 +211,27 @@ export class MemStorage implements IStorage {
         .filter(franchise => 
           franchise.name.toLowerCase().includes(queryLower) // 부분 일치
         );
+      
+      // 카테고리 이름으로 검색
+      const categoryMatches = Array.from(this._categories.values())
+        .filter(category => 
+          category.name.toLowerCase().includes(queryLower) || 
+          category.nameKorean.toLowerCase().includes(queryLower)
+        );
+        
+      // 카테고리 매칭이 있으면 해당 카테고리 제품 필터링
+      if (categoryMatches.length > 0) {
+        const matchingCategoryIds = categoryMatches.map(c => c.id);
+        
+        // 해당 카테고리에 속한 제품 찾기
+        const categoryResults = results.filter(product => 
+          product.categoryId ? matchingCategoryIds.includes(product.categoryId) : false
+        );
+        
+        if (categoryResults.length > 0) {
+          return categoryResults;
+        }
+      }
       
       // 매칭된 프랜차이즈가 있으면 해당 프랜차이즈의 제품만 필터링
       if (franchiseMatches.length > 0) {
@@ -316,15 +338,34 @@ export class MemStorage implements IStorage {
       );
     }
 
-    // Filter by category ID (this requires joining with franchises)
+    // Filter by category ID (using both product.categoryId and franchise categoryId)
     if (params.categoryId) {
+      // 1. 직접 카테고리 ID를 가진 제품들 필터링
+      const directCategoryProducts = results.filter(product => 
+        product.categoryId === params.categoryId
+      );
+      
+      // 2. 프랜차이즈의 카테고리 ID를 통해 필터링
       const franchisesInCategory = Array.from(this._franchises.values())
         .filter(franchise => franchise.categoryId === params.categoryId)
         .map(franchise => franchise.id);
       
-      results = results.filter(product => 
+      const franchiseCategoryProducts = results.filter(product => 
         franchisesInCategory.includes(product.franchiseId)
       );
+      
+      // 두 결과 병합 (중복 제거)
+      const productIds = new Set();
+      const combinedResults = [];
+      
+      for (const product of [...directCategoryProducts, ...franchiseCategoryProducts]) {
+        if (!productIds.has(product.id)) {
+          productIds.add(product.id);
+          combinedResults.push(product);
+        }
+      }
+      
+      results = combinedResults;
     }
 
     // Filter by nutritional values
