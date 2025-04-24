@@ -166,20 +166,27 @@ export default function SearchResults() {
   
   // 검색 실행 함수
   const handleSearch = () => {
-    // 빈 검색어 허용 (필터만으로도 검색)
+    // 새 검색을 위한 파라미터 생성 (기존 파라미터 복사하지 않고 새로 생성)
     const newParams = new URLSearchParams();
     
-    // 검색어 업데이트 (빈 값이면 제거)
+    // 검색어 설정 (빈 값이면 제거)
     if (searchInput.trim()) {
       newParams.set("q", searchInput.trim());
     }
     
-    // 현재 필터값도 유지
-    if (calorieRange) newParams.set("calorieRange", calorieRange);
-    if (proteinRange) newParams.set("proteinRange", proteinRange);
-    if (carbsRange) newParams.set("carbsRange", carbsRange);
-    if (fatRange) newParams.set("fatRange", fatRange);
-    if (categoryId) newParams.set("categoryId", categoryId.toString());
+    // 현재 URL에서 필터 파라미터 가져오기 - 최신값 보장
+    const currentCalorieRange = searchParams.get("calorieRange") || "";
+    const currentProteinRange = searchParams.get("proteinRange") || "";
+    const currentCarbsRange = searchParams.get("carbsRange") || "";
+    const currentFatRange = searchParams.get("fatRange") || "";
+    const currentCategoryId = searchParams.get("categoryId") || "";
+    
+    // 필터값 추가 (있는 경우에만)
+    if (currentCalorieRange) newParams.set("calorieRange", currentCalorieRange);
+    if (currentProteinRange) newParams.set("proteinRange", currentProteinRange);
+    if (currentCarbsRange) newParams.set("carbsRange", currentCarbsRange);
+    if (currentFatRange) newParams.set("fatRange", currentFatRange);
+    if (currentCategoryId) newParams.set("categoryId", currentCategoryId);
     
     // URL 업데이트 (새 검색 파라미터로)
     setSearchParams(newParams);
@@ -205,9 +212,39 @@ export default function SearchResults() {
   // 필터 변경 시 실행할 함수 - FilterBar로부터 호출됨
   const handleFilterChange = (newFilters: any) => {
     console.log("필터 변경됨:", newFilters); // 디버깅용
-
-    // 필터 파라미터는 FilterBar에서 이미 URL에 업데이트됨
-    // 여기서는 아무것도 할 필요가 없음 (useEffect에서 URL 파라미터 변경 감지하여 필터링)
+    
+    // 서버 검색결과는 유지하되, 클라이언트 필터링만 수행
+    if (initialSearchResults) {
+      const results = [...initialSearchResults];
+      let filtered = results;
+      
+      // 칼로리 필터
+      if (newFilters.calorieRange && parseInt(newFilters.calorieRange) > 0) {
+        filtered = filtered.filter(p => p.calories <= parseInt(newFilters.calorieRange));
+        console.log(`칼로리 필터 (${newFilters.calorieRange} kcal 이하) 적용 후: ${filtered.length}개`);
+      }
+      
+      // 단백질 필터
+      if (newFilters.proteinRange && parseInt(newFilters.proteinRange) > 0) {
+        filtered = filtered.filter(p => p.protein <= parseInt(newFilters.proteinRange));
+        console.log(`단백질 필터 (${newFilters.proteinRange}g 이하) 적용 후: ${filtered.length}개`);
+      }
+      
+      // 탄수화물 필터
+      if (newFilters.carbsRange && parseInt(newFilters.carbsRange) > 0) {
+        filtered = filtered.filter(p => p.carbs <= parseInt(newFilters.carbsRange));
+        console.log(`탄수화물 필터 (${newFilters.carbsRange}g 이하) 적용 후: ${filtered.length}개`);
+      }
+      
+      // 지방 필터
+      if (newFilters.fatRange && parseInt(newFilters.fatRange) > 0) {
+        filtered = filtered.filter(p => p.fat <= parseInt(newFilters.fatRange));
+        console.log(`지방 필터 (${newFilters.fatRange}g 이하) 적용 후: ${filtered.length}개`);
+      }
+      
+      console.log(`최종 필터링 결과 수: ${filtered.length}`);
+      setFilteredResults(filtered);
+    }
   };
 
   // Scroll to top on page load
