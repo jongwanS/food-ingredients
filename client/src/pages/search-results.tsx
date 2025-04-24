@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useEffect, useState, useCallback, useMemo, useRef } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { useSearchParams } from "@/hooks/use-search-params";
 import { FilterBar } from "@/components/ui/filter-bar";
@@ -147,7 +147,7 @@ export default function SearchResults() {
     
     setIsLoadingMore(true);
     
-    // 로딩 애니메이션을 위한 짧은 지연 (실제로는 필요하지 않지만 부드러운 UX를 위해)
+    // 로딩 애니메이션을 위한 짧은 지연
     setTimeout(() => {
       setVisibleItems(prev => Math.min(prev + 20, filteredResults.length));
       setIsLoadingMore(false);
@@ -410,7 +410,6 @@ export default function SearchResults() {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {displayResults.map((product, index) => (
             <React.Fragment key={`product-${product.id}`}>
-              {/* 4개마다 광고 추가 */}
               {index > 0 && index % 8 === 0 && (
                 <div key={`ad-${index}`} className="col-span-full my-2">
                   <ResponsiveAd />
@@ -487,7 +486,6 @@ export default function SearchResults() {
         <div className="flex flex-col gap-4">
           {displayResults.map((product, index) => (
             <React.Fragment key={`product-list-${product.id}`}>
-              {/* 3개마다 광고 추가 */}
               {index > 0 && index % 3 === 0 && (
                 <div key={`ad-list-${index}`} className="my-2">
                   <BannerAd />
