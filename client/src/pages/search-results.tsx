@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { useSearchParams } from "@/hooks/use-search-params";
@@ -77,49 +77,44 @@ export default function SearchResults() {
   const [filteredResults, setFilteredResults] = useState<Product[]>([]);
   
   // 필터 적용 함수 - 이 함수를 직접 호출하여 결과를 필터링
-  const applyFilters = (results: Product[]) => {
+  const applyFilters = useCallback((results: Product[]) => {
     if (!results || !Array.isArray(results)) {
+      console.log("유효하지 않은 결과:", results);
       setFilteredResults([]);
       return;
     }
     
-    // 필터가 없는 경우 모든 결과 표시
-    if ((!calorieRange || parseInt(calorieRange) <= 0) && 
-        (!proteinRange || parseInt(proteinRange) <= 0) && 
-        (!carbsRange || parseInt(carbsRange) <= 0) && 
-        (!fatRange || parseInt(fatRange) <= 0)) {
-      setFilteredResults(results);
-      return;
+    console.log(`필터링 전 결과 수: ${results.length}`);
+    
+    let filtered = [...results];
+    
+    // 칼로리 필터
+    if (calorieRange && parseInt(calorieRange) > 0) {
+      filtered = filtered.filter(p => p.calories <= parseInt(calorieRange));
+      console.log(`칼로리 필터 (${calorieRange} kcal 이하) 적용 후: ${filtered.length}개`);
     }
     
-    // 필터링 적용
-    const filtered = results.filter(product => {
-      // 칼로리 필터
-      if (calorieRange && parseInt(calorieRange) > 0) {
-        if (product.calories > parseInt(calorieRange)) return false;
-      }
-      
-      // 단백질 필터
-      if (proteinRange && parseInt(proteinRange) > 0) {
-        if (product.protein > parseInt(proteinRange)) return false;
-      }
-      
-      // 탄수화물 필터
-      if (carbsRange && parseInt(carbsRange) > 0) {
-        if (product.carbs > parseInt(carbsRange)) return false;
-      }
-      
-      // 지방 필터
-      if (fatRange && parseInt(fatRange) > 0) {
-        if (product.fat > parseInt(fatRange)) return false;
-      }
-      
-      // 모든 필터 조건을 통과
-      return true;
-    });
+    // 단백질 필터
+    if (proteinRange && parseInt(proteinRange) > 0) {
+      filtered = filtered.filter(p => p.protein <= parseInt(proteinRange));
+      console.log(`단백질 필터 (${proteinRange}g 이하) 적용 후: ${filtered.length}개`);
+    }
     
+    // 탄수화물 필터
+    if (carbsRange && parseInt(carbsRange) > 0) {
+      filtered = filtered.filter(p => p.carbs <= parseInt(carbsRange));
+      console.log(`탄수화물 필터 (${carbsRange}g 이하) 적용 후: ${filtered.length}개`);
+    }
+    
+    // 지방 필터
+    if (fatRange && parseInt(fatRange) > 0) {
+      filtered = filtered.filter(p => p.fat <= parseInt(fatRange));
+      console.log(`지방 필터 (${fatRange}g 이하) 적용 후: ${filtered.length}개`);
+    }
+    
+    console.log(`최종 필터링 결과 수: ${filtered.length}`);
     setFilteredResults(filtered);
-  };
+  }, [calorieRange, proteinRange, carbsRange, fatRange]);
   
   // 초기 검색 결과가 로드되면 필터 적용
   useEffect(() => {
@@ -127,7 +122,7 @@ export default function SearchResults() {
     if (initialSearchResults) {
       applyFilters(initialSearchResults);
     }
-  }, [initialSearchResults]);
+  }, [initialSearchResults, applyFilters]);
   
   // 필터값 변경 시 필터 적용 (별도 useEffect로 분리)
   useEffect(() => {
@@ -135,7 +130,7 @@ export default function SearchResults() {
     if (initialSearchResults) {
       applyFilters(initialSearchResults);
     }
-  }, [calorieRange, proteinRange, carbsRange, fatRange]);
+  }, [calorieRange, proteinRange, carbsRange, fatRange, initialSearchResults, applyFilters]);
   
   // 필터링된 검색 결과 (UI에서 표시할 데이터)
   const searchResults = filteredResults;
@@ -172,16 +167,21 @@ export default function SearchResults() {
   // 검색 실행 함수
   const handleSearch = () => {
     // 빈 검색어 허용 (필터만으로도 검색)
-    const newParams = new URLSearchParams(searchParams);
+    const newParams = new URLSearchParams();
     
     // 검색어 업데이트 (빈 값이면 제거)
     if (searchInput.trim()) {
       newParams.set("q", searchInput.trim());
-    } else {
-      newParams.delete("q");
     }
     
-    // 현재 필터값들 유지
+    // 현재 필터값도 유지
+    if (calorieRange) newParams.set("calorieRange", calorieRange);
+    if (proteinRange) newParams.set("proteinRange", proteinRange);
+    if (carbsRange) newParams.set("carbsRange", carbsRange);
+    if (fatRange) newParams.set("fatRange", fatRange);
+    if (categoryId) newParams.set("categoryId", categoryId.toString());
+    
+    // URL 업데이트 (새 검색 파라미터로)
     setSearchParams(newParams);
     
     // 쿼리 무효화하여 새로운 검색 결과 로드
@@ -191,6 +191,8 @@ export default function SearchResults() {
     
     // 페이지 최상단으로 스크롤
     window.scrollTo(0, 0);
+    
+    console.log("검색 실행:", searchInput, newParams.toString());
   };
   
   // Enter 키 누르면 검색 실행
