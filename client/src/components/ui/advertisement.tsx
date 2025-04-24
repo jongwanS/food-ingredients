@@ -17,6 +17,8 @@ interface AdProps {
  * <GoogleAd format="horizontal" slot="1234567890" />
  */
 export function GoogleAd({ className, format = 'auto', slot = '1234567890' }: AdProps) {
+  // 임시로 주석 처리 (Google AdSense 오류 해결 시 다시 활성화)
+  /*
   const adRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -67,10 +69,12 @@ export function GoogleAd({ className, format = 'auto', slot = '1234567890' }: Ad
       console.error('광고 로드 중 오류 발생:', error);
     }
   }, [format, slot]);
+  */
 
+  // 임시 광고 플레이스홀더 반환
   return (
-    <div ref={adRef} className={`ad-container my-4 ${className || ''}`}>
-      <div className="text-xs text-gray-400 text-center mb-1">Sponsored</div>
+    <div className={`ad-container my-4 ${className || ''}`}>
+      <div className="text-xs text-gray-400 text-center mb-1">광고 영역 (현재 비활성화)</div>
     </div>
   );
 }
