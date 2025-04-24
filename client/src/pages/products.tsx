@@ -4,6 +4,7 @@ import { FilterBar } from "@/components/ui/filter-bar";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { ProductList } from "@/components/product-list";
 import { Skeleton } from "@/components/ui/skeleton";
+import { BannerAd, ResponsiveAd } from "@/components/ui/advertisement";
 
 interface ProductsProps {
   params: {
@@ -70,7 +71,15 @@ export default function Products({ params }: ProductsProps) {
         )}
       </h1>
       
+      {/* 제품 목록 위 광고 배너 */}
+      <BannerAd className="my-4" />
+      
       <ProductList franchiseId={franchiseId} />
+      
+      {/* 제품 목록 아래 반응형 광고 */}
+      <div className="mt-10">
+        <ResponsiveAd />
+      </div>
     </>
   );
 }

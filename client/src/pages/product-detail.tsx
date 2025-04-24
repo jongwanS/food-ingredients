@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { ProductDetail as ProductDetailComponent } from "@/components/product-detail";
 import { Skeleton } from "@/components/ui/skeleton";
+import { BannerAd, InArticleAd } from "@/components/ui/advertisement";
 
 interface ProductDetailProps {
   params: {
@@ -67,7 +68,17 @@ export default function ProductDetail({ params }: ProductDetailProps) {
     <>
       <Breadcrumbs items={breadcrumbItems} />
       
+      {/* 제품 정보 위 광고 배너 */}
+      <BannerAd className="my-4" />
+      
       <ProductDetailComponent productId={productId} />
+      
+      {/* 제품 정보 아래 기사 중간 형태의 광고 */}
+      {!productLoading && product && (
+        <div className="mt-8">
+          <InArticleAd />
+        </div>
+      )}
     </>
   );
 }
