@@ -54,9 +54,6 @@ export default function Home() {
       {/* 히어로 섹션 */}
       <div className="mb-8 p-8 bg-gradient-to-r from-primary/5 to-primary/20 rounded-2xl">
         <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-heading font-bold mb-4 bg-gradient-to-r from-primary to-primary-500 bg-clip-text text-transparent">
-            한국 프랜차이즈 영양성분 분석
-          </h1>
           <p className="text-lg mb-6 text-gray-700">
             다양한 프랜차이즈 메뉴의 영양성분을 검색하고 비교해보세요
           </p>
