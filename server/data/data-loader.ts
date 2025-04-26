@@ -354,54 +354,10 @@ export async function loadProductData(): Promise<Product[]> {
         // 중복 제거
         const uniqueAllergens = Array.from(new Set(allergenIds));
         
-        // 제품 무게 추정 (g 단위)
-        // 카테고리별 평균 중량 추정
-        let estimatedWeight = 0;
-        
-        // 카테고리 ID에 따른 추정 무게 설정
-        switch (categoryId) {
-          case 1: // 버거
-            estimatedWeight = 250; // 버거 평균 무게 (g)
-            break;
-          case 2: // 치킨
-            estimatedWeight = 200; // 치킨류 평균 무게 (g)
-            break;
-          case 3: // 피자
-            estimatedWeight = 300; // 피자 슬라이스 평균 무게 (g)
-            break;
-          case 4: // 커피/음료
-            estimatedWeight = 350; // 음료 평균 무게 (mL)
-            break;
-          case 5: // 디저트
-            estimatedWeight = 120; // 디저트류 평균 무게 (g)
-            break;
-          default:
-            // 제품 이름에 따른 추정
-            if (productName.toLowerCase().includes('샌드위치')) {
-              estimatedWeight = 220; // 샌드위치 평균 무게 (g)
-            } else {
-              estimatedWeight = 200; // 기본 추정 무게 (g)
-            }
-        }
-        
-        // 특정 키워드에 따라 중량 추가 조정
-        if (productName.includes('더블') || productName.includes('라지') || productName.includes('빅')) {
-          estimatedWeight *= 1.5; // 더블/라지/빅 메뉴는 50% 더 무거움
-        } else if (productName.includes('미니') || productName.includes('스몰')) {
-          estimatedWeight *= 0.7; // 미니/스몰 메뉴는 30% 더 가벼움
-        }
-        
-        // 롯데리아 미라클 버거 같은 특별한 경우 처리
-        if (franchiseName === '롯데리아' && productName.includes('미라클')) {
-          estimatedWeight = 320; // 미라클 버거는 무게가 더 나감
-        }
-        
-        // 100g당 영양성분을 전체 제품 영양성분으로 환산 (중량 기반)
-        const weightFactor = estimatedWeight / 100; // 100g 대비 비율
-        
+        // 직접 원본 데이터 사용 (100g 기준)
         // 총 지방 계산 로직: 총 지방이 null이고 포화지방이 있으면 포화지방으로 총 지방 추정
-        let totalFat = Math.round(Number(item['지방(g)']) * weightFactor * 10) / 10;
-        const saturatedFat = item['포화지방산(g)'] ? Math.round(Number(item['포화지방산(g)']) * weightFactor * 10) / 10 : null;
+        let totalFat = Number(item['지방(g)']) || 0;
+        const saturatedFat = item['포화지방산(g)'] ? Number(item['포화지방산(g)']) : null;
         
         // 총 지방이 없지만 포화지방이 있는 경우, 포화지방을 기준으로 총 지방을 추정 (포화지방은 총 지방의 일부)
         if ((!totalFat || isNaN(totalFat)) && saturatedFat) {
@@ -409,24 +365,24 @@ export async function loadProductData(): Promise<Product[]> {
           totalFat = Math.round(saturatedFat * 2 * 10) / 10; // 포화지방의 2배로 추정
         }
         
-        // 제품 정보 생성 (영양성분 환산 적용)
+        // 제품 정보 생성 (원본 100g 영양성분 데이터 그대로 사용)
         const product: Product = {
           id: productId++,
           name: productName,
           franchiseId: franchiseInfo.id,
-          description: `${franchiseName}의 ${productName} 메뉴입니다.`,
+          description: `${franchiseName}의 ${productName} 메뉴입니다. (영양성분: 100g 기준)`,
           imageUrl: imageUrl,
           categoryId: categoryId, // 자동 분류된 카테고리 ID 설정
-          calories: Math.round(Number(item['에너지(kcal)']) * weightFactor) || 0,
-          protein: Math.round(Number(item['단백질(g)']) * weightFactor * 10) / 10 || 0,
-          carbs: Math.round(Number(item['탄수화물(g)']) * weightFactor * 10) / 10 || 0,
+          calories: Number(item['에너지(kcal)']) || 0,
+          protein: Number(item['단백질(g)']) || 0,
+          carbs: Number(item['탄수화물(g)']) || 0,
           fat: totalFat || 0, // 추정된 총 지방 사용
           saturatedFat: saturatedFat,
-          transFat: item['트랜스지방산(g)'] ? Math.round(Number(item['트랜스지방산(g)']) * weightFactor * 10) / 10 : null,
-          cholesterol: item['콜레스테롤(mg)'] ? Math.round(Number(item['콜레스테롤(mg)']) * weightFactor) : null,
-          sodium: item['나트륨(mg)'] ? Math.round(Number(item['나트륨(mg)']) * weightFactor) : null,
+          transFat: item['트랜스지방산(g)'] ? Number(item['트랜스지방산(g)']) : null,
+          cholesterol: item['콜레스테롤(mg)'] ? Number(item['콜레스테롤(mg)']) : null,
+          sodium: item['나트륨(mg)'] ? Number(item['나트륨(mg)']) : null,
           fiber: null,
-          sugar: item['당류(g)'] ? Math.round(Number(item['당류(g)']) * weightFactor * 10) / 10 : null,
+          sugar: item['당류(g)'] ? Number(item['당류(g)']) : null,
           calcium: null,
           iron: null,
           vitaminD: null,
