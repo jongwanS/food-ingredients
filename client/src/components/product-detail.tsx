@@ -399,7 +399,7 @@ export function ProductDetail({ productId }: ProductDetailProps) {
               </div>
               <div className="bg-white p-4 rounded-lg text-center shadow-sm border border-yellow-100">
                 <span className="block text-2xl font-bold text-yellow-500">
-                  {product.fatPer100g !== null ? `${product.fatPer100g}g` : '-'}
+                  {product.fatPer100g !== null && product.fatPer100g !== undefined ? `${product.fatPer100g}g` : '-'}
                 </span>
                 <span className="text-sm text-gray-500">총 지방</span>
               </div>
@@ -419,19 +419,19 @@ export function ProductDetail({ productId }: ProductDetailProps) {
                   <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                     <td className="py-3 px-4 font-medium text-gray-700">칼로리</td>
                     <td className="py-3 px-4 text-right text-primary font-medium">
-                      {product.caloriesPer100g !== null ? `${product.caloriesPer100g} kcal` : '-'}
+                      {product.caloriesPer100g !== null && product.caloriesPer100g !== undefined ? `${product.caloriesPer100g} kcal` : '-'}
                     </td>
                     <td className="py-3 px-4 text-right">
-                      {product.caloriesPer100g !== null ? `${Math.round(product.caloriesPer100g / 2000 * 100)}%` : '-'}
+                      {product.caloriesPer100g !== null && product.caloriesPer100g !== undefined ? `${Math.round(product.caloriesPer100g / 2000 * 100)}%` : '-'}
                     </td>
                   </tr>
                   <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                     <td className="py-3 px-4 font-medium text-gray-700">지방</td>
                     <td className="py-3 px-4 text-right text-yellow-500 font-medium">
-                      {product.fatPer100g !== null ? `${product.fatPer100g}g` : '-'}
+                      {product.fatPer100g !== null && product.fatPer100g !== undefined ? `${product.fatPer100g}g` : '-'}
                     </td>
                     <td className="py-3 px-4 text-right">
-                      {product.fatPer100g !== null ? `${Math.round(product.fatPer100g / 65 * 100)}%` : '-'}
+                      {product.fatPer100g !== null && product.fatPer100g !== undefined ? `${Math.round(product.fatPer100g / 65 * 100)}%` : '-'}
                     </td>
                   </tr>
                   {product.saturatedFatPer100g !== null && (
@@ -479,10 +479,10 @@ export function ProductDetail({ productId }: ProductDetailProps) {
                   <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                     <td className="py-3 px-4 font-medium text-gray-700">탄수화물</td>
                     <td className="py-3 px-4 text-right text-blue-500 font-medium">
-                      {product.carbsPer100g !== null ? `${product.carbsPer100g}g` : '-'}
+                      {product.carbsPer100g !== null && product.carbsPer100g !== undefined ? `${product.carbsPer100g}g` : '-'}
                     </td>
                     <td className="py-3 px-4 text-right">
-                      {product.carbsPer100g !== null ? `${Math.round(product.carbsPer100g / 300 * 100)}%` : '-'}
+                      {product.carbsPer100g !== null && product.carbsPer100g !== undefined ? `${Math.round(product.carbsPer100g / 300 * 100)}%` : '-'}
                     </td>
                   </tr>
                   {product.fiberPer100g !== null && (
@@ -508,10 +508,10 @@ export function ProductDetail({ productId }: ProductDetailProps) {
                   <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                     <td className="py-3 px-4 font-medium text-gray-700">단백질</td>
                     <td className="py-3 px-4 text-right text-green-500 font-medium">
-                      {product.proteinPer100g !== null ? `${product.proteinPer100g}g` : '-'}
+                      {product.proteinPer100g !== null && product.proteinPer100g !== undefined ? `${product.proteinPer100g}g` : '-'}
                     </td>
                     <td className="py-3 px-4 text-right">
-                      {product.proteinPer100g !== null ? `${Math.round(product.proteinPer100g / 50 * 100)}%` : '-'}
+                      {product.proteinPer100g !== null && product.proteinPer100g !== undefined ? `${Math.round(product.proteinPer100g / 50 * 100)}%` : '-'}
                     </td>
                   </tr>
                 </tbody>
