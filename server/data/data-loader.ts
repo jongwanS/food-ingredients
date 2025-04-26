@@ -354,7 +354,54 @@ export async function loadProductData(): Promise<Product[]> {
         // 중복 제거
         const uniqueAllergens = Array.from(new Set(allergenIds));
         
-        // 직접 원본 데이터 사용 (100g 기준)
+        // 제품 무게 계산 (g 단위)
+        // 카테고리별 평균 중량 - 사용자가 제공한 데이터 기준
+        let productWeight = 0;
+        
+        // 카테고리 ID에 따른 무게 설정 (실제 제품 기준)
+        switch (categoryId) {
+          case 1: // 버거
+            productWeight = 250; // 버거 평균 무게 (g)
+            break;
+          case 2: // 치킨
+            productWeight = 200; // 치킨류 평균 무게 (g)
+            break;
+          case 3: // 피자
+            productWeight = 300; // 피자 슬라이스 평균 무게 (g)
+            break;
+          case 4: // 커피/음료
+            productWeight = 350; // 음료 평균 무게 (mL)
+            break;
+          case 5: // 디저트
+            productWeight = 120; // 디저트류 평균 무게 (g)
+            break;
+          default:
+            // 제품 이름에 따른 일반적인 무게
+            if (productName.includes('샌드위치')) {
+              productWeight = 220; // 샌드위치 평균 무게 (g)
+            } else if (productName.includes('버거')) {
+              productWeight = 250; // 버거 키워드 포함시
+            } else if (productName.includes('볶음밥')) {
+              productWeight = 300; // 볶음밥 키워드 포함시
+            } else if (productName.includes('치킨')) {
+              productWeight = 200; // 치킨 키워드 포함시
+            } else {
+              productWeight = 200; // 기본 무게 (g)
+            }
+        }
+        
+        // 개인화된 무게 데이터 (특정 제품에 대해 무게 정보가 있는 경우)
+        if (franchiseName === '교촌치킨' && productName.includes('달걀듬뿍 볶음밥')) {
+          productWeight = 400; // 실제 교촌치킨 달걀듬뿍 볶음밥 무게 (g)
+        } else if (franchiseName === '교촌치킨' && productName.includes('닭갈비 볶음밥')) {
+          productWeight = 400; // 실제 교촌치킨 닭갈비 볶음밥 무게 (g)
+        } else if (franchiseName === '교촌치킨' && productName.includes('의성마늘 볶음밥')) {
+          productWeight = 400; // 실제 교촌치킨 의성마늘 볶음밥 무게 (g)
+        }
+
+        // 제품 무게를 기준으로 100g당 영양성분을 전체 제품 영양성분으로 변환
+        const weightFactor = productWeight / 100; // 100g 대비 비율
+        
         // 총 지방 계산 로직: 총 지방이 null이고 포화지방이 있으면 포화지방으로 총 지방 추정
         let totalFat = Number(item['지방(g)']) || 0;
         const saturatedFat = item['포화지방산(g)'] ? Number(item['포화지방산(g)']) : null;
@@ -365,24 +412,35 @@ export async function loadProductData(): Promise<Product[]> {
           totalFat = Math.round(saturatedFat * 2 * 10) / 10; // 포화지방의 2배로 추정
         }
         
-        // 제품 정보 생성 (원본 100g 영양성분 데이터 그대로 사용)
+        // 전체 제품 영양성분 계산 (100g당 * 무게 계수)
+        const caloriesTotal = Math.round(Number(item['에너지(kcal)']) * weightFactor);
+        const proteinTotal = Math.round(Number(item['단백질(g)']) * weightFactor * 10) / 10;
+        const carbsTotal = item['탄수화물(g)'] ? Math.round(Number(item['탄수화물(g)']) * weightFactor * 10) / 10 : 0;
+        const fatTotal = Math.round(totalFat * weightFactor * 10) / 10;
+        const saturatedFatTotal = saturatedFat ? Math.round(saturatedFat * weightFactor * 10) / 10 : null;
+        const transFatTotal = item['트랜스지방산(g)'] ? Math.round(Number(item['트랜스지방산(g)']) * weightFactor * 10) / 10 : null;
+        const cholesterolTotal = item['콜레스테롤(mg)'] ? Math.round(Number(item['콜레스테롤(mg)']) * weightFactor) : null;
+        const sodiumTotal = item['나트륨(mg)'] ? Math.round(Number(item['나트륨(mg)']) * weightFactor) : null;
+        const sugarTotal = item['당류(g)'] ? Math.round(Number(item['당류(g)']) * weightFactor * 10) / 10 : null;
+        
+        // 제품 정보 생성 (전체 제품 영양성분)
         const product: Product = {
           id: productId++,
           name: productName,
           franchiseId: franchiseInfo.id,
-          description: `${franchiseName}의 ${productName} 메뉴입니다. (영양성분: 100g 기준)`,
+          description: `${franchiseName}의 ${productName} 메뉴입니다. (영양성분: 전체 ${productWeight}g 기준)`,
           imageUrl: imageUrl,
           categoryId: categoryId, // 자동 분류된 카테고리 ID 설정
-          calories: Number(item['에너지(kcal)']) || 0,
-          protein: Number(item['단백질(g)']) || 0,
-          carbs: Number(item['탄수화물(g)']) || 0,
-          fat: totalFat || 0, // 추정된 총 지방 사용
-          saturatedFat: saturatedFat,
-          transFat: item['트랜스지방산(g)'] ? Number(item['트랜스지방산(g)']) : null,
-          cholesterol: item['콜레스테롤(mg)'] ? Number(item['콜레스테롤(mg)']) : null,
-          sodium: item['나트륨(mg)'] ? Number(item['나트륨(mg)']) : null,
+          calories: caloriesTotal || 0,
+          protein: proteinTotal || 0,
+          carbs: carbsTotal || 0,
+          fat: fatTotal || 0,
+          saturatedFat: saturatedFatTotal,
+          transFat: transFatTotal,
+          cholesterol: cholesterolTotal,
+          sodium: sodiumTotal,
           fiber: null,
-          sugar: item['당류(g)'] ? Number(item['당류(g)']) : null,
+          sugar: sugarTotal,
           calcium: null,
           iron: null,
           vitaminD: null,
