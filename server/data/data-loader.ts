@@ -410,16 +410,13 @@ export async function loadProductData(): Promise<Product[]> {
         }
         
         // 제품 정보 생성 (영양성분 환산 적용)
-        // weight 정보와 100g당 영양 정보 추가
-        const product: any = {
+        const product: Product = {
           id: productId++,
           name: productName,
           franchiseId: franchiseInfo.id,
           description: `${franchiseName}의 ${productName} 메뉴입니다.`,
           imageUrl: imageUrl,
           categoryId: categoryId, // 자동 분류된 카테고리 ID 설정
-          
-          // 제품 전체 영양정보
           calories: Math.round(Number(item['에너지(kcal)']) * weightFactor) || 0,
           protein: Math.round(Number(item['단백질(g)']) * weightFactor * 10) / 10 || 0,
           carbs: Math.round(Number(item['탄수화물(g)']) * weightFactor * 10) / 10 || 0,
@@ -433,22 +430,6 @@ export async function loadProductData(): Promise<Product[]> {
           calcium: null,
           iron: null,
           vitaminD: null,
-          
-          // 제품 무게 정보 추가 (g)
-          weight: estimatedWeight,
-          
-          // 100g당 영양정보 (식약처 원본 데이터)
-          caloriesPer100g: Number(item['에너지(kcal)']) || null,
-          proteinPer100g: Number(item['단백질(g)']) || null,
-          carbsPer100g: Number(item['탄수화물(g)']) || null,
-          fatPer100g: Number(item['지방(g)']) || null,
-          saturatedFatPer100g: item['포화지방산(g)'] ? Number(item['포화지방산(g)']) : null,
-          transFatPer100g: item['트랜스지방산(g)'] ? Number(item['트랜스지방산(g)']) : null,
-          cholesterolPer100g: item['콜레스테롤(mg)'] ? Number(item['콜레스테롤(mg)']) : null,
-          sodiumPer100g: item['나트륨(mg)'] ? Number(item['나트륨(mg)']) : null,
-          fiberPer100g: item['식이섬유(g)'] ? Number(item['식이섬유(g)']) : null,
-          sugarPer100g: item['당류(g)'] ? Number(item['당류(g)']) : null,
-          
           allergens: uniqueAllergens.length > 0 ? uniqueAllergens : null,
           featuredProduct: false // 기본값으로 설정
         };
