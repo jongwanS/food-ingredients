@@ -381,19 +381,19 @@ export function ProductDetail({ productId }: ProductDetailProps) {
               <div className="bg-white p-4 rounded-lg text-center shadow-sm border border-pink-100">
                 <Flame className="h-5 w-5 mx-auto mb-1 text-primary" />
                 <span className="block text-2xl font-bold text-primary">
-                  {product.caloriesPer100g !== null ? product.caloriesPer100g : '-'}
+                  {product.caloriesPer100g !== null && product.caloriesPer100g !== undefined ? product.caloriesPer100g : '-'}
                 </span>
                 <span className="text-sm text-gray-500">칼로리 (kcal)</span>
               </div>
               <div className="bg-white p-4 rounded-lg text-center shadow-sm border border-green-100">
                 <span className="block text-2xl font-bold text-green-500">
-                  {product.proteinPer100g !== null ? `${product.proteinPer100g}g` : '-'}
+                  {product.proteinPer100g !== null && product.proteinPer100g !== undefined ? `${product.proteinPer100g}g` : '-'}
                 </span>
                 <span className="text-sm text-gray-500">단백질</span>
               </div>
               <div className="bg-white p-4 rounded-lg text-center shadow-sm border border-blue-100">
                 <span className="block text-2xl font-bold text-blue-500">
-                  {product.carbsPer100g !== null ? `${product.carbsPer100g}g` : '-'}
+                  {product.carbsPer100g !== null && product.carbsPer100g !== undefined ? `${product.carbsPer100g}g` : '-'}
                 </span>
                 <span className="text-sm text-gray-500">탄수화물</span>
               </div>
