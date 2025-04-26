@@ -438,10 +438,10 @@ export function ProductDetail({ productId }: ProductDetailProps) {
                     <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                       <td className="py-3 px-4 pl-8 text-gray-600">포화지방</td>
                       <td className="py-3 px-4 text-right text-orange-400">
-                        {`${product.saturatedFatPer100g}g`}
+                        {product.saturatedFatPer100g !== undefined ? `${product.saturatedFatPer100g}g` : '-'}
                       </td>
                       <td className="py-3 px-4 text-right">
-                        {`${Math.round(product.saturatedFatPer100g / 20 * 100)}%`}
+                        {product.saturatedFatPer100g !== undefined ? `${Math.round(product.saturatedFatPer100g / 20 * 100)}%` : '-'}
                       </td>
                     </tr>
                   )}
@@ -449,7 +449,7 @@ export function ProductDetail({ productId }: ProductDetailProps) {
                     <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                       <td className="py-3 px-4 pl-8 text-gray-600">트랜스지방</td>
                       <td className="py-3 px-4 text-right text-orange-400">
-                        {`${product.transFatPer100g}g`}
+                        {product.transFatPer100g !== undefined ? `${product.transFatPer100g}g` : '-'}
                       </td>
                       <td className="py-3 px-4 text-right">-</td>
                     </tr>
@@ -458,10 +458,10 @@ export function ProductDetail({ productId }: ProductDetailProps) {
                     <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                       <td className="py-3 px-4 font-medium text-gray-700">콜레스테롤</td>
                       <td className="py-3 px-4 text-right">
-                        {`${product.cholesterolPer100g}mg`}
+                        {product.cholesterolPer100g !== undefined ? `${product.cholesterolPer100g}mg` : '-'}
                       </td>
                       <td className="py-3 px-4 text-right">
-                        {`${Math.round(product.cholesterolPer100g / 300 * 100)}%`}
+                        {product.cholesterolPer100g !== undefined ? `${Math.round(product.cholesterolPer100g / 300 * 100)}%` : '-'}
                       </td>
                     </tr>
                   )}
@@ -469,10 +469,10 @@ export function ProductDetail({ productId }: ProductDetailProps) {
                     <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                       <td className="py-3 px-4 font-medium text-gray-700">나트륨</td>
                       <td className="py-3 px-4 text-right">
-                        {`${product.sodiumPer100g}mg`}
+                        {product.sodiumPer100g !== undefined ? `${product.sodiumPer100g}mg` : '-'}
                       </td>
                       <td className="py-3 px-4 text-right">
-                        {`${Math.round(product.sodiumPer100g / 2400 * 100)}%`}
+                        {product.sodiumPer100g !== undefined ? `${Math.round(product.sodiumPer100g / 2400 * 100)}%` : '-'}
                       </td>
                     </tr>
                   )}
@@ -489,10 +489,10 @@ export function ProductDetail({ productId }: ProductDetailProps) {
                     <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                       <td className="py-3 px-4 pl-8 text-gray-600">식이섬유</td>
                       <td className="py-3 px-4 text-right">
-                        {`${product.fiberPer100g}g`}
+                        {product.fiberPer100g !== undefined ? `${product.fiberPer100g}g` : '-'}
                       </td>
                       <td className="py-3 px-4 text-right">
-                        {`${Math.round(product.fiberPer100g / 25 * 100)}%`}
+                        {product.fiberPer100g !== undefined ? `${Math.round(product.fiberPer100g / 25 * 100)}%` : '-'}
                       </td>
                     </tr>
                   )}
@@ -500,7 +500,7 @@ export function ProductDetail({ productId }: ProductDetailProps) {
                     <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                       <td className="py-3 px-4 pl-8 text-gray-600">당류</td>
                       <td className="py-3 px-4 text-right">
-                        {`${product.sugarPer100g}g`}
+                        {product.sugarPer100g !== undefined ? `${product.sugarPer100g}g` : '-'}
                       </td>
                       <td className="py-3 px-4 text-right">-</td>
                     </tr>
