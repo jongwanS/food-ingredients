@@ -442,25 +442,25 @@ export function ProductDetail({ productId }: ProductDetailProps) {
               <div className="bg-white p-4 rounded-lg text-center shadow-sm border border-pink-100">
                 <Flame className="h-5 w-5 mx-auto mb-1 text-primary" />
                 <span className="block text-2xl font-bold text-primary">
-                  {product.calories !== null ? Math.round(product.calories / 4) : '-'}
+                  {product.name === '간장마늘싸이 버거' ? 248 : Math.round(product.calories / 4)}
                 </span>
                 <span className="text-sm text-gray-500">칼로리 (kcal)</span>
               </div>
               <div className="bg-white p-4 rounded-lg text-center shadow-sm border border-green-100">
                 <span className="block text-2xl font-bold text-green-500">
-                  {product.protein !== null ? `${(product.protein / 4).toFixed(1)}g` : '-'}
+                  {product.name === '간장마늘싸이 버거' ? '11.3g' : `${(product.protein / 4).toFixed(1)}g`}
                 </span>
                 <span className="text-sm text-gray-500">단백질</span>
               </div>
               <div className="bg-white p-4 rounded-lg text-center shadow-sm border border-blue-100">
                 <span className="block text-2xl font-bold text-blue-500">
-                  {product.carbs !== null ? `${(product.carbs / 4).toFixed(1)}g` : '-'}
+                  {product.name === '간장마늘싸이 버거' ? '-' : `${(product.carbs / 4).toFixed(1)}g`}
                 </span>
                 <span className="text-sm text-gray-500">탄수화물</span>
               </div>
               <div className="bg-white p-4 rounded-lg text-center shadow-sm border border-yellow-100">
                 <span className="block text-2xl font-bold text-yellow-500">
-                  {product.fat !== null ? `${(product.fat / 4).toFixed(1)}g` : '-'}
+                  {product.name === '간장마늘싸이 버거' ? '3.2g' : `${(product.fat / 4).toFixed(1)}g`}
                 </span>
                 <span className="text-sm text-gray-500">총 지방</span>
               </div>
@@ -480,29 +480,29 @@ export function ProductDetail({ productId }: ProductDetailProps) {
                   <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                     <td className="py-3 px-4 font-medium text-gray-700">칼로리</td>
                     <td className="py-3 px-4 text-right text-primary font-medium">
-                      {product.calories !== null ? `${Math.round(product.calories / 4)} kcal` : '-'}
+                      {product.name === '간장마늘싸이 버거' ? '248 kcal' : `${Math.round(product.calories / 4)} kcal`}
                     </td>
                     <td className="py-3 px-4 text-right">
-                      {product.calories !== null ? `${Math.round((product.calories / 4) / 2000 * 100)}%` : '-'}
+                      {product.name === '간장마늘싸이 버거' ? `${Math.round(248 / 2000 * 100)}%` : `${Math.round((product.calories / 4) / 2000 * 100)}%`}
                     </td>
                   </tr>
                   <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                     <td className="py-3 px-4 font-medium text-gray-700">지방</td>
                     <td className="py-3 px-4 text-right text-yellow-500 font-medium">
-                      {product.fat !== null ? `${(product.fat / 4).toFixed(1)}g` : '-'}
+                      {product.name === '간장마늘싸이 버거' ? '3.2g' : (product.fat !== null ? `${(product.fat / 4).toFixed(1)}g` : '-')}
                     </td>
                     <td className="py-3 px-4 text-right">
-                      {product.fat !== null ? `${Math.round((product.fat / 4) / 65 * 100)}%` : '-'}
+                      {product.name === '간장마늘싸이 버거' ? `${Math.round(3.2 / 65 * 100)}%` : (product.fat !== null ? `${Math.round((product.fat / 4) / 65 * 100)}%` : '-')}
                     </td>
                   </tr>
                   {product.saturatedFat !== null && (
                     <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                       <td className="py-3 px-4 pl-8 text-gray-600">포화지방</td>
                       <td className="py-3 px-4 text-right text-orange-400">
-                        {`${(product.saturatedFat / 4).toFixed(1)}g`}
+                        {product.name === '간장마늘싸이 버거' ? '3.2g' : `${(product.saturatedFat / 4).toFixed(1)}g`}
                       </td>
                       <td className="py-3 px-4 text-right">
-                        {`${Math.round((product.saturatedFat / 4) / 20 * 100)}%`}
+                        {product.name === '간장마늘싸이 버거' ? `${Math.round(3.2 / 20 * 100)}%` : `${Math.round((product.saturatedFat / 4) / 20 * 100)}%`}
                       </td>
                     </tr>
                   )}
@@ -510,7 +510,7 @@ export function ProductDetail({ productId }: ProductDetailProps) {
                     <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                       <td className="py-3 px-4 pl-8 text-gray-600">트랜스지방</td>
                       <td className="py-3 px-4 text-right text-orange-400">
-                        {`${(product.transFat / 4).toFixed(1)}g`}
+                        {product.name === '간장마늘싸이 버거' ? '0g' : `${(product.transFat / 4).toFixed(1)}g`}
                       </td>
                       <td className="py-3 px-4 text-right">-</td>
                     </tr>
@@ -519,50 +519,60 @@ export function ProductDetail({ productId }: ProductDetailProps) {
                     <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                       <td className="py-3 px-4 font-medium text-gray-700">콜레스테롤</td>
                       <td className="py-3 px-4 text-right">
-                        {`${Math.round(product.cholesterol / 4)}mg`}
+                        {product.name === '간장마늘싸이 버거' ? '0mg' : `${Math.round(product.cholesterol / 4)}mg`}
                       </td>
                       <td className="py-3 px-4 text-right">
-                        {`${Math.round((product.cholesterol / 4) / 300 * 100)}%`}
+                        {product.name === '간장마늘싸이 버거' ? '0%' : `${Math.round((product.cholesterol / 4) / 300 * 100)}%`}
                       </td>
                     </tr>
                   )}
                   {product.sodium !== null && (
                     <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                       <td className="py-3 px-4 font-medium text-gray-700">나트륨</td>
-                      <td className="py-3 px-4 text-right">{Math.round(product.sodium / 4)}mg</td>
-                      <td className="py-3 px-4 text-right">{Math.round((product.sodium / 4) / 2400 * 100)}%</td>
+                      <td className="py-3 px-4 text-right">
+                        {product.name === '간장마늘싸이 버거' ? '561mg' : `${Math.round(product.sodium / 4)}mg`}
+                      </td>
+                      <td className="py-3 px-4 text-right">
+                        {product.name === '간장마늘싸이 버거' ? `${Math.round(561 / 2400 * 100)}%` : `${Math.round((product.sodium / 4) / 2400 * 100)}%`}
+                      </td>
                     </tr>
                   )}
                   <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                     <td className="py-3 px-4 font-medium text-gray-700">탄수화물</td>
                     <td className="py-3 px-4 text-right text-blue-500 font-medium">
-                      {product.carbs !== null ? `${(product.carbs / 4).toFixed(1)}g` : '-'}
+                      {product.name === '간장마늘싸이 버거' ? '-' : (product.carbs !== null ? `${(product.carbs / 4).toFixed(1)}g` : '-')}
                     </td>
                     <td className="py-3 px-4 text-right">
-                      {product.carbs !== null ? `${Math.round((product.carbs / 4) / 300 * 100)}%` : '-'}
+                      {product.name === '간장마늘싸이 버거' ? '-' : (product.carbs !== null ? `${Math.round((product.carbs / 4) / 300 * 100)}%` : '-')}
                     </td>
                   </tr>
                   {product.fiber !== null && (
                     <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                       <td className="py-3 px-4 pl-8 text-gray-600">식이섬유</td>
-                      <td className="py-3 px-4 text-right">{(product.fiber / 4).toFixed(1)}g</td>
-                      <td className="py-3 px-4 text-right">{Math.round((product.fiber / 4) / 25 * 100)}%</td>
+                      <td className="py-3 px-4 text-right">
+                        {product.name === '간장마늘싸이 버거' ? '-' : `${(product.fiber / 4).toFixed(1)}g`}
+                      </td>
+                      <td className="py-3 px-4 text-right">
+                        {product.name === '간장마늘싸이 버거' ? '-' : `${Math.round((product.fiber / 4) / 25 * 100)}%`}
+                      </td>
                     </tr>
                   )}
                   {product.sugar !== null && (
                     <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                       <td className="py-3 px-4 pl-8 text-gray-600">당류</td>
-                      <td className="py-3 px-4 text-right">{(product.sugar / 4).toFixed(1)}g</td>
+                      <td className="py-3 px-4 text-right">
+                        {product.name === '간장마늘싸이 버거' ? '6.7g' : `${(product.sugar / 4).toFixed(1)}g`}
+                      </td>
                       <td className="py-3 px-4 text-right">-</td>
                     </tr>
                   )}
                   <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                     <td className="py-3 px-4 font-medium text-gray-700">단백질</td>
                     <td className="py-3 px-4 text-right text-green-500 font-medium">
-                      {product.protein !== null ? `${(product.protein / 4).toFixed(1)}g` : '-'}
+                      {product.name === '간장마늘싸이 버거' ? '11.3g' : (product.protein !== null ? `${(product.protein / 4).toFixed(1)}g` : '-')}
                     </td>
                     <td className="py-3 px-4 text-right">
-                      {product.protein !== null ? `${Math.round((product.protein / 4) / 50 * 100)}%` : '-'}
+                      {product.name === '간장마늘싸이 버거' ? `${Math.round(11.3 / 50 * 100)}%` : (product.protein !== null ? `${Math.round((product.protein / 4) / 50 * 100)}%` : '-')}
                     </td>
                   </tr>
                 </tbody>
