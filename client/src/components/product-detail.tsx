@@ -269,7 +269,15 @@ export function ProductDetail({ productId }: ProductDetailProps) {
         
         <Tabs defaultValue="total" className="mb-6">
           <TabsList>
-            <TabsTrigger value="total">전체 영양성분</TabsTrigger>
+            <TabsTrigger value="total">
+              전체 영양성분 {product.description && product.description.includes('전체') && (
+                <span className="text-xs font-normal ml-1 opacity-80">
+                  {product.description.match(/전체\s*(\d+)g\s*기준/i) 
+                    ? `(중량: ${product.description.match(/전체\s*(\d+)g\s*기준/i)[1]}g)` 
+                    : ''}
+                </span>
+              )}
+            </TabsTrigger>
             <TabsTrigger value="per100g">100g 당 영양성분</TabsTrigger>
           </TabsList>
           
