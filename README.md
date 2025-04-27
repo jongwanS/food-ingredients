@@ -22,4 +22,8 @@
 
 ## 개발자
 
-jongwanS
+jongwanS (GitHub: https://github.com/jongwanS)
+
+## 배포 
+
+Replit을 통해 배포되었습니다.
