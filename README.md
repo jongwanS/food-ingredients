@@ -26,11 +26,21 @@
 1. Vercel 계정에 로그인합니다.
 2. "New Project" 버튼을 클릭합니다.
 3. GitHub 저장소(jongwanS/food-ingredients)를 선택합니다.
-4. 다음 기본 설정을 유지합니다:
-   - Framework Preset: Vite
-   - Build Command: `npm run build`
+4. 다음과 같이 설정을 변경합니다:
+   - Framework Preset: Other (기타)
+   - Build Command: `bash ./build.sh`
    - Output Directory: `dist`
+   - Install Command: `npm install`
 5. "Deploy" 버튼을 클릭합니다.
+
+### 서버 코드가 보이는 문제 해결
+
+웹사이트에 서버 코드가 노출되는 문제가 발생하는 경우:
+
+1. Vercel 대시보드에서 해당 프로젝트 설정으로 이동합니다.
+2. "Settings" → "General" → "Build & Development Settings"에서 위의 설정이 제대로 적용되었는지 확인합니다.
+3. "Settings" → "Git" → "Production Branch"가 `main`으로 설정되어 있는지 확인합니다.
+4. "Deployments" 탭에서 최신 배포를 선택하고 "Redeploy"를 클릭하여 재배포합니다.
 
 Vercel은 자동으로 프로젝트를 빌드하고 배포합니다. 배포가 완료되면 사용자에게 접근 가능한 URL이 제공됩니다.
 
