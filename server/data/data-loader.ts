@@ -446,14 +446,27 @@ export async function loadProductData(): Promise<Product[]> {
         
         // 수동으로 무게가 설정되지 않은 경우, 데이터에서 추출 시도
         if (!extractedWeight) {
-          // 제품명이나 JSON 데이터에서 중량 정보 추출 시도
-          const weightMatch = productName.match(/(\d+)g/i) || 
+          // 1. 먼저 "식품중량" 필드에서 바로 추출 시도
+          if (item['식품중량']) {
+            const weightMatch = item['식품중량'].match(/(\d+)g/i);
+            if (weightMatch) {
+              extractedWeight = parseInt(weightMatch[1]);
+              console.log(`중량 추출 성공 (식품중량): ${productName} - ${extractedWeight}g`);
+            }
+          }
+          
+          // 2. 식품중량에서 추출 실패 시 다른 필드 확인
+          if (!extractedWeight) {
+            // 제품명이나 JSON 데이터에서 중량 정보 추출 시도
+            const weightMatch = productName.match(/(\d+)g/i) || 
                               JSON.stringify(item).match(/중량[:\s]*(\d+)g/i) ||
                               JSON.stringify(item).match(/무게[:\s]*(\d+)g/i) ||
                               item['영양성분함량기준량']?.match(/(\d+)g/i);
-          
-          if (weightMatch) {
-            extractedWeight = parseInt(weightMatch[1]);
+            
+            if (weightMatch) {
+              extractedWeight = parseInt(weightMatch[1]);
+              console.log(`중량 추출 성공 (기타): ${productName} - ${extractedWeight}g`);
+            }
           }
         }
         
