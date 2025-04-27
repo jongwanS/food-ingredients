@@ -12,9 +12,15 @@ import { Heart, AlertCircle, Flame } from "lucide-react";
 
 interface ProductListProps {
   franchiseId: number;
+  filterParams?: {
+    calorieRange: string;
+    proteinRange: string;
+    carbsRange: string;
+    fatRange: string;
+  };
 }
 
-export function ProductList({ franchiseId }: ProductListProps) {
+export function ProductList({ franchiseId, filterParams }: ProductListProps) {
   const [, navigate] = useLocation();
   const [searchParams] = useSearchParams();
   const [favoriteProducts, setFavoriteProducts] = useState<number[]>([]);
@@ -53,20 +59,13 @@ export function ProductList({ franchiseId }: ProductListProps) {
     };
   }, []);
   
-  // Get filter params from URL
-  const calorieRange = searchParams.get("calorieRange") || "";
-  const proteinRange = searchParams.get("proteinRange") || "";
-  const carbsRange = searchParams.get("carbsRange") || "";
-  const fatRange = searchParams.get("fatRange") || "";
+  // Get filter params from either props or URL
+  const calorieRange = filterParams?.calorieRange || searchParams.get("calorieRange") || "";
+  const proteinRange = filterParams?.proteinRange || searchParams.get("proteinRange") || "";
+  const carbsRange = filterParams?.carbsRange || searchParams.get("carbsRange") || "";
+  const fatRange = filterParams?.fatRange || searchParams.get("fatRange") || "";
   
-  // Create query parameter string
-  const filterParams = new URLSearchParams();
-  filterParams.append("franchiseId", franchiseId.toString());
-  
-  if (calorieRange) filterParams.append("calorieRange", calorieRange);
-  if (proteinRange) filterParams.append("proteinRange", proteinRange);
-  if (carbsRange) filterParams.append("carbsRange", carbsRange);
-  if (fatRange) filterParams.append("fatRange", fatRange);
+  console.log("사용 중인 필터:", { calorieRange, proteinRange, carbsRange, fatRange });
   
   // Fetch products by franchise with filters
   const { data: products, isLoading, error } = useQuery({
@@ -87,6 +86,8 @@ export function ProductList({ franchiseId }: ProductListProps) {
           // 필터가 없으면 기본 제품 API 사용
           endpoint = `/api/products?franchiseId=${franchiseId}`;
         }
+        
+        console.log("API 요청 경로:", endpoint);
         
         const res = await fetch(endpoint);
         if (!res.ok) {
