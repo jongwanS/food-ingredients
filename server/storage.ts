@@ -67,9 +67,39 @@ export class MemStorage implements IStorage {
     
     // 데이터 초기화 (비동기)
     this.initializeData();
-    
-    // data-loader 초기화 호출
-    dataLoader.initializeData();
+  }
+
+  private async initializeData() {
+    try {
+      // 데이터 로더 초기화
+      await dataLoader.initializeData();
+      
+      // 카테고리 데이터 로드
+      const categories = await dataLoader.getCategories();
+      categories.forEach(category => {
+        this._categories.set(category.id, category);
+      });
+
+      // 프랜차이즈 데이터 로드
+      const franchises = await dataLoader.getFranchises();
+      franchises.forEach(franchise => {
+        this._franchises.set(franchise.id, franchise);
+      });
+
+      // 알레르기 데이터 로드
+      const allergens = await dataLoader.getAllergens();
+      allergens.forEach(allergen => {
+        this._allergens.set(allergen.id, allergen);
+      });
+
+      // 제품 데이터 로드
+      const products = await dataLoader.loadProductData();
+      products.forEach(product => {
+        this._products.set(product.id, product);
+      });
+    } catch (error) {
+      console.error('데이터 초기화 중 오류 발생:', error);
+    }
   }
 
   // User methods (keep for reference)
@@ -397,51 +427,6 @@ export class MemStorage implements IStorage {
     }
 
     return results;
-  }
-
-  // Initialize data from data-loader
-  private async initializeData() {
-    try {
-      // 알러젠 데이터 로드
-      const allergenData = dataLoader.getAllergens();
-      for (const allergen of allergenData) {
-        const { id, ...insertData } = allergen;
-        await this.createAllergen(insertData as InsertAllergen);
-      }
-      console.log("알러젠 데이터 로드 완료");
-
-      // 카테고리 데이터 로드
-      const categoryData = dataLoader.getCategories();
-      for (const category of categoryData) {
-        const { id, ...insertData } = category;
-        await this.createCategory(insertData as InsertCategory);
-      }
-      console.log("카테고리 데이터 로드 완료");
-
-      // 프랜차이즈 데이터 로드
-      const franchiseData = dataLoader.getFranchises();
-      for (const franchise of franchiseData) {
-        const { id, ...insertData } = franchise;
-        await this.createFranchise(insertData as InsertFranchise);
-      }
-      console.log("프랜차이즈 데이터 로드 완료");
-
-      // 제품 데이터 로드 (비동기)
-      const products = await dataLoader.loadProductData();
-      for (const product of products) {
-        const { id, ...insertData } = product;
-        
-        // 저장소 내부 정보에 의존하지 않도록 중복 확인
-        if (!this._products.has(id)) {
-          await this.createProduct(insertData as InsertProduct);
-        }
-      }
-      console.log(`총 ${this._products.size}개 제품 로드 완료`);
-    } catch (error) {
-      console.error("데이터 초기화 중 오류 발생:", error);
-    }
-
-
   }
 }
 

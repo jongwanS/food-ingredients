@@ -47,11 +47,35 @@ export interface KoreanFoodItem {
   '식품중량'?: string | number | null; // 추가된 속성
 }
 
-// ... 나머지 코드는 동일 ...
+// 프랜차이즈 매핑 정보
+const franchiseMap: Record<string, { id: number; categoryId: number }> = {
+  'mcdonalds': { id: 1, categoryId: 1 },
+  'kfc': { id: 2, categoryId: 1 },
+  'burgerking': { id: 3, categoryId: 1 },
+  'lotteria': { id: 4, categoryId: 1 },
+  'momstouch': { id: 5, categoryId: 1 }
+};
+
+export async function initializeData() {
+  // 데이터 초기화 로직
+  console.log('Data loader initialized');
+}
+
+export async function getAllergens(): Promise<Allergen[]> {
+  return [];
+}
+
+export async function getCategories(): Promise<Category[]> {
+  return [];
+}
+
+export async function getFranchises(): Promise<Franchise[]> {
+  return [];
+}
 
 // 제품 데이터 로드
 export async function loadProductData(): Promise<Product[]> {
-  // ... (기존 코드) ...
+  const products: Product[] = [];
 
   try {
     const franchiseDir = path.resolve('./seller/franchise');
@@ -76,7 +100,8 @@ export async function loadProductData(): Promise<Product[]> {
 
       // 메뉴 항목 처리
       for (const item of menuItems) {
-        // ... (기존 코드) ...
+        const productName = item.식품명;
+        let extractedWeight = 0;
 
         // 1. 먼저 식품중량 필드에서 바로 추출 시도 (타입 처리)
         if (typeof item['식품중량'] === 'string') {
@@ -87,11 +112,11 @@ export async function loadProductData(): Promise<Product[]> {
           }
         }
 
-        // ... (나머지 코드) ...
+        // ... rest of the code ...
       }
     }
 
-    // ... (나머지 코드) ...
+    return products;
   } catch (error) {
     console.error('제품 데이터 로드 중 오류 발생:', error);
     return [];
