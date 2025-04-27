@@ -51,13 +51,13 @@ app.use((req, res, next) => {
     res.status(status).json({ message });
   });
 
-  // development 환경에서 Vite 설정
+  // 개발 환경에서 Vite 설정
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
     serveStatic(app);
   }
 
-  // Vercel에서는 서버리스 함수 환경이므로, 서버 시작을 `export default`로 변경
-  export default app;
+  // Vercel 환경에서는 `export default` 대신 `module.exports` 사용
+  module.exports = app;  // Vercel 서버리스 함수에서 app을 내보냄
 })();
