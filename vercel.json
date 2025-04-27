@@ -1,9 +1,13 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
+  "buildCommand": "bash ./build.sh",
   "outputDirectory": "dist",
-  "framework": "vite",
+  "framework": null,
   "routes": [
+    {
+      "src": "/api/products/(.*)",
+      "dest": "/api/products.js"
+    },
     {
       "src": "/api/(.*)",
       "dest": "/api/index.js"
@@ -14,6 +18,16 @@
     {
       "src": "/(.*)",
       "dest": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type" }
+      ]
     }
   ]
 }
