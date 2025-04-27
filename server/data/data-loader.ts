@@ -428,12 +428,29 @@ export async function loadProductData(): Promise<Product[]> {
         const sodiumTotal = item['나트륨(mg)'] ? Number(item['나트륨(mg)']) : null;
         const sugarTotal = item['당류(g)'] ? Number(item['당류(g)']) : null;
         
-        // 제품 정보 생성 (전체 제품 영양성분)
+        // 제품 중량 정보 추출 (있는 경우에만)
+        let extractedWeight = null;
+        // 제품명이나 JSON 데이터에서 중량 정보 추출 시도
+        const weightMatch = productName.match(/(\d+)g/i) || 
+                            JSON.stringify(item).match(/중량[:\s]*(\d+)g/i) ||
+                            JSON.stringify(item).match(/무게[:\s]*(\d+)g/i) ||
+                            item['영양성분함량기준량']?.match(/(\d+)g/i);
+        
+        if (weightMatch) {
+          extractedWeight = parseInt(weightMatch[1]);
+        }
+        
+        const description = extractedWeight 
+          ? `${franchiseName}의 ${productName} 메뉴입니다. (영양성분: 전체 ${extractedWeight}g 기준)`
+          : `${franchiseName}의 ${productName} 메뉴입니다. (영양성분: 100g 기준)`;
+        
+        // 제품 정보 생성
         const product: Product = {
           id: productId++,
           name: productName,
           franchiseId: franchiseInfo.id,
-          description: `${franchiseName}의 ${productName} 메뉴입니다. (영양성분: 100g 기준)`,
+          description: description,
+          weight: extractedWeight, // 추출된 중량 정보 저장
           imageUrl: imageUrl,
           categoryId: categoryId, // 자동 분류된 카테고리 ID 설정
           calories: caloriesTotal || 0,

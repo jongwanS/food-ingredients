@@ -89,6 +89,7 @@ export const products = pgTable("products", {
   vitaminD: integer("vitamin_d"),
   allergens: json("allergens").$type<number[]>().default([]),
   featuredProduct: boolean("featured_product").default(false),
+  weight: integer("weight"), // 제품 중량(g)
 });
 
 export const insertProductSchema = createInsertSchema(products).pick({
@@ -112,6 +113,7 @@ export const insertProductSchema = createInsertSchema(products).pick({
   vitaminD: true,
   allergens: true,
   featuredProduct: true,
+  weight: true,
 });
 
 export type InsertProduct = z.infer<typeof insertProductSchema>;
