@@ -19,19 +19,20 @@
 
 ## 배포 정보
 
-Replit에서 이 프로젝트를 배포하려면 다음 단계를 따르세요:
+### Vercel에 배포하기
 
-1. Replit 배포 화면에서 빌드 명령을 다음과 같이 설정합니다:
-   ```
-   ./build.sh
-   ```
+이 프로젝트는 Vercel 배포를 위해 최적화되어 있습니다.
 
-2. 출력 디렉토리를 'public'으로 설정합니다.
+1. Vercel 계정에 로그인합니다.
+2. "New Project" 버튼을 클릭합니다.
+3. GitHub 저장소(jongwanS/food-ingredients)를 선택합니다.
+4. 다음 기본 설정을 유지합니다:
+   - Framework Preset: Vite
+   - Build Command: `npm run build`
+   - Output Directory: `dist`
+5. "Deploy" 버튼을 클릭합니다.
 
-3. 실행 명령은 기본값을 유지합니다:
-   ```
-   npm run start
-   ```
+Vercel은 자동으로 프로젝트를 빌드하고 배포합니다. 배포가 완료되면 사용자에게 접근 가능한 URL이 제공됩니다.
 
 ## 개발자 정보
 
