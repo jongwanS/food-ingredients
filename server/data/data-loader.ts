@@ -404,6 +404,8 @@ export async function loadProductData(): Promise<Product[]> {
           productWeight = 400; // 실제 교촌치킨 닭갈비 볶음밥 무게 (g)
         } else if (franchiseName === '교촌치킨' && productName.includes('의성마늘 볶음밥')) {
           productWeight = 400; // 실제 교촌치킨 의성마늘 볶음밥 무게 (g)
+        } else if (franchiseName === '맘스터치' && productName.includes('간장마늘싸이 버거')) {
+          productWeight = 250; // 맘스터치 간장마늘싸이 버거 무게 (g)
         }
 
         // 원본 데이터 그대로 사용 (100g 당 영양성분 정보)
@@ -430,14 +432,29 @@ export async function loadProductData(): Promise<Product[]> {
         
         // 제품 중량 정보 추출 (있는 경우에만)
         let extractedWeight = null;
-        // 제품명이나 JSON 데이터에서 중량 정보 추출 시도
-        const weightMatch = productName.match(/(\d+)g/i) || 
-                            JSON.stringify(item).match(/중량[:\s]*(\d+)g/i) ||
-                            JSON.stringify(item).match(/무게[:\s]*(\d+)g/i) ||
-                            item['영양성분함량기준량']?.match(/(\d+)g/i);
         
-        if (weightMatch) {
-          extractedWeight = parseInt(weightMatch[1]);
+        // 개인화된 무게 데이터 먼저 확인 (특정 제품에 대해 수동으로 설정된 경우)
+        if (franchiseName === '맘스터치' && productName.includes('간장마늘싸이 버거')) {
+          extractedWeight = 250; // 맘스터치 간장마늘싸이 버거 무게 (g)
+        } else if (franchiseName === '교촌치킨' && (
+          productName.includes('달걀듬뿍 볶음밥') ||
+          productName.includes('닭갈비 볶음밥') ||
+          productName.includes('의성마늘 볶음밥')
+        )) {
+          extractedWeight = 400; // 교촌치킨 볶음밥 무게 (g)
+        }
+        
+        // 수동으로 무게가 설정되지 않은 경우, 데이터에서 추출 시도
+        if (!extractedWeight) {
+          // 제품명이나 JSON 데이터에서 중량 정보 추출 시도
+          const weightMatch = productName.match(/(\d+)g/i) || 
+                              JSON.stringify(item).match(/중량[:\s]*(\d+)g/i) ||
+                              JSON.stringify(item).match(/무게[:\s]*(\d+)g/i) ||
+                              item['영양성분함량기준량']?.match(/(\d+)g/i);
+          
+          if (weightMatch) {
+            extractedWeight = parseInt(weightMatch[1]);
+          }
         }
         
         const description = extractedWeight 
