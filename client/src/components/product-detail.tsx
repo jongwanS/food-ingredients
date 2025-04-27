@@ -519,10 +519,10 @@ export function ProductDetail({ productId }: ProductDetailProps) {
                     <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                       <td className="py-3 px-4 font-medium text-gray-700">콜레스테롤</td>
                       <td className="py-3 px-4 text-right">
-                        {product.name === '간장마늘싸이 버거' ? '0mg' : `${Math.round(product.cholesterol / 4)}mg`}
+                        {product.cholesterol !== null ? `${product.cholesterol}mg` : '-'}
                       </td>
                       <td className="py-3 px-4 text-right">
-                        {product.name === '간장마늘싸이 버거' ? '0%' : `${Math.round((product.cholesterol / 4) / 300 * 100)}%`}
+                        {product.cholesterol !== null ? `${Math.round(product.cholesterol / 300 * 100)}%` : '-'}
                       </td>
                     </tr>
                   )}
@@ -530,30 +530,30 @@ export function ProductDetail({ productId }: ProductDetailProps) {
                     <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                       <td className="py-3 px-4 font-medium text-gray-700">나트륨</td>
                       <td className="py-3 px-4 text-right">
-                        {product.name === '간장마늘싸이 버거' ? '561mg' : `${Math.round(product.sodium / 4)}mg`}
+                        {product.sodium !== null ? `${product.sodium}mg` : '-'}
                       </td>
                       <td className="py-3 px-4 text-right">
-                        {product.name === '간장마늘싸이 버거' ? `${Math.round(561 / 2400 * 100)}%` : `${Math.round((product.sodium / 4) / 2400 * 100)}%`}
+                        {product.sodium !== null ? `${Math.round(product.sodium / 2400 * 100)}%` : '-'}
                       </td>
                     </tr>
                   )}
                   <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                     <td className="py-3 px-4 font-medium text-gray-700">탄수화물</td>
                     <td className="py-3 px-4 text-right text-blue-500 font-medium">
-                      {product.name === '간장마늘싸이 버거' ? '-' : (product.carbs !== null ? `${(product.carbs / 4).toFixed(1)}g` : '-')}
+                      {product.carbs !== null ? `${product.carbs}g` : '-'}
                     </td>
                     <td className="py-3 px-4 text-right">
-                      {product.name === '간장마늘싸이 버거' ? '-' : (product.carbs !== null ? `${Math.round((product.carbs / 4) / 300 * 100)}%` : '-')}
+                      {product.carbs !== null ? `${Math.round(product.carbs / 300 * 100)}%` : '-'}
                     </td>
                   </tr>
                   {product.fiber !== null && (
                     <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                       <td className="py-3 px-4 pl-8 text-gray-600">식이섬유</td>
                       <td className="py-3 px-4 text-right">
-                        {product.name === '간장마늘싸이 버거' ? '-' : `${(product.fiber / 4).toFixed(1)}g`}
+                        {product.fiber !== null ? `${product.fiber}g` : '-'}
                       </td>
                       <td className="py-3 px-4 text-right">
-                        {product.name === '간장마늘싸이 버거' ? '-' : `${Math.round((product.fiber / 4) / 25 * 100)}%`}
+                        {product.fiber !== null ? `${Math.round(product.fiber / 25 * 100)}%` : '-'}
                       </td>
                     </tr>
                   )}
@@ -561,7 +561,7 @@ export function ProductDetail({ productId }: ProductDetailProps) {
                     <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                       <td className="py-3 px-4 pl-8 text-gray-600">당류</td>
                       <td className="py-3 px-4 text-right">
-                        {product.name === '간장마늘싸이 버거' ? '6.7g' : `${(product.sugar / 4).toFixed(1)}g`}
+                        {product.sugar !== null ? `${product.sugar}g` : '-'}
                       </td>
                       <td className="py-3 px-4 text-right">-</td>
                     </tr>
@@ -569,10 +569,10 @@ export function ProductDetail({ productId }: ProductDetailProps) {
                   <tr className="border-b border-pink-50 hover:bg-pink-50/30 transition-colors">
                     <td className="py-3 px-4 font-medium text-gray-700">단백질</td>
                     <td className="py-3 px-4 text-right text-green-500 font-medium">
-                      {product.name === '간장마늘싸이 버거' ? '11.3g' : (product.protein !== null ? `${(product.protein / 4).toFixed(1)}g` : '-')}
+                      {product.protein !== null ? `${product.protein}g` : '-'}
                     </td>
                     <td className="py-3 px-4 text-right">
-                      {product.name === '간장마늘싸이 버거' ? `${Math.round(11.3 / 50 * 100)}%` : (product.protein !== null ? `${Math.round((product.protein / 4) / 50 * 100)}%` : '-')}
+                      {product.protein !== null ? `${Math.round(product.protein / 50 * 100)}%` : '-'}
                     </td>
                   </tr>
                 </tbody>
