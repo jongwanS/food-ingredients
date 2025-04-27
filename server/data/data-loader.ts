@@ -406,9 +406,7 @@ export async function loadProductData(): Promise<Product[]> {
           productWeight = 400; // 실제 교촌치킨 의성마늘 볶음밥 무게 (g)
         }
 
-        // 제품 무게를 기준으로 100g당 영양성분을 전체 제품 영양성분으로 변환
-        const weightFactor = productWeight / 100; // 100g 대비 비율
-        
+        // 원본 데이터 그대로 사용 (100g 당 영양성분 정보)
         // 총 지방 계산 로직: 총 지방이 null이고 포화지방이 있으면 포화지방으로 총 지방 추정
         let totalFat = Number(item['지방(g)']) || 0;
         const saturatedFat = item['포화지방산(g)'] ? Number(item['포화지방산(g)']) : null;
@@ -419,23 +417,23 @@ export async function loadProductData(): Promise<Product[]> {
           totalFat = Math.round(saturatedFat * 2 * 10) / 10; // 포화지방의 2배로 추정
         }
         
-        // 전체 제품 영양성분 계산 (100g당 * 무게 계수)
-        const caloriesTotal = Math.round(Number(item['에너지(kcal)']) * weightFactor);
-        const proteinTotal = Math.round(Number(item['단백질(g)']) * weightFactor * 10) / 10;
-        const carbsTotal = item['탄수화물(g)'] ? Math.round(Number(item['탄수화물(g)']) * weightFactor * 10) / 10 : 0;
-        const fatTotal = Math.round(totalFat * weightFactor * 10) / 10;
-        const saturatedFatTotal = saturatedFat ? Math.round(saturatedFat * weightFactor * 10) / 10 : null;
-        const transFatTotal = item['트랜스지방산(g)'] ? Math.round(Number(item['트랜스지방산(g)']) * weightFactor * 10) / 10 : null;
-        const cholesterolTotal = item['콜레스테롤(mg)'] ? Math.round(Number(item['콜레스테롤(mg)']) * weightFactor) : null;
-        const sodiumTotal = item['나트륨(mg)'] ? Math.round(Number(item['나트륨(mg)']) * weightFactor) : null;
-        const sugarTotal = item['당류(g)'] ? Math.round(Number(item['당류(g)']) * weightFactor * 10) / 10 : null;
+        // 원본 데이터 그대로 사용 (100g 당 영양성분 정보)
+        const caloriesTotal = Number(item['에너지(kcal)']) || 0;
+        const proteinTotal = Number(item['단백질(g)']) || 0;
+        const carbsTotal = item['탄수화물(g)'] ? Number(item['탄수화물(g)']) : 0;
+        const fatTotal = totalFat;
+        const saturatedFatTotal = saturatedFat;
+        const transFatTotal = item['트랜스지방산(g)'] ? Number(item['트랜스지방산(g)']) : null;
+        const cholesterolTotal = item['콜레스테롤(mg)'] ? Number(item['콜레스테롤(mg)']) : null;
+        const sodiumTotal = item['나트륨(mg)'] ? Number(item['나트륨(mg)']) : null;
+        const sugarTotal = item['당류(g)'] ? Number(item['당류(g)']) : null;
         
         // 제품 정보 생성 (전체 제품 영양성분)
         const product: Product = {
           id: productId++,
           name: productName,
           franchiseId: franchiseInfo.id,
-          description: `${franchiseName}의 ${productName} 메뉴입니다. (영양성분: 전체 ${productWeight}g 기준)`,
+          description: `${franchiseName}의 ${productName} 메뉴입니다. (영양성분: 100g 기준)`,
           imageUrl: imageUrl,
           categoryId: categoryId, // 자동 분류된 카테고리 ID 설정
           calories: caloriesTotal || 0,
