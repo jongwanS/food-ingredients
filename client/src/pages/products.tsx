@@ -87,13 +87,18 @@ export default function Products({ params }: ProductsProps) {
       
       <Breadcrumbs items={breadcrumbItems} />
       
-      <h1 className="text-3xl font-heading font-bold mb-6">
+      <h1 className="text-3xl font-heading font-bold mb-2">
         {franchiseLoading ? (
           <Skeleton className="h-9 w-64" />
         ) : (
           <>{franchise?.name || "프랜차이즈"} 메뉴</>
         )}
       </h1>
+      
+      {/* 영양성분이 100g 기준임을 표시 */}
+      <p className="text-gray-500 text-sm mb-4 italic">
+        * 표시된 모든 영양성분 정보는 100g 기준입니다.
+      </p>
       
       {/* 제품 목록 위 광고 배너 */}
       <BannerAd className="my-4" />
