@@ -229,7 +229,14 @@ export async function loadProductData(): Promise<Product[]> {
         // 식품명에서 카테고리 제거 (예: "버거_빅맥" -> "빅맥")
         const nameParts = item.식품명.split('_');
         const productCategory = nameParts[0] || '';
-        const productName = nameParts.length > 1 ? nameParts[1] : item.식품명;
+        
+        // 밀키트 제품의 경우 세 번째 부분을 제품명으로 사용 (예: "칼국수_간편조리세트_닭한마리와 칼국수" -> "닭한마리와 칼국수")
+        let productName;
+        if (nameParts.length > 2 && nameParts[1] === '간편조리세트') {
+          productName = nameParts[2];
+        } else {
+          productName = nameParts.length > 1 ? nameParts[1] : item.식품명;
+        }
         
         // 카테고리 ID 결정 (명시적 카테고리 매핑)
         let categoryId = franchiseInfo.categoryId; // 기본값은 프랜차이즈 카테고리
